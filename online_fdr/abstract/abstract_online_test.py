@@ -4,6 +4,7 @@ from online_fdr.utils.validity import check_alpha
 
 
 class AbstractOnlineTest(abc.ABC):
+    """Abstract class for online hypothesis testing."""
 
     def __init__(self, alpha: float):
         check_alpha(alpha)

@@ -19,16 +19,10 @@ def check_alpha(p_val: float) -> None:
         )
 
 
-def check_initial_wealth(initial_wealth: float) -> None:
-    if not 0 < initial_wealth < 1:
-        raise ValueError(
-            """
-            Defined initial wealth value must be between (0,1).
-            """
-        )
-    if not 0.05 <= initial_wealth <= 0.1:
+def check_initial_wealth(initial_wealth: float, alpha: float) -> None:
+    if not 0 < initial_wealth < alpha:
         warnings.warn(
             """
-            By convention, initial wealth is usually either 0.05 or 0.1.
+            By convention, initial wealth should be between (0, alpha].
             """
         )
