@@ -24,16 +24,3 @@ class AbstractOnlineTest(abc.ABC):
             bool: True if the null hypothesis is rejected, False otherwise.
         """
         pass
-
-    @abc.abstractmethod
-    def transform_one(self, p_val: float) -> float:
-        """
-        Transform a p-value based on the specific method.
-
-        Args:
-            p_val (float): The p-value to be transformed.
-
-        Returns:
-            float: The transformed p-value.
-        """
-        pass

@@ -7,10 +7,6 @@ class NaiveTest(AbstractOnlineTest):
         check_p_val(p_val)
         return p_val < self.alpha
 
-    def transform_one(self, p_val: float) -> float:
-        check_p_val(p_val)
-        return p_val
-
     def update(self, rejected):
         """Naive online testing implements no internal update procedure."""
         pass

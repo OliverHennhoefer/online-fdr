@@ -5,6 +5,3 @@ class AlphaSpending(AbstractOnlineTest):
 
     def test_one(self, p_val: float) -> bool:
         pass
-
-    def transform_one(self, p_val: float) -> float:
-        pass

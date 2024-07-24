@@ -25,10 +25,6 @@ class LONDstar(AbstractOnlineTest):
             return True
         return False
 
-    def transform_one(self, p_val: float) -> float:
-        check_p_val(p_val)
-        return p_val  # LOND adapts the significance threshold
-
     def _compute_beta(self):
         self.i += 1
         if self.i == 1:

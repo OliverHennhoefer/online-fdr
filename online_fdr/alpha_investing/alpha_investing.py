@@ -28,7 +28,3 @@ class AlphaInvesting(AbstractOnlineTest):
         is_rejected = p_val <= alpha
         self.wealth += (self.payout - alpha) if is_rejected else -alpha
         return is_rejected
-
-    def transform_one(self, p_val: float) -> float:
-        check_p_val(p_val)
-        return p_val  # method only adapts the significance threshold
