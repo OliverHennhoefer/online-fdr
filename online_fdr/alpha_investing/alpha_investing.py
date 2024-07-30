@@ -1,13 +1,20 @@
 from online_fdr.abstract.abstract_invest_rule import AbstractInvestRule
 from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
-from online_fdr.invest_rules.original_function import (
+from online_fdr.rules.investing.original_function import (
     OriginalInvestRule,
 )
 from online_fdr.utils.validity import check_p_val, check_initial_wealth
 
 
 class AlphaInvesting(AbstractOnlineTest):
-    """Implements Alpha Investing."""
+    """Implements the original Alpha Investing[1]_.
+
+    References
+    ----------
+    [1] Foster, D., and R. Stine. α-investing: a procedure for
+    sequential control of expected false discoveries.
+    Journal of the Royal Statistical Society (Series B),
+    29(4):429-444, 2008."""
 
     def __init__(
         self,
@@ -26,6 +33,7 @@ class AlphaInvesting(AbstractOnlineTest):
         check_p_val(p_val)
         self.alpha = self.rule.allocate_wealth(self.wealth, self.alpha, self.payout)
         is_rejected = p_val <= self.alpha
+        # in contrast to GAI, the original AI invests only on acceptance of H0
         self.wealth += (
             self.payout
             if is_rejected
