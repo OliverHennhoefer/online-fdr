@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
 
-class AbstractInvestRule(ABC):
-    """Abstract class of an alpha investment rule."""
+class AbstractInvestFunc(ABC):
+    """Abstract class of an alpha investing function."""
 
     @staticmethod
     @abstractmethod
-    def allocate_wealth(wealth: float, alpha: float, omega: float) -> float:
+    def invest(wealth: float, alpha: float, omega: float) -> float:
         pass
 
     @staticmethod

@@ -22,7 +22,7 @@ df <- data.frame(
 #_______________________________________________________________________________
 # 1 Alpha Spending
 
-onlineFDR::Alpha_spending(df, alpha = 0.05, random = FALSE)
+onlineFDR::Alpha_spending(df['pval'], alpha = 0.05, random = FALSE)
 
 #_______________________________________________________________________________
 # 2 Alpha Investing

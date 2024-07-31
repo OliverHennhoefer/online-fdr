@@ -1,6 +1,6 @@
-from online_fdr.abstract.abstract_invest_rule import AbstractInvestRule
+from online_fdr.abstract.abstract_invest_func import AbstractInvestFunc
 from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
-from online_fdr.rules.investing.original_function import (
+from online_fdr.functions.investing.original_function import (
     OriginalInvestRule,
 )
 from online_fdr.utils.validity import check_p_val, check_initial_wealth
@@ -21,7 +21,7 @@ class AlphaInvesting(AbstractOnlineTest):
         alpha: float,
         initial_wealth: float | None = None,
         payout: float | None = None,
-        rule: AbstractInvestRule | None = None,
+        rule: AbstractInvestFunc | None = None,
     ):
         super().__init__(alpha)
         self.payout: float = payout or alpha

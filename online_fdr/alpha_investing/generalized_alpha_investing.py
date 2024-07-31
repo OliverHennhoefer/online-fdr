@@ -15,7 +15,7 @@ class GeneralizedAlphaInvesting(AbstractOnlineTest):
     sequential control of expected false discoveries.
     Journal of the Royal Statistical Society (Series B),
     29(4):429-444, 2008.
-    [2] Javanmard, A., and A. Montanari. Online rules for control
+    [2] Javanmard, A., and A. Montanari. Online functions for control
     of false discovery rate and false discovery exceedance.
     Annals of Statistics, 46(2):526-554, 2018.
     [3] Javanmard, A., and A. Montanari.
@@ -25,7 +25,6 @@ class GeneralizedAlphaInvesting(AbstractOnlineTest):
     def __init__(self, alpha: float, initial_wealth: float):
         super().__init__(alpha)
         self.wealth: float = initial_wealth or alpha
-
 
     def test_one(self, p_val: float) -> bool:
         check_p_val(p_val)

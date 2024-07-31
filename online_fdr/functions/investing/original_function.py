@@ -1,7 +1,7 @@
-from online_fdr.abstract.abstract_invest_rule import AbstractInvestRule
+from online_fdr.abstract.abstract_invest_func import AbstractInvestFunc
 
 
-class OriginalInvestRule(AbstractInvestRule):
+class OriginalInvestRule(AbstractInvestFunc):
     """Implements the original investment rule as mentioned in the
     original paper. [1]_.
 

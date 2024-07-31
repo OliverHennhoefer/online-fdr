@@ -1,7 +1,7 @@
 import random
 
 from online_fdr.alpha_investing.alpha_investing import AlphaInvesting
-from online_fdr.rules.investing.original_function import OriginalInvestRule
+from online_fdr.functions.investing.original_function import OriginalInvestRule
 
 random.seed(1)
 x = [random.random() for _ in range(1_000)]
