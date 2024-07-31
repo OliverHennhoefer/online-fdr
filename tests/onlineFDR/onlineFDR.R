@@ -20,7 +20,14 @@ df <- data.frame(
   lags = rep(1,15))
 
 #_______________________________________________________________________________
-# 1 Alpha Spending
+# 0 Alpha Spending (Bonferroni)
+
+alpha <- 0.05
+gammai <- rep(alpha/15, 15)
+onlineFDR::Alpha_spending(df['pval'], alpha = alpha, gammai = gammai)
+
+#_______________________________________________________________________________
+# 1 Alpha Spending (Default)
 
 onlineFDR::Alpha_spending(df['pval'], alpha = 0.05, random = FALSE)
 

@@ -19,5 +19,5 @@ class Bonferroni(AbstractSpendFunc):
     def __init__(self, k):
         super().__init__(k)
 
-    def spend(self, _: int, alpha: float) -> float:
+    def spend(self, index: int, alpha: float) -> float:
         return alpha / self.k

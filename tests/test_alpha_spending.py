@@ -3,64 +3,12 @@ import unittest
 from online_fdr.alpha_spending.alpha_spending import AlphaSpending
 from online_fdr.functions.spending.bonferroni import Bonferroni
 from online_fdr.functions.spending.lord_three import LordThree
+from tests.utils import get_test_data
 
 
 class TestCaseOnlineFDR(unittest.TestCase):
-    data = {
-        "id": [
-            "A15432",
-            "B90969",
-            "C18705",
-            "B49731",
-            "E99902",
-            "C38292",
-            "A30619",
-            "D46627",
-            "E29198",
-            "A41418",
-            "D51456",
-            "C88669",
-            "E03673",
-            "A63155",
-            "B66033",
-        ],
-        "date": [
-            "2014-12-01",
-            "2014-12-01",
-            "2014-12-01",
-            "2015-09-21",
-            "2015-09-21",
-            "2015-09-21",
-            "2015-09-21",
-            "2015-09-21",
-            "2016-05-19",
-            "2016-05-19",
-            "2016-11-12",
-            "2017-03-27",
-            "2017-03-27",
-            "2017-03-27",
-            "2017-03-27",
-        ],
-        "p_value": [
-            2.90e-14,
-            0.00143,
-            0.06514,
-            0.00174,
-            0.00171,
-            3.61e-05,
-            0.79149,
-            0.27201,
-            0.28295,
-            7.59e-08,
-            0.69274,
-            0.30443,
-            0.000487,
-            0.72342,
-            0.54757,
-        ],
-        "decision_times": list(range(2, 17)),
-        "lags": [1] * 15,
-    }
+
+    data = get_test_data()
 
     def test_alpha_spending_bonferroni(self):
 
@@ -77,7 +25,7 @@ class TestCaseOnlineFDR(unittest.TestCase):
 
         self.assertEqual(
             alpha_j,
-            [round((alpha / k), 6)] * 15,  # (Non-Adaptive) Bonferroni
+            [round((alpha / k), 6)] * 15,  # Bonferroni
         )
         self.assertEqual(
             decision,
@@ -156,5 +104,4 @@ class TestCaseOnlineFDR(unittest.TestCase):
 
 
 if __name__ == "__main__":
-
     unittest.main()
