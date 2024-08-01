@@ -8,13 +8,14 @@ from tests.utils import get_test_data
 
 class TestCaseOnlineFDR(unittest.TestCase):
 
-    data = get_test_data()
+    data = get_test_data()  # test data
+    k = len(data["p_value"])  # number of tests to be performed
+    alpha = 0.05  # significance level
 
     def test_alpha_spending_bonferroni(self):
-
-        alpha = 0.05
-        k = len(self.data["p_value"])
-        alpha_spending = AlphaSpending(alpha=alpha, spend_func=Bonferroni(k=k))
+        alpha_spending = AlphaSpending(
+            alpha=self.alpha, spend_func=Bonferroni(k=self.k)
+        )
 
         alpha_j = []
         decision = []
@@ -25,7 +26,7 @@ class TestCaseOnlineFDR(unittest.TestCase):
 
         self.assertEqual(
             alpha_j,
-            [round((alpha / k), 6)] * 15,  # Bonferroni
+            [round((self.alpha / self.k), 6)] * 15,  # Bonferroni
         )
         self.assertEqual(
             decision,
@@ -50,9 +51,7 @@ class TestCaseOnlineFDR(unittest.TestCase):
 
     def test_alpha_spending_lord_three(self):
 
-        alpha = 0.05
-        k = len(self.data["p_value"])
-        alpha_spending = AlphaSpending(alpha=alpha, spend_func=LordThree(k=k))
+        alpha_spending = AlphaSpending(alpha=self.alpha, spend_func=LordThree(k=self.k))
 
         alpha_j = []
         decision = []

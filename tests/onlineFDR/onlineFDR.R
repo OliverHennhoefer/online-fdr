@@ -34,7 +34,7 @@ onlineFDR::Alpha_spending(df['pval'], alpha = 0.05, random = FALSE)
 #_______________________________________________________________________________
 # 2 Alpha Investing
 
-onlineFDR::Alpha_investing(df, alpha = 0.1, w0 = 0.05, random = FALSE)
+onlineFDR::Alpha_investing(df, alpha = 0.05, w0 = 0.025, random = FALSE)
 
 #_______________________________________________________________________________
 # 3 ADDIS (FDR control)

@@ -1,6 +1,6 @@
 from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
 from online_fdr.abstract.abstract_spend_func import AbstractSpendFunc
-from online_fdr.utils.validity import check_p_val
+from online_fdr.utils import validity
 
 
 class AlphaSpending(AbstractOnlineTest):
@@ -27,7 +27,8 @@ class AlphaSpending(AbstractOnlineTest):
         self.i: int = 0
 
     def test_one(self, p_val: float) -> bool:
-        check_p_val(p_val)
+        validity.check_p_val(p_val)
+
         self.threshold = self.rule.spend(index=self.i, alpha=self.alpha)
         self.i += 1
         return p_val < self.threshold
