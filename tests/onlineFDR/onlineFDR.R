@@ -3,7 +3,6 @@ library(onlineFDR)
 set.seed(1)
 
 # Example data.frame
-
 df <- data.frame(
   id = c('A15432', 'B90969', 'C18705', 'B49731', 'E99902',
          'C38292', 'A30619', 'D46627', 'E29198', 'A41418',
@@ -34,7 +33,7 @@ onlineFDR::Alpha_spending(df['pval'], alpha = 0.05, random = FALSE)
 #_______________________________________________________________________________
 # 2 Alpha Investing
 
-onlineFDR::Alpha_investing(df, alpha = 0.05, w0 = 0.025, random = FALSE)
+onlineFDR::Alpha_investing(df['pval'], alpha = 0.05, w0 = 0.025, random = FALSE)
 
 #_______________________________________________________________________________
 # 3 ADDIS (FDR control)

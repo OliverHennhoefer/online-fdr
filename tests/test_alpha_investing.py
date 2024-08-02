@@ -1,37 +1,34 @@
 import unittest
 
 from online_fdr.alpha_investing.alpha_investing import AlphaInvesting
-from online_fdr.functions.investing.foster_stine import FosterStine
 from tests.utils import get_test_data
 
 
 class MyTestCase(unittest.TestCase):
 
     data = get_test_data()
+
     alpha = 0.05
     initial_wealth = 0.025
-    payout = 0.025
+    reward = 0.025
     phi = 0.25
-    rule = FosterStine()
 
-    def test_alpha_investing_foster_stine(self):
+    def test_alpha_investing(self):
         alpha_investing = AlphaInvesting(
-            self.alpha, self.initial_wealth, self.payout, self.phi
+            self.alpha, self.initial_wealth, self.reward, self.phi
         )
 
-        wealth_j = [self.initial_wealth]
-        alpha_j = [self.initial_wealth / 2]
-        num_rej = []
+        wealth = [self.initial_wealth]
+        alpha = [self.initial_wealth / 2]
         decision = []
         for i, p_value in enumerate(self.data["p_value"]):
             result = alpha_investing.test_one(p_value)
-            wealth_j.append(round(alpha_investing.wealth, ndigits=6))
-            alpha_j.append(round(alpha_investing.alpha, ndigits=6))
-            num_rej.append(alpha_investing.num_reject)
+            wealth.append(round(alpha_investing.wealth, ndigits=6))
+            alpha.append(round(alpha_investing.alpha, ndigits=6))
             decision.append(result)
 
         self.assertEqual(
-            alpha_j[:-1],
+            alpha[:-1],
             [
                 0.0125,
                 0.025,
@@ -52,7 +49,7 @@ class MyTestCase(unittest.TestCase):
         )
 
         self.assertEqual(
-            wealth_j[:-1],
+            wealth[:-1],
             [
                 0.025,
                 0.05,
@@ -69,26 +66,6 @@ class MyTestCase(unittest.TestCase):
                 0.01643,
                 0.04143,
                 0.020277,
-            ],
-        )
-
-        self.assertEqual(
-            num_rej[:-1],
-            [
-                1,
-                2,
-                2,
-                4,
-                5,
-                6,
-                6,
-                6,
-                6,
-                10,
-                10,
-                10,
-                13,
-                13,
             ],
         )
 

@@ -10,8 +10,6 @@ class AlphaInvesting(AbstractOnlineTest):
     https://github.com/tijana-zrnic/SAFFRONcode and
     https://github.com/JINJINT/ADDIS, respectively.
 
-
-
     References
     ----------
     [1] Foster, D., and R. Stine. α-investing: a procedure for
@@ -41,7 +39,7 @@ class AlphaInvesting(AbstractOnlineTest):
         self.num_test += 1
 
         self.alpha = self.wealth / 2 if (self.num_test == 1) else self.alpha
-        is_rejected = p_val < self.alpha
+        is_rejected = p_val <= self.alpha
         self.num_reject = self.num_test if is_rejected else self.num_reject
         self.wealth = (
             self.wealth
