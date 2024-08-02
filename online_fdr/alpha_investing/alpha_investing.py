@@ -3,7 +3,14 @@ from online_fdr.utils import validity
 
 
 class AlphaInvesting(AbstractOnlineTest):
-    """Implements the original Alpha Investing[1]_.
+    """Implements Alpha Investing[1]_.
+
+    Specific implementation based on:
+    https://github.com/fanny-yang/OnlineFDRCode and
+    https://github.com/tijana-zrnic/SAFFRONcode and
+    https://github.com/JINJINT/ADDIS, respectively.
+
+
 
     References
     ----------
