@@ -1,9 +1,5 @@
-from online_fdr.abstract.abstract_invest_func import AbstractInvestFunc
 from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
-from online_fdr.functions.investing.original_function import (
-    OriginalInvestRule,
-)
-from online_fdr.utils.validity import check_p_val, check_initial_wealth
+from online_fdr.utils import validity
 
 
 class AlphaInvesting(AbstractOnlineTest):
@@ -20,23 +16,35 @@ class AlphaInvesting(AbstractOnlineTest):
         self,
         alpha: float,
         initial_wealth: float | None = None,
-        payout: float | None = None,
-        rule: AbstractInvestFunc | None = None,
+        reward: float | None = None,
+        phi: float = 0.25,
     ):
         super().__init__(alpha)
-        self.payout: float = payout or alpha
-        self.wealth: float = initial_wealth or alpha
-        self.rule = rule or OriginalInvestRule()
-        check_initial_wealth(self.wealth, self.alpha)
+        self.wealth: float = initial_wealth or (alpha / 2)
+        self.reward: float = reward or (alpha / 2)
+        self.phi_fac: float = 1 - phi
+        validity.check_initial_wealth(self.wealth, self.alpha)
+
+        self.num_test: int = 0
+        self.num_reject: int = 0
 
     def test_one(self, p_val: float) -> bool:
-        check_p_val(p_val)
-        self.alpha = self.rule.allocate_wealth(self.wealth, self.alpha, self.payout)
-        is_rejected = p_val <= self.alpha
-        # in contrast to GAI, the original AI invests only on acceptance of H0
-        self.wealth += (
-            self.payout
-            if is_rejected
-            else self.rule.decrease_wealth(self.wealth, self.alpha)
+        validity.check_p_val(p_val)
+        validity.check_wealth(self.wealth)
+        self.num_test += 1
+
+        self.alpha = self.wealth / 2 if (self.num_test == 1) else self.alpha
+        is_rejected = p_val < self.alpha
+        self.num_reject = self.num_test if is_rejected else self.num_reject
+        self.wealth = (
+            self.wealth
+            - (1 - is_rejected) * self.alpha / (1 - self.alpha)
+            + is_rejected * self.reward
         )
+
+        self.alpha = min(
+            self.wealth / (self.num_test + 2 - self.num_reject),
+            (self.phi_fac * self.wealth) / (self.phi_fac * self.wealth + 1),
+        )
+
         return is_rejected

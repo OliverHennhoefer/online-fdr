@@ -4,12 +4,12 @@ from abc import ABC, abstractmethod
 class AbstractInvestFunc(ABC):
     """Abstract class of an alpha investing function."""
 
-    @staticmethod
     @abstractmethod
-    def invest(wealth: float, alpha: float, omega: float) -> float:
+    def invest(
+        self, k: int, wealth: float, alpha: float, phi: float, last_reject: int
+    ) -> float:
         pass
 
-    @staticmethod
     @abstractmethod
-    def decrease_wealth(wealth: float, alpha: float) -> float:
+    def reduce(self, wealth: float, alpha: float) -> float:
         pass
