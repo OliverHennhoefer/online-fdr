@@ -4,7 +4,7 @@ from online_fdr.alpha_investing.alpha_investing import AlphaInvesting
 from tests.utils import get_test_data
 
 
-class MyTestCase(unittest.TestCase):
+class TestCaseAlphaInvesting(unittest.TestCase):
 
     data = get_test_data()
 

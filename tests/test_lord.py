@@ -1,10 +1,10 @@
 import unittest
 
-from online_fdr.lond.lond import LOND
+from online_fdr.lord.lord import LORD
 from tests.utils import get_test_data
 
 
-class TestCaseLOND(unittest.TestCase):
+class TestCaseLORD(unittest.TestCase):
 
     data = get_test_data()
 
@@ -13,33 +13,33 @@ class TestCaseLOND(unittest.TestCase):
     gamma = 0
 
     def test_lond(self):
-        lond = LOND(self.alpha, self.initial_wealth, self.gamma)
+        lord = LORD(self.alpha, self.initial_wealth, self.gamma)
 
-        alpha = [round(lond.alpha, 6)]
+        alpha = [round(lord.alpha, 6)]
         decision = []
         for i, p_value in enumerate(self.data["p_value"]):
-            result = lond.test_one(p_value)
-            alpha.append(round(lond.alpha, ndigits=6))
+            result = lord.test_one(p_value)
+            alpha.append(round(lord.alpha, ndigits=6))
             decision.append(result)
 
         self.assertEqual(
             alpha[:-1],
             [
                 0.003485,
-                0.001516,
-                0.002582,
-                0.002147,
-                0.002731,
-                0.00315,
-                0.003464,
-                0.00309,
-                0.002788,
-                0.002539,
-                0.002796,
-                0.002583,
-                0.0024,
-                0.002614,
-                0.002451,
+                0.004243,
+                0.008374,
+                0.002698,
+                0.009254,
+                0.010409,
+                0.011428,
+                0.005324,
+                0.004556,
+                0.003922,
+                0.010406,
+                0.00457,
+                0.004041,
+                0.010545,
+                0.004719,
             ],
         )
 

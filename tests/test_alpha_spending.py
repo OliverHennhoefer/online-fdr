@@ -6,7 +6,7 @@ from online_fdr.functions.spending.lord_three import LordThree
 from tests.utils import get_test_data
 
 
-class TestCaseOnlineFDR(unittest.TestCase):
+class TestCaseAlphaSpending(unittest.TestCase):
 
     data = get_test_data()  # test data
     k = len(data["p_value"])  # number of tests to be performed
