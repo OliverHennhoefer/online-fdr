@@ -6,7 +6,3 @@ class NaiveTest(AbstractOnlineTest):
     def test_one(self, p_val: float) -> bool:
         check_p_val(p_val)
         return p_val < self.alpha
-
-    def update(self, rejected):
-        """Naive online testing implements no internal update procedure."""
-        pass
