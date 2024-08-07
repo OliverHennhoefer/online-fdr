@@ -1,5 +1,7 @@
-# Pycharm
+# Individual
 .idea/
+.rdata
+.renv
 
 
 # Byte-compiled / optimized / DLL files

@@ -1,6 +1,6 @@
 import random
 
-from online_fdr.lord.lord import LORD
+from online_fdr.generalized_alpha_investing.lord import LORD
 
 random.seed(1)
 x = [random.random() for _ in range(1_000)]

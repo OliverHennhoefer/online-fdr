@@ -1,8 +1,8 @@
 import unittest
 
 from online_fdr.alpha_spending.alpha_spending import AlphaSpending
-from online_fdr.functions.spending.bonferroni import Bonferroni
-from online_fdr.functions.spending.lord_three import LordThree
+from online_fdr.alpha_spending.functions.bonferroni import Bonferroni
+from online_fdr.alpha_spending.functions.lord_three import LordThree
 from tests.utils import get_test_data
 
 

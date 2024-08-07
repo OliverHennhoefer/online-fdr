@@ -1,6 +1,6 @@
 import unittest
 
-from online_fdr.lord.lord import LORD
+from online_fdr.generalized_alpha_investing.lord.lord import LORD
 from tests.utils import get_test_data
 
 

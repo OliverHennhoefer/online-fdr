@@ -1,11 +1,13 @@
 import random
 
-from online_fdr.alpha_investing.alpha_investing import AlphaInvesting
+from online_fdr.generalized_alpha_investing.alpha_investing.alpha_investing import (
+    AlphaInvestingPhi,
+)
 
 random.seed(1)
 x = [random.random() for _ in range(1_000)]
 
-alpha_investing = AlphaInvesting(
+alpha_investing = AlphaInvestingPhi(
     alpha=0.05, initial_wealth=0.025, reward=0.025, phi=0.25
 )
 

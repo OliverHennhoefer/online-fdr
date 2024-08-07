@@ -1,6 +1,6 @@
 import unittest
 
-from online_fdr.lond.lond import LOND
+from online_fdr.generalized_alpha_investing.lond.lond import LOND
 from tests.utils import get_test_data
 
 

@@ -1,7 +1,7 @@
 import random
 
 from online_fdr.alpha_spending.alpha_spending import AlphaSpending
-from online_fdr.functions.spending.bonferroni import Bonferroni
+from online_fdr.alpha_spending.functions.bonferroni import Bonferroni
 from online_fdr.utils.format import format_result
 
 random.seed(1)
