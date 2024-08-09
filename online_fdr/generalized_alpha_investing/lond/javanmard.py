@@ -27,8 +27,9 @@ class LONDJavanmard(AbstractOnlineTest):
         self.alpha0: float = alpha
 
         self.num_test: int = 1
-        self.alpha = self.calc_gamma_at_j(j=self.num_test)
         self.num_reject: int = 0
+
+        self.alpha = self.calc_gamma_at_j(j=self.num_test)
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
@@ -44,7 +45,7 @@ class LONDJavanmard(AbstractOnlineTest):
 
     def calc_gamma_at_j(self, j: int) -> float:
         return (
-            0.07720838
+            0.07720838  # compare Javanmard2018, Equation (31)
             * self.alpha0
             * (math.log(max(j, 2)) / (j * math.exp(math.sqrt(math.log(j)))))
         )

@@ -5,12 +5,12 @@ from online_fdr.utils import validity
 
 
 class LONDZrnic(AbstractOnlineTest):
-    """Implements the modified variant of '[Significance] Levels based
+    """Implements a modified variant of '[Significance] Levels based
     On Number of Discoveries', short LOND[1]_.
 
-    The R package 'onlineFDR' [2]_[3]_ implements this variant for 'LOND'.
-    The dependent modification also controls the FDR under positive dependence
-    (PRDS condition)[1]_.
+    The R package 'onlineFDR' [2]_[3]_ implements this variant for 'LOND'
+    (original=FALSE). The dependent modification also controls the FDR
+    under positive dependence (PRDS condition)[1]_.
 
     [1] Zrnic, T., A. Ramdas, and M. I. Jordan.
     Asynchronous online testing of multiple hypotheses.
