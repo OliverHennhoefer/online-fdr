@@ -6,10 +6,7 @@ from online_fdr.utils import validity
 class LOND(AbstractOnlineTest):
     """Implements '(Significance) Levels-based On Recent Discoveries'[1]_[2]_.
 
-    Specific implementation based on:
-    https://github.com/fanny-yang/OnlineFDRCode and
-    https://github.com/tijana-zrnic/SAFFRONcode and
-    https://github.com/JINJINT/ADDIS, respectively.
+    Specific implementation is based on https://github.com/JINJINT/ADDIS.
 
     References
     ----------
@@ -32,7 +29,7 @@ class LOND(AbstractOnlineTest):
 
         tmp = range(1, 10000)
         self.gamma = (
-            [log(max(x, 2)) / (x * exp(sqrt(log(max(1, x))))) for x in tmp]
+            [log(max(x, 2)) / (x * exp(sqrt(log(x)))) for x in tmp]
             if gamma == 0
             else [1 / (x**gamma) for x in tmp]
         )

@@ -18,90 +18,95 @@ df <- data.frame(
   lags = rep(1,15))
 
 #_______________________________________________________________________________
-# 0 Alpha Spending (Bonferroni)
+# Alpha Spending (Bonferroni)
 
 alpha <- 0.05
 gammai <- rep(alpha/15, 15)
 onlineFDR::Alpha_spending(df['pval'], alpha = alpha, gammai = gammai)
 
 #_______________________________________________________________________________
-# 1 Alpha Spending (Default)
+# Alpha Spending (Default)
 
 onlineFDR::Alpha_spending(df['pval'], alpha = 0.05, random = FALSE)
 
 #_______________________________________________________________________________
-# 2 Alpha Investing
+# Alpha Investing
 
 onlineFDR::Alpha_investing(df['pval'], alpha = 0.05, w0 = 0.025, random = FALSE)
 
 #_______________________________________________________________________________
-# 3 ADDIS (FDR control)
+# ADDIS (FDR control)
 
 onlineFDR::ADDIS(df, alpha = 0.1, w0 = 0.05, lambda = 0.25, tau = 0.5,
                  async = FALSE, random = FALSE)
 
 #_______________________________________________________________________________
-# 4 ADDIS (FWER control)
+# ADDIS (FWER control)
 
 onlineFDR::ADDIS_spending(df, alpha = 0.1, lambda = 0.25, tau = 0.5,
                           dep = FALSE)
 
 #_______________________________________________________________________________
-# 5 LOND (Original)
+# LOND (Original)
 
-onlineFDR::LOND(df, alpha = 0.1, dep = FALSE, random = FALSE)
-
-#_______________________________________________________________________________
-# 6 LOND (Modified)
-
-onlineFDR::LOND(df, alpha = 0.1, dep = FALSE, random = FALSE, original = FALSE)
+onlineFDR::LOND(df['pval'], alpha = 0.05, dep = FALSE, random = FALSE, original = TRUE)
 
 #_______________________________________________________________________________
-# 7 LOND* (Async)
+# LOND (Modified)
+
+onlineFDR::LOND(df, alpha = 0.05, dep = FALSE, random = FALSE, original = FALSE)
+
+#_______________________________________________________________________________
+# LOND (Dependent)
+
+onlineFDR::LOND(df, alpha = 0.05, dep = TRUE, random = FALSE, original = FALSE)
+
+#_______________________________________________________________________________
+# LOND* (Async)
 
 onlineFDR::LONDstar(df, alpha = 0.1, version = 'async')
 
 #_______________________________________________________________________________
-# 8 LOND* (Dependent)
+# LOND* (Dependent)
 
 onlineFDR::LONDstar(df, alpha = 0.1, version = 'dep')
 
 #_______________________________________________________________________________
-# 9 LORD++
+# LORD++
 
 onlineFDR::LORD(df, alpha = 0.05, version = '++', w0 = 0.025, b0 = 0.025,
                 random = FALSE)
 
 #_______________________________________________________________________________
-# 10 LORD (Dependent)
+# LORD (Dependent)
 
 onlineFDR::LORD(df, alpha = 0.05, version = 'dep', w0 = 0.01, b0 = 0.04,
                 random = FALSE)
 
 #_______________________________________________________________________________
-# 11 LORD (Discard)
+# LORD (Discard)
 
 onlineFDR::LORD(df, alpha = 0.05, version = 'discard', w0 = 0.01, b0 = 0.04,
                 tau.discard = 0.5, random = FALSE)
 
 #_______________________________________________________________________________
-# 12 SAFFRON
+# SAFFRON
 
 onlineFDR::SAFFRON(df, alpha = 0.1, w0 = 0.05, random = FALSE)
 
 #_______________________________________________________________________________
-# 13 SAFFRON* (Async)
+# SAFFRON* (Async)
 
 onlineFDR::SAFFRONstar(df, alpha = 0.1, version = 'async', w0=0.05,
                        lambda = 0.5)
 
 #_______________________________________________________________________________
-# 14 SAFFRON* (Dependent)
+# SAFFRON* (Dependent)
 
 onlineFDR::SAFFRONstar(df, alpha = 0.1, version = 'dep', w0=0.05, lambda = 0.5)
 
 #_______________________________________________________________________________
-# 15 SAFFRON* (Batch)
+# SAFFRON* (Batch)
 
 onlineFDR::SAFFRONstar(df, alpha = 0.1, version = 'batch', w0=0.05,
                        lambda = 0.5, batch.sizes = nrow(df))

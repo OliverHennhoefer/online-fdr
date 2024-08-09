@@ -1,6 +1,6 @@
 import random
 
-from online_fdr.generalized_alpha_investing.alpha_investing.alpha_investing import (
+from online_fdr.generalized_alpha_investing.alpha_investing.phi import (
     AlphaInvestingPhi,
 )
 

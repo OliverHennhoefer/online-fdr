@@ -5,6 +5,8 @@ from online_fdr.utils import validity
 class AlphaInvestingFosterStine(AbstractOnlineTest):
     """Implements the original version of Alpha Investing[1]_.
 
+    The original (non-generalized) method only controls the mFDR.
+
     Strictly spoken, this version does not conform to the overall
     framework of 'Generalized Alpha Investing' as the alpha wealth
     does not get depleted by rejections. For 'Generalized Alpha
