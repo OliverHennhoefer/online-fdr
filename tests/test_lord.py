@@ -5,7 +5,6 @@ from tests.utils import get_test_data
 
 
 class TestCaseLORD(unittest.TestCase):
-
     data = get_test_data()
 
     alpha = 0.05

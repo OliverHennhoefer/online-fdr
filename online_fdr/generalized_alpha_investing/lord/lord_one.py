@@ -2,7 +2,6 @@ from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
 
 
 class LordOne(AbstractOnlineTest):
-
     def __init__(
         self,
         alpha: float,

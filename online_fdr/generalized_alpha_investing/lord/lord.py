@@ -57,7 +57,6 @@ class LORD(AbstractOnlineTest):
             else:
                 first_gamma = 0
             if num_last_reject >= 2:
-
                 idx = [self.num_test] * (self.num_reject - 1)
                 gamma_idx = [g - i for g, i in zip(idx, self.last_reject[1:])]
                 sum_gamma = [self.gamma[i] for i in gamma_idx]

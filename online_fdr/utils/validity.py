@@ -36,3 +36,13 @@ def check_wealth(wealth: float) -> None:
             Alpha wealth depleted. Test execution stopped.
             """
         )
+
+
+def check_decay_factor(decay_factor: float) -> None:
+    """Raise a ValueError when the invalid decay factors."""
+    if not 0 < decay_factor < 1:
+        raise ValueError(
+            """
+            Decay factor must be between (0,1).
+            """
+        )

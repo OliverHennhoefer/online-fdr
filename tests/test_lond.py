@@ -6,7 +6,6 @@ from tests.utils import get_test_data
 
 
 class TestCaseLOND(unittest.TestCase):
-
     data = get_test_data()
 
     alpha = 0.05

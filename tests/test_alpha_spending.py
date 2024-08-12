@@ -7,7 +7,6 @@ from tests.utils import get_test_data
 
 
 class TestCaseAlphaSpending(unittest.TestCase):
-
     data = get_test_data()  # test data
     k = len(data["p_value"])  # number of tests to be performed
     alpha = 0.05  # significance level
@@ -50,7 +49,6 @@ class TestCaseAlphaSpending(unittest.TestCase):
         )
 
     def test_alpha_spending_lord_three(self):
-
         alpha_spending = AlphaSpending(alpha=self.alpha, spend_func=LordThree(k=self.k))
 
         alpha_j = []

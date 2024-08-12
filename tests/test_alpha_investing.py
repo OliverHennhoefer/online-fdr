@@ -10,7 +10,6 @@ from tests.utils import get_test_data
 
 
 class TestCaseAlphaInvesting(unittest.TestCase):
-
     data: dict = get_test_data()
 
     alpha: float = 0.05
