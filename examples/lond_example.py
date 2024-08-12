@@ -9,4 +9,4 @@ lond = LONDJavanmard(alpha=0.05)
 
 for p_val in x:
     result = lond.test_one(p_val)
-    print(f"[{lond.i}] {result} ({p_val:.3f}; threshold {lond.alpha:.6f})")
+    print(f"[{lond.num_test}] {result} ({p_val:.3f}; threshold {lond.alpha:.6f})")

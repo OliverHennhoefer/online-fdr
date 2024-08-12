@@ -7,4 +7,5 @@ class NaiveTest(AbstractOnlineTest):
 
     def test_one(self, p_val: float) -> bool:
         check_p_val(p_val)
+        self.num_test += 1
         return p_val < self.alpha

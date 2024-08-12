@@ -24,11 +24,10 @@ class AlphaSpending(AbstractOnlineTest):
         self.rule: AbstractSpendFunc = spend_func
 
         self.threshold: float | None = None
-        self.i: int = 0
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
 
-        self.threshold = self.rule.spend(index=self.i, alpha=self.alpha)
-        self.i += 1
+        self.threshold = self.rule.spend(index=self.num_test, alpha=self.alpha)
+        self.num_test += 1
         return p_val < self.threshold

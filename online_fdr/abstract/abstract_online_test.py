@@ -10,7 +10,7 @@ class AbstractOnlineTest(abc.ABC):
         check_alpha(alpha)
 
         self.alpha: float = alpha
-        self.i: int = 0  # number of tests conducted
+        self.num_test: int = 0
 
     @abc.abstractmethod
     def test_one(self, p_val: float) -> bool:

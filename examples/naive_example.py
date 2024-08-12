@@ -9,4 +9,4 @@ naive = NaiveTest(alpha=0.05)
 
 for p_val in x:
     result = naive.test_one(p_val)
-    print(f"{result} ({p_val:.3f})")
+    print(f"[{naive.num_test}] {result} ({p_val:.3f}; threshold {naive.alpha:.6f})")
