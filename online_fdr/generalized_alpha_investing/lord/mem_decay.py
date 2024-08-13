@@ -3,6 +3,8 @@ from online_fdr.utils import validity
 
 
 class LORDMemoryDecay(AbstractOnlineTest):
+    """Implements a variant of LORD."""
+
     def __init__(self, decay_fac: float, alpha: float):
         super().__init__(alpha)
         self.decay_fac: float = decay_fac

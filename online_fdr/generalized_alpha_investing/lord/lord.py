@@ -21,10 +21,10 @@ class LORD(AbstractOnlineTest):
     Online control of the false discovery rate with decaying memory.
     Advances in Neural Info. Processing Systems, 30:5650-5659, 2017"""
 
-    def __init__(self, alpha: float, initial_wealth: float, gamma: float):
+    def __init__(self, alpha: float, wealth: float = None, gamma: float = 1.6):
         super().__init__(alpha)
         self.alpha0 = alpha
-        self.wealth: float = initial_wealth or alpha / 2
+        self.wealth: float = alpha / 2 if wealth is None else wealth
         validity.check_initial_wealth(self.wealth, self.alpha)
 
         self.num_test: int = 0
