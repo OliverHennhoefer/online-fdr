@@ -4,7 +4,7 @@ from online_fdr.generalized_alpha_investing.lord.lord import LORD
 from online_fdr.generalized_alpha_investing.lord.one import LordOne
 from online_fdr.generalized_alpha_investing.lord.three import LordThree
 from online_fdr.generalized_alpha_investing.lord.two import LordTwo
-from tests.utils import get_test_data
+from online_fdr.utils.testing import get_test_data
 
 
 class TestCaseLORD(unittest.TestCase):

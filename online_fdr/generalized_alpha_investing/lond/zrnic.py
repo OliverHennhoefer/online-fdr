@@ -1,6 +1,7 @@
-import math
-
 from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
+from online_fdr.generalized_alpha_investing.lond.gamma_seq.default import (
+    DefaultLondGammaSequence,
+)
 from online_fdr.utils import validity
 
 
@@ -27,7 +28,8 @@ class LONDZrnic(AbstractOnlineTest):
         self.dependent: bool = dependent
 
         self.num_test: int = 1
-        self.alpha = self.calc_gamma_j(j=self.num_test)
+        self.seq = DefaultLondGammaSequence(c=0.07720838)
+        self.alpha = self.seq.calc_gamma(self.num_test, self.alpha0)
         self.num_reject: int = 0
 
     def test_one(self, p_val: float) -> bool:
@@ -37,19 +39,15 @@ class LONDZrnic(AbstractOnlineTest):
         is_rejected = p_val <= self.alpha
         self.num_reject += 1 if is_rejected else 0
 
-        self.alpha = self.calc_gamma_j(self.num_test)
+        self.alpha = self.calc_gamma_j()
         self.alpha *= max(self.num_reject, 1)
 
         return is_rejected
 
-    def calc_gamma_j(self, j: int) -> float:
-        gamma_j = (
-            0.07720838
-            * self.alpha0
-            * (math.log(max(j, 2)) / (j * math.exp(math.sqrt(math.log(j)))))
-        )
+    def calc_gamma_j(self) -> float:
+        gamma_j = self.seq.calc_gamma(self.num_test, self.alpha0)
         return (
             gamma_j
             if not self.dependent
-            else gamma_j / sum(1 / i for i in range(1, j + 1))
+            else gamma_j / sum(1 / i for i in range(1, self.num_test + 1))
         )

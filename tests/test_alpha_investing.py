@@ -6,7 +6,7 @@ from online_fdr.generalized_alpha_investing.alpha_investing.phi import (
 from online_fdr.generalized_alpha_investing.alpha_investing.foster_stine import (
     AlphaInvestingFosterStine,
 )
-from tests.utils import get_test_data
+from online_fdr.utils.testing import get_test_data
 
 
 class TestCaseAlphaInvesting(unittest.TestCase):

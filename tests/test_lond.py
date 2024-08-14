@@ -2,7 +2,7 @@ import unittest
 
 from online_fdr.generalized_alpha_investing.lond.javanmard import LONDJavanmard
 from online_fdr.generalized_alpha_investing.lond.zrnic import LONDZrnic
-from tests.utils import get_test_data
+from online_fdr.utils.testing import get_test_data
 
 
 class TestCaseLOND(unittest.TestCase):

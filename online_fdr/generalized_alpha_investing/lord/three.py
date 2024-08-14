@@ -1,6 +1,7 @@
-import math
-
 from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
+from online_fdr.generalized_alpha_investing.lord.gamma_seq.default import (
+    DefaultLordGammaSequence,
+)
 from online_fdr.utils import validity
 
 
@@ -28,6 +29,8 @@ class LordThree(AbstractOnlineTest):
         self.reward: float = alpha / 2 if reward is None else reward
         validity.check_initial_wealth(wealth, alpha)
 
+        self.seq = DefaultLordGammaSequence(c=0.07720838)
+
         self.num_test: int = 1
         self.last_reject: int = 0  # tau
         self.wealth_reject: float = self.wealth  # wealth at tau
@@ -36,13 +39,13 @@ class LordThree(AbstractOnlineTest):
         validity.check_p_val(p_val)
 
         self.alpha = (
-            self.calc_gamma_at(self.num_test - self.last_reject)  # fmt: skip
+            self.seq.calc_gamma(self.num_test - self.last_reject)  # fmt: skip
             * self.wealth_reject
         )
 
         is_rejected = p_val <= self.alpha
 
-        # TODO Order correct?
+        # TODO update order correct?
         self.wealth -= self.alpha
         self.wealth += self.reward if is_rejected else 0
         self.last_reject = self.num_test if is_rejected else self.last_reject
@@ -50,9 +53,3 @@ class LordThree(AbstractOnlineTest):
 
         self.num_test += 1
         return is_rejected
-
-    @staticmethod
-    def calc_gamma_at(j: int) -> float:
-        return 0.07720838 * (  # compare Javanmard2018, Equation (31)
-            math.log(max(j, 2)) / (j * math.exp(math.sqrt(math.log(j))))
-        )
