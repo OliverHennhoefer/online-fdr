@@ -1,8 +1,9 @@
 import unittest
 
 from online_fdr.generalized_alpha_investing.lord.lord import LORD
-from online_fdr.generalized_alpha_investing.lord.two import LordTwo
 from online_fdr.generalized_alpha_investing.lord.one import LordOne
+from online_fdr.generalized_alpha_investing.lord.three import LordThree
+from online_fdr.generalized_alpha_investing.lord.two import LordTwo
 from tests.utils import get_test_data
 
 
@@ -25,7 +26,7 @@ class TestCaseLORD(unittest.TestCase):
             decision.append(result)
 
         self.assertEqual(
-            alpha[:-1],
+            alpha,
             [
                 0.003485,
                 0.004243,
@@ -42,6 +43,7 @@ class TestCaseLORD(unittest.TestCase):
                 0.004041,
                 0.010545,
                 0.004719,
+                0.004196,
             ],
         )
 
@@ -71,7 +73,7 @@ class TestCaseLORD(unittest.TestCase):
         from other implementations."""
         lord = LordOne(self.alpha, self.wealth, self.reward)
 
-        alpha = [round(lord.alpha, 6)]
+        alpha = []
         decision = []
         for i, p_value in enumerate(self.data["p_value"]):
             result = lord.test_one(p_value)
@@ -81,7 +83,6 @@ class TestCaseLORD(unittest.TestCase):
         self.assertEqual(
             alpha,
             [
-                0.05,
                 0.001338,
                 0.001338,
                 0.000248,
@@ -126,7 +127,7 @@ class TestCaseLORD(unittest.TestCase):
         from other implementations."""
         lord = LordTwo(self.alpha, self.wealth, self.reward)
 
-        alpha = [round(lord.alpha, 6)]
+        alpha = []
         decision = []
         for i, p_value in enumerate(self.data["p_value"]):
             result = lord.test_one(p_value)
@@ -136,7 +137,6 @@ class TestCaseLORD(unittest.TestCase):
         self.assertEqual(
             alpha,
             [
-                0.05,
                 0.001338,
                 0.001629,
                 0.000539,
@@ -171,6 +171,60 @@ class TestCaseLORD(unittest.TestCase):
                 False,
                 False,
                 False,
+                False,
+                False,
+            ],
+        )
+
+    def test_lord_three(self):
+        """For this test exists no reference solution
+        from other implementations."""
+        lord = LordThree(self.alpha, self.wealth, self.reward)
+
+        alpha = []
+        decision = []
+        for i, p_value in enumerate(self.data["p_value"]):
+            result = lord.test_one(p_value)
+            alpha.append(round(lord.alpha, ndigits=6))
+            decision.append(result)
+
+        self.assertEqual(
+            alpha,
+            [
+                0.001338,
+                0.002604,
+                0.003803,
+                0.000827,
+                0.000704,
+                0.000586,
+                0.004824,
+                0.001049,
+                0.000893,
+                0.000743,
+                0.00576,
+                0.001253,
+                0.001067,
+                0.006665,
+                0.00145,
+            ],
+        )
+
+        self.assertEqual(
+            decision,
+            [
+                True,
+                True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                True,
                 False,
                 False,
             ],

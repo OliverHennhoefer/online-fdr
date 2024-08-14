@@ -9,9 +9,7 @@ class LordOne(AbstractOnlineTest):
     are set solely based on the time of the last discovery.
 
     This method was superseded by LORD++[2]_ and is implemented
-    for demonstrative purposes only. There exists no reference
-    implementation to definitively verify the correctness
-    of the current implementation.
+    for demonstrative purposes only.
 
     [1] Javanmard, A., and A. Montanari.
     Online rules for control of false discovery rate
@@ -19,7 +17,7 @@ class LordOne(AbstractOnlineTest):
     Annals of Statistics, 46(2):526-554, 2018.
     [2] Ramdas, A., Yang, F., Wainwright, M. J., and Jordan, M. I.
     Online control of the false discovery rate with decaying memory.
-    Advances    in Neural Information Processing Systems, 30, 2017."""
+    Advances in Neural Information Processing Systems, 30, 2017."""
 
     def __init__(
         self,  # fmt: skip
