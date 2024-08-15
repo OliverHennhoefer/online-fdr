@@ -1,5 +1,3 @@
-import math
-
 from online_fdr.abstract.abstract_gamma_seq import AbstractGammaSequence
 
 
@@ -14,4 +12,4 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
         super().__init__(gamma_exp)
 
     def calc_gamma(self, j: int, alpha: float | None):
-        return math.pow(j, self.gamma_exponent)
+        return j**self.gamma_exp

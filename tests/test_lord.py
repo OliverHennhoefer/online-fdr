@@ -1,5 +1,6 @@
 import unittest
 
+from online_fdr.generalized_alpha_investing.lord.dependent import LordDependent
 from online_fdr.generalized_alpha_investing.lord.lord import LORD
 from online_fdr.generalized_alpha_investing.lord.one import LordOne
 from online_fdr.generalized_alpha_investing.lord.plus_plus import LordPlusPlus
@@ -275,6 +276,58 @@ class TestCaseLORD(unittest.TestCase):
                 False,
                 False,
                 True,
+                False,
+                False,
+            ],
+        )
+
+    def test_lord_dependent(self):
+        lord = LordDependent(self.alpha, self.wealth, self.reward)
+
+        alpha = []
+        decision = []
+        for i, p_value in enumerate(self.data["p_value"]):
+            result = lord.test_one(p_value)
+            alpha.append(round(lord.alpha, ndigits=6))
+            decision.append(result)
+
+        self.assertEqual(
+            alpha,
+            [
+                0.010458,
+                0.008270,
+                0.001971,
+                0.000736,
+                0.000376,
+                0.000227,
+                0.000211,
+                0.000151,
+                0.000114,
+                0.000089,
+                0.000094,
+                0.000077,
+                0.000065,
+                0.000055,
+                0.000048,
+            ],
+        )
+
+        self.assertEqual(
+            decision,
+            [
+                True,
+                True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                False,
                 False,
                 False,
             ],

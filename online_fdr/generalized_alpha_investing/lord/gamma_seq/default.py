@@ -7,6 +7,8 @@ class DefaultLordGammaSequence(AbstractGammaSequence):
     """Proposed default gamma sequence for LORD variants as
     proposed by [1]_ in equation 31.
 
+    References
+    ----------
     [1] Javanmard, A., and A. Montanari.
     Online rules for control of false discovery rate and false discovery
     exceedance. Annals of Statistics, 46(2):526-554, 2018."""
