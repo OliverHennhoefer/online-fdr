@@ -28,6 +28,15 @@ def check_initial_wealth(initial_wealth: float, alpha: float) -> None:
         )
 
 
+def check_candidate_threshold(lambda_: float) -> None:
+    if not 0 < lambda_ < 1:
+        raise ValueError(
+            """
+            The candidate threshold (lambda) should be between (0, 1).
+            """
+        )
+
+
 def check_wealth(wealth: float) -> None:
     """Raise a ValueError when alpha wealth is depleted."""
     if wealth <= 0:

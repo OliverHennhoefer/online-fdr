@@ -2,6 +2,7 @@ import unittest
 
 from online_fdr.generalized_alpha_investing.lord.lord import LORD
 from online_fdr.generalized_alpha_investing.lord.one import LordOne
+from online_fdr.generalized_alpha_investing.lord.plus_plus import LordPlusPlus
 from online_fdr.generalized_alpha_investing.lord.three import LordThree
 from online_fdr.generalized_alpha_investing.lord.two import LordTwo
 from online_fdr.utils.testing import get_test_data
@@ -69,8 +70,7 @@ class TestCaseLORD(unittest.TestCase):
         )
 
     def test_lord_one(self):
-        """For this test exists no reference solution
-        from other implementations."""
+        """Disclaimer: No reference solution available!"""
         lord = LordOne(self.alpha, self.wealth, self.reward)
 
         alpha = []
@@ -123,8 +123,7 @@ class TestCaseLORD(unittest.TestCase):
         )
 
     def test_lord_two(self):
-        """For this test exists no reference solution
-        from other implementations."""
+        """Disclaimer: No reference solution available!"""
         lord = LordTwo(self.alpha, self.wealth, self.reward)
 
         alpha = []
@@ -177,8 +176,7 @@ class TestCaseLORD(unittest.TestCase):
         )
 
     def test_lord_three(self):
-        """For this test exists no reference solution
-        from other implementations."""
+        """Disclaimer: No reference solution available!"""
         lord = LordThree(self.alpha, self.wealth, self.reward)
 
         alpha = []
@@ -206,6 +204,58 @@ class TestCaseLORD(unittest.TestCase):
                 0.001067,
                 0.006665,
                 0.00145,
+            ],
+        )
+
+        self.assertEqual(
+            decision,
+            [
+                True,
+                True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                True,
+                False,
+                False,
+            ],
+        )
+
+    def test_lord_plus_plus(self):
+        lord = LordPlusPlus(self.alpha, self.wealth)
+
+        alpha = []
+        decision = []
+        for i, p_value in enumerate(self.data["p_value"]):
+            result = lord.test_one(p_value)
+            alpha.append(round(lord.alpha, ndigits=6))
+            decision.append(result)
+
+        self.assertEqual(
+            alpha,
+            [
+                0.001338,
+                0.001629,
+                0.003215,
+                0.001036,
+                0.000876,
+                0.000738,
+                0.003309,
+                0.001136,
+                0.000987,
+                0.000854,
+                0.003426,
+                0.001251,
+                0.0011,
+                0.003639,
+                0.001438,
             ],
         )
 
