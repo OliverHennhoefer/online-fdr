@@ -23,4 +23,4 @@ class AbstractOnlineTest(abc.ABC):
         Returns:
             bool: True if the null hypothesis is rejected, False otherwise.
         """
-        pass
+        raise NotImplementedError

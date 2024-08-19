@@ -17,22 +17,44 @@ df <- data.frame(
   decision.times = seq_len(15) + 1,
   lags = rep(1,15))
 
-#_______________________________________________________________________________
-# Alpha Spending (Bonferroni)
 
-alpha <- 0.05
-gammai <- rep(alpha/15, 15)
-onlineFDR::Alpha_spending(df['pval'], alpha = alpha, gammai = gammai)
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Alpha Spending
 
-#_______________________________________________________________________________
-# Alpha Spending (Default)
+# __________________________________________
+# Test Case 1: Alpha Spending (Bonferroni)
+onlineFDR::Alpha_spending(df['pval'], alpha = 0.05, gammai = rep(0.05/15, 15))
 
+# ______________________________________
+# Test Case 2: Alpha Spending (default) 
 onlineFDR::Alpha_spending(df['pval'], alpha = 0.05, random = FALSE)
 
-#_______________________________________________________________________________
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Alpha Investing
 
+# ______________________________________
+# Test Case 1: Alpha Investing (default)
 onlineFDR::Alpha_investing(df['pval'], alpha = 0.05, w0 = 0.025, random = FALSE)
+
+# _______________________________
+# Test Case 2: Alpha Investing ()
+onlineFDR::Alpha_investing()
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Saffron
+
+# ____________________
+# Test Case 1: Saffron
+onlineFDR::SAFFRON(df['pval'], alpha = 0.05, w0 = 0.025, lambda=0.5, random = FALSE)
+
+
+#####
+#####
+#####
 
 #_______________________________________________________________________________
 # ADDIS (FDR control)
@@ -80,7 +102,7 @@ onlineFDR::LORD(df['pval'], alpha = 0.05, version = '++', w0 = 0.025, b0 = 0.025
 #_______________________________________________________________________________
 # LORD (Dependent)
 
-onlineFDR::LORD(df, alpha = 0.05, version = 'dep', w0 = 0.01, b0 = 0.04,
+onlineFDR::LORD(df['pval'], alpha = 0.05, version = 'dep', w0 = 0.025, b0 = 0.025,
                 random = FALSE)
 
 #_______________________________________________________________________________
@@ -92,7 +114,7 @@ onlineFDR::LORD(df, alpha = 0.05, version = 'discard', w0 = 0.01, b0 = 0.04,
 #_______________________________________________________________________________
 # SAFFRON
 
-onlineFDR::SAFFRON(df, alpha = 0.1, w0 = 0.05, random = FALSE)
+onlineFDR::SAFFRON(df['pval'], alpha = 0.05, w0 = 0.05, random = FALSE)
 
 #_______________________________________________________________________________
 # SAFFRON* (Async)

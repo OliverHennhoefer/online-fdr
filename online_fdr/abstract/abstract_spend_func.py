@@ -9,4 +9,4 @@ class AbstractSpendFunc(ABC):
 
     @abstractmethod
     def spend(self, index: int, alpha: float) -> float:
-        pass
+        raise NotImplementedError

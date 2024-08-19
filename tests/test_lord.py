@@ -20,8 +20,7 @@ class TestCaseLORD(unittest.TestCase):
     def test_lord(self):
         lord = LORD(self.alpha, self.wealth, self.gamma)
 
-        alpha = [round(lord.alpha, 6)]
-        decision = []
+        alpha, decision = [round(lord.alpha, 6)], []
         for i, p_value in enumerate(self.data["p_value"]):
             result = lord.test_one(p_value)
             alpha.append(round(lord.alpha, ndigits=6))

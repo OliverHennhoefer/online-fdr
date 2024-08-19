@@ -45,7 +45,6 @@ class LordThree(AbstractOnlineTest):
 
         is_rejected = p_val <= self.alpha
 
-        # TODO update order correct?
         self.wealth -= self.alpha
         self.wealth += self.reward if is_rejected else 0
         self.last_reject = self.num_test if is_rejected else self.last_reject

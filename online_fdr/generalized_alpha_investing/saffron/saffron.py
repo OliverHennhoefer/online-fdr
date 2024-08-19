@@ -5,14 +5,22 @@ from online_fdr.generalized_alpha_investing.saffron.gamma_seq.default import (
 from online_fdr.utils import validity
 
 
-class Addis(AbstractOnlineTest):
+class Saffron(AbstractOnlineTest):
+    """Implements SAFFRON[1]
 
-    def __init__(self, alpha: float, wealth: float, lambda_: float, eta: float):
+    References
+    ----------
+    [1] Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan.
+    SAFFRON: an adaptive algorithm for online control of the FDR.
+    In Proceedings of the 35th Internat. Conference on ML (ICML 2018),
+    Proceedings of ML Research, vol. 80, pp. 4283-4291, PMLR, 2018.
+    """
+
+    def __init__(self, alpha: float, wealth: float, lambda_: float):
         super().__init__(alpha)
         self.alpha0: float = alpha
         self.wealth0: float = wealth
         self.lambda_: float = lambda_
-        self.eta: float = eta
 
         validity.check_initial_wealth(wealth, alpha)
         validity.check_candidate_threshold(lambda_)
@@ -26,13 +34,6 @@ class Addis(AbstractOnlineTest):
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
-
-        # Discarding
-        if p_val > self.eta:
-            return False
-        else:
-            p_val *= (1 / self.eta)
-
         self.alpha = self.alpha = self.calc_alpha_t()
 
         is_candidate = p_val <= self.lambda_  # candidate

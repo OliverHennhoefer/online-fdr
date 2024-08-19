@@ -18,16 +18,17 @@ class AlphaSpending(AbstractOnlineTest):
     def __init__(
         self,
         alpha: float,
-        spend_func: AbstractSpendFunc = None,
+        spend_func: AbstractSpendFunc,
     ):
         super().__init__(alpha)
+        self.alpha0: float = alpha
         self.rule: AbstractSpendFunc = spend_func
 
-        self.threshold: float | None = None
+        self.alpha: float | None = None
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
 
-        self.threshold = self.rule.spend(index=self.num_test, alpha=self.alpha)
+        self.alpha = self.rule.spend(index=self.num_test, alpha=self.alpha0)
         self.num_test += 1
-        return p_val < self.threshold
+        return p_val < self.alpha

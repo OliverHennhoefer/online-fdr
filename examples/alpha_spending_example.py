@@ -11,4 +11,4 @@ alpha_spend = AlphaSpending(alpha=0.05, spend_func=Bonferroni(1_000))
 
 for i, p_val in enumerate(x):
     result = alpha_spend.test_one(p_val)
-    format_result(i, result, p_val, alpha_spend.threshold)
+    format_result(i, result, p_val, alpha_spend.alpha)
