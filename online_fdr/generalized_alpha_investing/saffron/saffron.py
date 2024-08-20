@@ -6,7 +6,7 @@ from online_fdr.utils import validity
 
 
 class Saffron(AbstractOnlineTest):
-    """Implements SAFFRON[1]
+    """Implements SAFFRON[1].
 
     References
     ----------

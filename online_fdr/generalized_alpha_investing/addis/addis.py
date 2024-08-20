@@ -7,44 +7,50 @@ from online_fdr.utils import validity
 
 class Addis(AbstractOnlineTest):
 
-    def __init__(self, alpha: float, wealth: float, lambda_: float, eta: float):
+    def __init__(
+        self,
+        alpha: float,  # fmt: skip
+        wealth: float,  # fmt: skip
+        lambda_: float,  # fmt: skip
+        tau: float,
+    ):
         super().__init__(alpha)
         self.alpha0: float = alpha
         self.wealth0: float = wealth
         self.lambda_: float = lambda_
-        self.eta: float = eta
+        self.tau: float = tau
 
         validity.check_initial_wealth(wealth, alpha)
         validity.check_candidate_threshold(lambda_)
 
-        self.num_test: int = 1
+        self.num_test: int = 0
         self.candidates: list[bool] = []
         self.reject_idx: list[int] = []
 
-        self.seq = DefaultSaffronGammaSequence(gamma_exp=-1.6, c=0.4374901658)
+        self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
         self.alpha: float | None = None
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
 
-        # Discarding
-        if p_val > self.eta:
+        if p_val > self.tau:  # discard
+            self.alpha = None
             return False
         else:
-            p_val *= (1 / self.eta)
+            p_val *= 1 / self.tau
 
-        self.alpha = self.alpha = self.calc_alpha_t()
+        self.num_test += 1
+        self.alpha = self.calc_alpha_t()
 
         is_candidate = p_val <= self.lambda_  # candidate
         self.candidates.append(is_candidate)
 
         is_rejected = p_val <= self.alpha  # rejection
         self.reject_idx.append(self.num_test) if is_rejected else None
-
-        self.num_test += 1
         return is_rejected
 
     def calc_alpha_t(self):
+
         alpha_t = self.wealth0 * self.seq.calc_gamma(
             self.num_test - sum(self.candidates), None
         )
@@ -62,5 +68,5 @@ class Addis(AbstractOnlineTest):
                 )
                 for idx in self.reject_idx[1:]
             )
-        alpha_t *= 1 - self.lambda_
-        return min(self.lambda_, alpha_t)
+        alpha_t *= self.tau - self.lambda_
+        return min(self.tau * self.lambda_, alpha_t)
