@@ -25,43 +25,50 @@ class Saffron(AbstractOnlineTest):
         validity.check_initial_wealth(wealth, alpha)
         validity.check_candidate_threshold(lambda_)
 
-        self.num_test: int = 1
+        self.num_test: int = 0
         self.candidates: list[bool] = []
         self.reject_idx: list[int] = []
 
-        self.seq = DefaultSaffronGammaSequence(gamma_exp=-1.6, c=0.4374901658)
+        self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
         self.alpha: float | None = None
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
-        self.alpha = self.alpha = self.calc_alpha_t()
+        self.num_test += 1
+        self.alpha = self.calc_alpha_t()
 
         is_candidate = p_val <= self.lambda_  # candidate
         self.candidates.append(is_candidate)
 
         is_rejected = p_val <= self.alpha  # rejection
         self.reject_idx.append(self.num_test) if is_rejected else None
-
-        self.num_test += 1
         return is_rejected
 
     def calc_alpha_t(self):
-        alpha_t = self.wealth0 * self.seq.calc_gamma(
-            self.num_test - sum(self.candidates), None
-        )
-        if len(self.reject_idx) >= 1:
-            tau_1 = self.reject_idx[0]
-            c_1_plus = sum(self.candidates[tau_1:])
-            alpha_t += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
-                (self.num_test - tau_1 - c_1_plus), None
+
+        if self.num_test == 1:
+            alpha_t = (
+                (1 - self.lambda_)
+                * self.seq.calc_gamma(1, None)  # fmt: skip
+                * self.wealth0
             )
-        if len(self.reject_idx) >= 2:
-            alpha_t += self.alpha0 * sum(
-                self.seq.calc_gamma(
-                    (self.num_test - idx - sum(self.candidates[idx:])),
-                    None,
+        else:
+            alpha_t = self.wealth0 * self.seq.calc_gamma(
+                self.num_test - sum(self.candidates), None
+            )
+            if len(self.reject_idx) >= 1:
+                tau_1 = self.reject_idx[0]
+                c_1_plus = sum(self.candidates[tau_1:])
+                alpha_t += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
+                    (self.num_test - tau_1 - c_1_plus), None
                 )
-                for idx in self.reject_idx[1:]
-            )
-        alpha_t *= 1 - self.lambda_
+            if len(self.reject_idx) >= 2:
+                alpha_t += self.alpha0 * sum(
+                    self.seq.calc_gamma(
+                        (self.num_test - idx - sum(self.candidates[idx:])),
+                        None,
+                    )
+                    for idx in self.reject_idx[1:]
+                )
+            alpha_t *= 1 - self.lambda_
         return min(self.lambda_, alpha_t)
