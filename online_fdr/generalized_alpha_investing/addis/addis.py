@@ -6,6 +6,13 @@ from online_fdr.utils import validity
 
 
 class Addis(AbstractOnlineTest):
+    """Implements ADDIS[1]_.
+
+    [1] Tian, J., and A. Ramdas.
+    ADDIS: an adaptive discarding algorithm for
+    online FDR control with conservative nulls.
+    In Advances in Neural Information Processing Systems
+    (NeurIPS 2019), vol. 32. Curran Associates, Inc., 2019."""
 
     def __init__(
         self,
@@ -36,12 +43,11 @@ class Addis(AbstractOnlineTest):
         if p_val > self.tau:  # discard
             self.alpha = None
             return False
-        else:
-            p_val *= 1 / self.tau
 
         self.num_test += 1
         self.alpha = self.calc_alpha_t()
 
+        p_val *= 1 / self.tau
         is_candidate = p_val <= self.lambda_  # candidate
         self.candidates.append(is_candidate)
 

@@ -15,7 +15,9 @@ class MyTestCase(unittest.TestCase):
         alpha, decision = [], []
         for i, p_value in enumerate(self.data["p_value"]):
             result = addis.test_one(p_value)
-            alpha.append(round(addis.alpha, ndigits=6) if addis.alpha is not None else None)
+            alpha.append(
+                round(addis.alpha, ndigits=6) if addis.alpha is not None else None
+            )
             decision.append(result)
 
         self.assertEqual(
@@ -48,15 +50,15 @@ class MyTestCase(unittest.TestCase):
                 True,
                 True,
                 True,
-                False,
-                False,
-                False,
-                True,
+                False,  # Discarded
                 False,
                 False,
                 True,
+                False,  # Discarded
                 False,
-                False,
+                True,
+                False,  # Discarded
+                False,  # Discarded
             ],
         )
 

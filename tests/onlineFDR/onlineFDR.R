@@ -45,90 +45,28 @@ onlineFDR::Alpha_investing()
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+# LORD
+
+# ________________________________
+# Test Case 1: LORD++
+onlineFDR::LORD(df['pval'], alpha = 0.05, w0 = 0.025, version='++', random = FALSE)
+
+# ________________________________
+# Test Case 2: D-LORD (Discarding)
+onlineFDR::LORD(df['pval'], alpha = 0.05, w0 = 0.025, version='discard', tau.discard=0.5, random = FALSE)
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Saffron
 
 # ____________________
 # Test Case 1: Saffron
 onlineFDR::SAFFRON(df['pval'], alpha = 0.05, w0 = 0.025, lambda=0.5, random = FALSE)
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Addis
 
-#####
-#####
-#####
-
-#_______________________________________________________________________________
-# ADDIS (FDR control)
-
-onlineFDR::ADDIS(df, alpha = 0.1, w0 = 0.05, lambda = 0.25, tau = 0.5,
-                 async = FALSE, random = FALSE)
-
-#_______________________________________________________________________________
-# ADDIS (FWER control)
-
-onlineFDR::ADDIS_spending(df, alpha = 0.1, lambda = 0.25, tau = 0.5,
-                          dep = FALSE)
-
-#_______________________________________________________________________________
-# LOND (Original)
-
-onlineFDR::LOND(df['pval'], alpha = 0.05, dep = FALSE, random = FALSE, original = TRUE)
-
-#_______________________________________________________________________________
-# LOND (Modified)
-
-onlineFDR::LOND(df, alpha = 0.05, dep = FALSE, random = FALSE, original = FALSE)
-
-#_______________________________________________________________________________
-# LOND (Dependent)
-
-onlineFDR::LOND(df, alpha = 0.05, dep = TRUE, random = FALSE, original = FALSE)
-
-#_______________________________________________________________________________
-# LOND* (Async)
-
-onlineFDR::LONDstar(df, alpha = 0.1, version = 'async')
-
-#_______________________________________________________________________________
-# LOND* (Dependent)
-
-onlineFDR::LONDstar(df, alpha = 0.1, version = 'dep')
-
-#_______________________________________________________________________________
-# LORD++
-
-onlineFDR::LORD(df['pval'], alpha = 0.05, version = '++', w0 = 0.025, b0 = 0.025,
-                random = FALSE)
-
-#_______________________________________________________________________________
-# LORD (Dependent)
-
-onlineFDR::LORD(df['pval'], alpha = 0.05, version = 'dep', w0 = 0.025, b0 = 0.025,
-                random = FALSE)
-
-#_______________________________________________________________________________
-# LORD (Discard)
-
-onlineFDR::LORD(df, alpha = 0.05, version = 'discard', w0 = 0.01, b0 = 0.04,
-                tau.discard = 0.5, random = FALSE)
-
-#_______________________________________________________________________________
-# SAFFRON
-
-onlineFDR::SAFFRON(df['pval'], alpha = 0.05, w0 = 0.05, random = FALSE)
-
-#_______________________________________________________________________________
-# SAFFRON* (Async)
-
-onlineFDR::SAFFRONstar(df, alpha = 0.1, version = 'async', w0=0.05,
-                       lambda = 0.5)
-
-#_______________________________________________________________________________
-# SAFFRON* (Dependent)
-
-onlineFDR::SAFFRONstar(df, alpha = 0.1, version = 'dep', w0=0.05, lambda = 0.5)
-
-#_______________________________________________________________________________
-# SAFFRON* (Batch)
-
-onlineFDR::SAFFRONstar(df, alpha = 0.1, version = 'batch', w0=0.05,
-                       lambda = 0.5, batch.sizes = nrow(df))
+# ____________________
+# Test Case 1: Addis
+onlineFDR::ADDIS(df['pval'], alpha = 0.05, w0 = 0.025, lambda=0.25, tau=0.5, random = FALSE)

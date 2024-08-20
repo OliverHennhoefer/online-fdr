@@ -1,6 +1,7 @@
 import unittest
 
 from online_fdr.generalized_alpha_investing.lord.dependent import LordDependent
+from online_fdr.generalized_alpha_investing.lord.discard import LordDiscard
 from online_fdr.generalized_alpha_investing.lord.lord import LORD
 from online_fdr.generalized_alpha_investing.lord.one import LordOne
 from online_fdr.generalized_alpha_investing.lord.plus_plus import LordPlusPlus
@@ -277,6 +278,59 @@ class TestCaseLORD(unittest.TestCase):
                 True,
                 False,
                 False,
+            ],
+        )
+
+    def test_lord_discard(self):
+        lord = LordDiscard(self.alpha, self.wealth, tau=0.5)
+
+        alpha = []
+        decision = []
+        for i, p_value in enumerate(self.data["p_value"]):
+            result = lord.test_one(p_value)
+            alpha.append(round(lord.alpha, 6) if lord.alpha is not None\
+        else None)  # fmt: skip
+            decision.append(result)
+
+        self.assertEqual(
+            alpha,
+            [
+                0.001338,
+                0.000291,
+                0.000248,
+                0.000206,
+                0.000175,
+                0.000151,
+                None,  # Discarded
+                0.001471,
+                0.00041,
+                0.000355,
+                None,
+                0.001641,
+                0.000555,
+                None,  # Discarded
+                None,  # Discarded
+            ],
+        )
+
+        self.assertEqual(
+            decision,
+            [
+                True,
+                False,
+                False,
+                False,
+                False,
+                True,
+                False,  # Discarded
+                False,
+                False,
+                True,
+                False,  # Discarded
+                False,
+                True,
+                False,  # Discarded
+                False,  # Discarded
             ],
         )
 
