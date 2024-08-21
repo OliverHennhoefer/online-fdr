@@ -2,6 +2,7 @@
 .idea/
 .rdata
 .renv
+.rhistory
 
 
 # Byte-compiled / optimized / DLL files
