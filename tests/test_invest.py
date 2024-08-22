@@ -1,41 +1,41 @@
 import unittest
 
-from online_fdr.investing.saffron.saffron import Saffron
+from online_fdr.investing.alpha.alpha import Gai
 from online_fdr.utils.testing import get_test_data
 
 
-class TestSuiteSaffron(unittest.TestCase):
+class TestSuiteAlphaInvesting(unittest.TestCase):
 
     DATA: dict = get_test_data()
 
-    def test_saffron(self):
+    def test_generalized_alpha_investing(self):
 
-        saffron = Saffron(alpha=0.05, wealth=0.025, lambda_=0.5)
+        gai = Gai(alpha=0.05, wealth=0.025)
 
         alpha, decision = [], []
         for i, p_value in enumerate(self.DATA["p_value"]):
-            result = saffron.test_one(p_value)
-            alpha.append(round(saffron.alpha, ndigits=6))
+            result = gai.test_one(p_value)
+            alpha.append(round(gai.alpha, ndigits=6))
             decision.append(result)
 
         self.assertEqual(
             alpha,
             [
-                0.005469,
-                0.010937,
-                0.021875,
-                0.021875,
-                0.032812,
-                0.043749,
-                0.054686,
-                0.01804,
-                0.01804,
-                0.01804,
-                0.028977,
-                0.013037,
-                0.013037,
-                0.023975,
-                0.011445,
+                0.010819,
+                0.021406,
+                0.041915,
+                0.014226,
+                0.035034,
+                0.054982,
+                0.074121,
+                0.028363,
+                0.015822,
+                0.010364,
+                0.031333,
+                0.014488,
+                0.009360,
+                0.030372,
+                0.013888,
             ],
         )
 

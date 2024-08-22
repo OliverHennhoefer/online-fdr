@@ -1,82 +1,24 @@
 import unittest
 
-from online_fdr.generalized_alpha_investing.lord.dependent import LordDependent
-from online_fdr.generalized_alpha_investing.lord.discard import LordDiscard
-from online_fdr.generalized_alpha_investing.lord.lord import LORD
-from online_fdr.generalized_alpha_investing.lord.one import LordOne
-from online_fdr.generalized_alpha_investing.lord.plus_plus import LordPlusPlus
-from online_fdr.generalized_alpha_investing.lord.three import LordThree
-from online_fdr.generalized_alpha_investing.lord.two import LordTwo
+from online_fdr.investing.lord.dependent import LordDependent
+from online_fdr.investing.lord.discard import LordDiscard
+from online_fdr.investing.lord.one import LordOne
+from online_fdr.investing.lord.plus_plus import LordPlusPlus
+from online_fdr.investing.lord.three import LordThree
+from online_fdr.investing.lord.two import LordTwo
 from online_fdr.utils.testing import get_test_data
 
 
-class TestCaseLORD(unittest.TestCase):
-    data = get_test_data()
+class TestSuiteLord(unittest.TestCase):
 
-    alpha = 0.05
-    wealth = 0.025
-    gamma = 0.0
-    reward = 0.025
-
-    def test_lord(self):
-        lord = LORD(self.alpha, self.wealth, self.gamma)
-
-        alpha, decision = [round(lord.alpha, 6)], []
-        for i, p_value in enumerate(self.data["p_value"]):
-            result = lord.test_one(p_value)
-            alpha.append(round(lord.alpha, ndigits=6))
-            decision.append(result)
-
-        self.assertEqual(
-            alpha,
-            [
-                0.003485,
-                0.004243,
-                0.008374,
-                0.002698,
-                0.009254,
-                0.010409,
-                0.011428,
-                0.005324,
-                0.004556,
-                0.003922,
-                0.010406,
-                0.00457,
-                0.004041,
-                0.010545,
-                0.004719,
-                0.004196,
-            ],
-        )
-
-        self.assertEqual(
-            decision,
-            [
-                True,
-                True,
-                False,
-                True,
-                True,
-                True,
-                False,
-                False,
-                False,
-                True,
-                False,
-                False,
-                True,
-                False,
-                False,
-            ],
-        )
+    DATA: dict = get_test_data()
 
     def test_lord_one(self):
         """Disclaimer: No reference solution available!"""
-        lord = LordOne(self.alpha, self.wealth, self.reward)
+        lord = LordOne(alpha=0.05, wealth=0.025, reward=0.025)
 
-        alpha = []
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lord.test_one(p_value)
             alpha.append(round(lord.alpha, ndigits=6))
             decision.append(result)
@@ -125,11 +67,10 @@ class TestCaseLORD(unittest.TestCase):
 
     def test_lord_two(self):
         """Disclaimer: No reference solution available!"""
-        lord = LordTwo(self.alpha, self.wealth, self.reward)
+        lord = LordTwo(alpha=0.05, wealth=0.025, reward=0.025)
 
-        alpha = []
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lord.test_one(p_value)
             alpha.append(round(lord.alpha, ndigits=6))
             decision.append(result)
@@ -178,11 +119,10 @@ class TestCaseLORD(unittest.TestCase):
 
     def test_lord_three(self):
         """Disclaimer: No reference solution available!"""
-        lord = LordThree(self.alpha, self.wealth, self.reward)
+        lord = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
 
-        alpha = []
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lord.test_one(p_value)
             alpha.append(round(lord.alpha, ndigits=6))
             decision.append(result)
@@ -230,11 +170,10 @@ class TestCaseLORD(unittest.TestCase):
         )
 
     def test_lord_plus_plus(self):
-        lord = LordPlusPlus(self.alpha, self.wealth)
+        lord = LordPlusPlus(alpha=0.05, wealth=0.025)
 
-        alpha = []
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lord.test_one(p_value)
             alpha.append(round(lord.alpha, ndigits=6))
             decision.append(result)
@@ -282,11 +221,10 @@ class TestCaseLORD(unittest.TestCase):
         )
 
     def test_lord_discard(self):
-        lord = LordDiscard(self.alpha, self.wealth, tau=0.5)
+        lord = LordDiscard(alpha=0.05, wealth=0.025, tau=0.5)
 
-        alpha = []
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lord.test_one(p_value)
             alpha.append(round(lord.alpha, 6) if lord.alpha is not None\
         else None)  # fmt: skip
@@ -335,11 +273,10 @@ class TestCaseLORD(unittest.TestCase):
         )
 
     def test_lord_dependent(self):
-        lord = LordDependent(self.alpha, self.wealth, self.reward)
+        lord = LordDependent(alpha=0.05, wealth=0.025, reward=0.025)
 
-        alpha = []
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lord.test_one(p_value)
             alpha.append(round(lord.alpha, ndigits=6))
             decision.append(result)

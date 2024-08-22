@@ -1,28 +1,25 @@
 import unittest
 
-from online_fdr.generalized_alpha_investing.lond.javanmard import LONDJavanmard
-from online_fdr.generalized_alpha_investing.lond.zrnic import LONDZrnic
+from online_fdr.investing.lond.lond import Lond
 from online_fdr.utils.testing import get_test_data
 
 
-class TestCaseLOND(unittest.TestCase):
-    data = get_test_data()
+class TestSuiteLond(unittest.TestCase):
 
-    alpha = 0.05
-    gamma = 0
+    DATA: dict = get_test_data()
 
-    def test_lond_javanmard(self):
-        lond = LONDJavanmard(self.alpha)
+    def test_lond_original(self):
 
-        alpha = [round(lond.alpha, 6)]
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        lond = Lond(alpha=0.05, original=True, dependent=False)
+
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lond.test_one(p_value)
             alpha.append(round(lond.alpha, ndigits=6))
             decision.append(result)
 
         self.assertEqual(
-            alpha[:-1],
+            alpha,
             [
                 0.002676,
                 0.001164,
@@ -63,18 +60,69 @@ class TestCaseLOND(unittest.TestCase):
             ],
         )
 
-    def test_lond_zrnic(self):
-        lond = LONDZrnic(self.alpha, dependent=False)
+    def test_lond_original_dependent(self):
 
-        alpha = [round(lond.alpha, 6)]
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        lond = Lond(alpha=0.05, original=True, dependent=True)
+
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lond.test_one(p_value)
             alpha.append(round(lond.alpha, ndigits=6))
             decision.append(result)
 
         self.assertEqual(
-            alpha[:-1],
+            alpha,
+            [
+                0.002676,
+                0.000776,
+                0.000541,
+                0.000396,
+                0.000306,
+                0.000247,
+                0.000308,
+                0.000262,
+                0.000227,
+                0.000200,
+                0.000237,
+                0.000213,
+                0.000193,
+                0.000176,
+                0.000162,
+            ],
+        )
+
+        self.assertEqual(
+            decision,
+            [
+                True,
+                False,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                False,
+                False,
+                False,
+            ],
+        )
+
+    def test_lond_modified(self):
+        lond = Lond(alpha=0.05, original=False, dependent=False)
+
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
+            result = lond.test_one(p_value)
+            alpha.append(round(lond.alpha, ndigits=6))
+            decision.append(result)
+
+        self.assertEqual(
+            alpha,
             [
                 0.002676,
                 0.000582,
@@ -115,18 +163,17 @@ class TestCaseLOND(unittest.TestCase):
             ],
         )
 
-    def test_lond_zrnic_dependent(self):
-        lond = LONDZrnic(self.alpha, dependent=True)
+    def test_lond_modified_dependent(self):
+        lond = Lond(alpha=0.05, original=False, dependent=True)
 
-        alpha = [round(lond.alpha, 6)]
-        decision = []
-        for i, p_value in enumerate(self.data["p_value"]):
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = lond.test_one(p_value)
             alpha.append(round(lond.alpha, ndigits=6))
             decision.append(result)
 
         self.assertEqual(
-            alpha[:-1],
+            alpha,
             [
                 0.002676,
                 0.000388,

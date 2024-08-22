@@ -1,19 +1,19 @@
 import unittest
 
-from online_fdr.generalized_alpha_investing.addis.addis import Addis
+from online_fdr.investing.addis.addis import Addis
 from online_fdr.utils.testing import get_test_data
 
 
-class MyTestCase(unittest.TestCase):
+class TestSuiteAddis(unittest.TestCase):
 
-    data = get_test_data()
+    DATA: dict = get_test_data()
 
     def test_addis(self):
 
         addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
 
         alpha, decision = [], []
-        for i, p_value in enumerate(self.data["p_value"]):
+        for i, p_value in enumerate(self.DATA["p_value"]):
             result = addis.test_one(p_value)
             alpha.append(
                 round(addis.alpha, ndigits=6) if addis.alpha is not None else None
