@@ -6,7 +6,7 @@ from online_fdr.utils import validity
 
 
 class LordPlusPlus(AbstractOnlineTest):
-    """Implements LORD++. This method superseded LORD1 and
+    """Implements LORD++[1]_ that superseded LORD1 and
     LORD2, so neither variant is implemented."""
 
     def __init__(self, alpha: float, wealth: float):
@@ -17,7 +17,7 @@ class LordPlusPlus(AbstractOnlineTest):
         self.seq = DefaultLordGammaSequence(c=0.07720838)
 
         self.first_reject: int | None = None  # first rejection index
-        self.last_reject: list = []  # without first rejection
+        self.last_reject: list = []  # rejection indices without first
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)

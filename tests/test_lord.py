@@ -2,6 +2,7 @@ import unittest
 
 from online_fdr.investing.lord.dependent import LordDependent
 from online_fdr.investing.lord.discard import LordDiscard
+from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
 from online_fdr.investing.lord.one import LordOne
 from online_fdr.investing.lord.plus_plus import LordPlusPlus
 from online_fdr.investing.lord.three import LordThree
@@ -311,6 +312,58 @@ class TestSuiteLord(unittest.TestCase):
                 False,
                 False,
                 True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                False,
+                False,
+                False,
+            ],
+        )
+
+    def test_lord_memory_decay(self):
+        """Disclaimer: No reference solution available!"""
+        lord = LORDMemoryDecay(alpha=0.05, wealth=0.025, delta=0.99, eta=0.001)
+
+        alpha, decision = [], []
+        for i, p_value in enumerate(self.DATA["p_value"]):
+            result = lord.test_one(p_value)
+            alpha.append(round(lord.alpha, ndigits=6))
+            decision.append(result)
+
+        self.assertEqual(
+            alpha,
+            [
+                3e-06,
+                1e-06,
+                1e-06,
+                1e-06,
+                1e-06,
+                1e-06,
+                1e-06,
+                1e-06,
+                1e-06,
+                1e-06,
+                0.00265,
+                0.000571,
+                0.000481,
+                0.000396,
+                0.000333,
+            ],
+        )
+
+        self.assertEqual(
+            decision,
+            [
+                True,
+                False,
+                False,
+                False,
+                False,
+                False,
                 False,
                 False,
                 False,

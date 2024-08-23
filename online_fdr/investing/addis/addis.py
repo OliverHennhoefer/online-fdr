@@ -55,7 +55,6 @@ class Addis(AbstractOnlineTest):
         return is_rejected
 
     def calc_alpha_t(self):
-
         alpha_t = self.wealth0 * self.seq.calc_gamma(
             self.num_test - sum(self.candidates), None
         )

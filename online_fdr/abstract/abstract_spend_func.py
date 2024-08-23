@@ -9,4 +9,11 @@ class AbstractSpendFunc(ABC):
 
     @abstractmethod
     def spend(self, index: int, alpha: float) -> float:
+        """
+        Spend alpha on a hypothesis test.
+
+        :param index: timestep (number of tests conducted)
+        :param alpha: overall significance level
+        :return: alpha level for current hypothesis
+        """
         raise NotImplementedError

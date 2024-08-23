@@ -15,12 +15,9 @@ class AbstractOnlineTest(abc.ABC):
     @abc.abstractmethod
     def test_one(self, p_val: float) -> bool:
         """
-        Make a rejection decision for a single hypothesis.
+        Make a decision for a single hypothesis.
 
-        Args:
-            p_val (float): The p-value to be tested.
-
-        Returns:
-            bool: True if the null hypothesis is rejected, False otherwise.
+        :param p_val: p-value to be tested
+        :return: whether to reject the hypothesis or not
         """
         raise NotImplementedError
