@@ -10,9 +10,8 @@ class OnlineFallback(AbstractOnlineTest):
 
     References
     ----------
-    [1] Tian, J., and A. Ramdas.
-    Online control of the family-wise error rate.
-    arXiv preprint, 2019."""
+    [1] Tian J, Ramdas A. Online control of the familywise  error rate.
+    Statistical Methods in Medical Research. 2021;30(4):976-993."""
 
     def __init__(
         self,
