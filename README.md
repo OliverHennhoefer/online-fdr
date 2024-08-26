@@ -49,12 +49,12 @@ promising hypothesis would be tested first to increase statistical power (...).
 ## References
 <a id="1">[1]</a> 
 Tian J, Ramdas A. Online control of the familywise  error rate. Statistical Methods in Medical Research. 2021;30(4):976-993.</br>
-<a id="1">[2]</a> 
+<a id="2">[2]</a> 
 Tukey, J. W. (1953). The problem of multiple comparisons. Unpublished manuscript. In The  Collected Works of John W. Tukey VIII. Multiple Comparisons: 1948–1983 1–300.  Chapman and Hall, New York.</br>
-<a id="1">[3]</a> 
+<a id="3">[3]</a> 
 Tukey, J. W. (1977a). Some thoughts on clinical trials, especially problems of multiplicity. Science 198 679–684.</br>
-<a id="1">[4]</a> 
+<a id="4">[4]</a> 
 Tukey, J. W. (1991). The philosophy of multiple comparisons. Statist. Sci. 6 100–116.</br>
-<a id="1">[5]</a> 
+<a id="5">[5]</a> 
 Foster, D., and R. Stine. α-investing: a procedure for seq. control of expected false discoveries. Journal of the Royal Statistical Society (Series B), 70(2):429-444, 2008.
 
