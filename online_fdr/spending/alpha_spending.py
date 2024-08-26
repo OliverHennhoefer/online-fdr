@@ -24,8 +24,6 @@ class AlphaSpending(AbstractOnlineTest):
         self.alpha0: float = alpha
         self.rule: AbstractSpendFunc = spend_func
 
-        self.alpha: float | None = None
-
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
 

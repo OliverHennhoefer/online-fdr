@@ -8,6 +8,8 @@ from online_fdr.utils import validity
 class Addis(AbstractOnlineTest):
     """Implements ADDIS[1]_.
 
+    References
+    ----------
     [1] Tian, J., and A. Ramdas.
     ADDIS: an adaptive discarding algorithm for
     online FDR control with conservative nulls.

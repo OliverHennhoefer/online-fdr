@@ -7,7 +7,11 @@ from online_fdr.utils import validity
 
 class LordPlusPlus(AbstractOnlineTest):
     """Implements LORD++[1]_ that superseded LORD1 and
-    LORD2, so neither variant is implemented."""
+    LORD2, so neither variant is implemented.
+
+    References
+    ----------
+    """
 
     def __init__(self, alpha: float, wealth: float):
         super().__init__(alpha)

@@ -8,6 +8,8 @@ from online_fdr.utils import validity
 class LORDMemoryDecay(AbstractOnlineTest):
     """Implements the LORD variant with memory decay[1]_.
 
+    References
+    ----------
     [1] Rebjock, Q., B. Kurt, T. Januschowski, and L. Callot.
     Online false discovery rate control for anomaly detection in time series.
     In Advances in Neural Information Processing Systems (NeurIPS 2021),

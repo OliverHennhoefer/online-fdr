@@ -12,6 +12,8 @@ class Lond(AbstractOnlineTest):
 
     The R package 'reference' [3]_[4]_ implements this variant for 'LOND'.
 
+    References
+    ----------
     [1] Javanmard, A., and Montanari, A.
     On online control of false discovery rate. arXiv preprint, 2015.
     [2] Javanmard, A., and A. Montanari.

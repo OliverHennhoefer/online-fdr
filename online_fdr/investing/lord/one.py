@@ -12,6 +12,8 @@ class LordOne(AbstractOnlineTest):
     This method was superseded by LORD++[2]_ and is implemented
     for demonstrative purposes only.
 
+    References
+    ----------
     [1] Javanmard, A., and A. Montanari.
     Online rules for control of false discovery rate
     and false discovery exceedance.

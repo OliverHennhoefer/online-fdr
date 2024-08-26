@@ -39,3 +39,5 @@ round(onlineFDR::Alpha_investing(df$pval, alpha = 0.05, w0 = 0.025)[c('alphai', 
 # test_alpha_spending.py
 round(onlineFDR::Alpha_spending(df$pval, alpha = 0.05)[c('alphai', 'R')], digits = 6)
 
+# test_online_fallback.py
+round(onlineFDR::online_fallback(df$pval, alpha = 0.05)[c('alphai', 'R')], digits = 6)

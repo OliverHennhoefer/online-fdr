@@ -9,6 +9,8 @@ class LordDiscard(AbstractOnlineTest):
     """Implements LORD++ with discarding as
     described in [1]_.
 
+    References
+    ----------
     [1] Tian, J., and A. Ramdas.
     ADDIS: an adaptive discarding algorithm for
     online FDR control with conservative nulls.

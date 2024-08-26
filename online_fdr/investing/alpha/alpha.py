@@ -6,6 +6,19 @@ from online_fdr.utils import validity
 
 
 class Gai(AbstractOnlineTest):
+    """Implements a variant of the original Alpha-Investing[1]_
+    as categorized by Generalized Alpha-Investing[2]_ that
+    is based on the update rule SAFFRON[2]_
+
+    References
+    ----------
+    [1] Foster, D., and R. Stine.
+    α-investing: a procedure for seq. control of expected false discoveries.
+    Journal of the Royal Statistical Society (Series B), 70(2):429-444, 2008.
+    [2] Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan.
+    SAFFRON: an adaptive algorithm for online control of the FDR.
+    In Proceedings of the 35th Internat. Conference on ML (ICML 2018),
+    Proceedings of ML Research, vol. 80, pp. 4283-4291, PMLR, 2018."""
 
     def __init__(self, alpha: float, wealth: float):
         super().__init__(alpha)

@@ -46,7 +46,6 @@ class TestSuiteAlphaSpending(unittest.TestCase):
             ],
         )
 
-    # Test Case 2: Alpha Spending (Default; LORD3)
     def test_alpha_spending_lord_three(self):
         k = len(self.DATA["p_value"])
         alpha_spending = AlphaSpending(alpha=0.05, spend_func=LordThree(k=k))
