@@ -23,22 +23,22 @@ class LordThree(AbstractOnlineTest):
     def __init__(
         self,  # fmt: skip
         alpha: float,  # fmt: skip
-        wealth: float = None,  # fmt: skip
-        reward: float = None,  # fmt: skip
+        wealth: float,  # fmt: skip
+        reward: float,  # fmt: skip
     ):
         super().__init__(alpha)
-        self.wealth: float = alpha / 2 if wealth is None else wealth
-        self.reward: float = alpha / 2 if reward is None else reward
+        self.wealth: float = wealth
+        self.reward: float = reward
         validity.check_initial_wealth(wealth, alpha)
 
         self.seq = DefaultLordGammaSequence(c=0.07720838)
 
-        self.num_test: int = 1
-        self.last_reject: int = 0  # tau
-        self.wealth_reject: float = self.wealth  # wealth at tau
+        self.last_reject: int = 0  # reject index
+        self.wealth_reject: float = wealth  # reject wealth
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
+        self.num_test += 1
 
         self.alpha = (
             self.seq.calc_gamma(self.num_test - self.last_reject)  # fmt: skip
@@ -48,9 +48,9 @@ class LordThree(AbstractOnlineTest):
         is_rejected = p_val <= self.alpha
 
         self.wealth -= self.alpha
-        self.wealth += self.reward if is_rejected else 0
+        self.wealth += self.reward * is_rejected
+
         self.last_reject = self.num_test if is_rejected else self.last_reject
         self.wealth_reject = self.wealth if is_rejected else self.wealth_reject
 
-        self.num_test += 1
         return is_rejected

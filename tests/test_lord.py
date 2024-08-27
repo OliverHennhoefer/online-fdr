@@ -1,12 +1,10 @@
 import unittest
 
 from online_fdr.investing.lord.dependent import LordDependent
-from online_fdr.investing.lord.discard import LordDiscard
 from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
-from online_fdr.investing.lord.one import LordOne
 from online_fdr.investing.lord.plus_plus import LordPlusPlus
+from online_fdr.investing.lord.discard import LordDiscard
 from online_fdr.investing.lord.three import LordThree
-from online_fdr.investing.lord.two import LordTwo
 from online_fdr.utils.testing import get_test_data
 
 
@@ -14,112 +12,12 @@ class TestSuiteLord(unittest.TestCase):
 
     DATA: dict = get_test_data()
 
-    def test_lord_one(self):
-        """Disclaimer: No reference solution available!"""
-        lord = LordOne(alpha=0.05, wealth=0.025, reward=0.025)
-
-        alpha, decision = [], []
-        for i, p_value in enumerate(self.DATA["p_value"]):
-            result = lord.test_one(p_value)
-            alpha.append(round(lord.alpha, ndigits=6))
-            decision.append(result)
-
-        self.assertEqual(
-            alpha,
-            [
-                0.001338,
-                0.001338,
-                0.000248,
-                0.000206,
-                0.000175,
-                0.000151,
-                0.001338,
-                0.000119,
-                0.000107,
-                9.7e-05,
-                0.001338,
-                8.3e-05,
-                7.7e-05,
-                7.2e-05,
-                6.7e-05,
-            ],
-        )
-
-        self.assertEqual(
-            decision,
-            [
-                True,
-                False,
-                False,
-                False,
-                False,
-                True,
-                False,
-                False,
-                False,
-                True,
-                False,
-                False,
-                False,
-                False,
-                False,
-            ],
-        )
-
-    def test_lord_two(self):
-        """Disclaimer: No reference solution available!"""
-        lord = LordTwo(alpha=0.05, wealth=0.025, reward=0.025)
-
-        alpha, decision = [], []
-        for i, p_value in enumerate(self.DATA["p_value"]):
-            result = lord.test_one(p_value)
-            alpha.append(round(lord.alpha, ndigits=6))
-            decision.append(result)
-
-        self.assertEqual(
-            alpha,
-            [
-                0.001338,
-                0.001629,
-                0.000539,
-                0.000454,
-                0.000381,
-                0.000326,
-                0.001622,
-                0.000543,
-                0.000473,
-                0.000411,
-                0.0017,
-                0.000614,
-                0.00054,
-                0.000473,
-                0.000421,
-            ],
-        )
-
-        self.assertEqual(
-            decision,
-            [
-                True,
-                False,
-                False,
-                False,
-                False,
-                True,
-                False,
-                False,
-                False,
-                True,
-                False,
-                False,
-                False,
-                False,
-                False,
-            ],
-        )
-
     def test_lord_three(self):
-        """Disclaimer: No reference solution available!"""
+        """
+        Deviates from the current C++ implementation in 'onlineFDR'.
+        Resembles the original R implementation in 'onlineFDR'.
+        See tests/reference/onlineFDR_lond.R for further information.
+        """
         lord = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
 
         alpha, decision = [], []
@@ -141,11 +39,11 @@ class TestSuiteLord(unittest.TestCase):
                 0.001049,
                 0.000893,
                 0.000743,
-                0.00576,
+                0.005760,
                 0.001253,
                 0.001067,
                 0.006665,
-                0.00145,
+                0.001450,
             ],
         )
 

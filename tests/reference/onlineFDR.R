@@ -24,6 +24,7 @@ round(onlineFDR::ADDIS(df$pval, alpha = 0.05, w0 = 0.025, lambda = 0.25, tau = 0
 round(onlineFDR::SAFFRON(df$pval, alpha = 0.05, w0 = 0.025, lambda = 0.5)[c('alphai', 'R')], digits = 6)
 
 # test_lord.py
+#round(onlineFDR::LORD(df$pval, alpha = 0.05, version = 3, w0 = 0.025, b0 = 0.025)[c('alphai', 'R')], digits = 6)  # compare onlineFDR_lond.R
 round(onlineFDR::LORD(df$pval, alpha = 0.05, version = "++", w0 = 0.025, b0 = 0.025, tau.discard = 0.5)[c('alphai', 'R')], digits = 6)
 round(onlineFDR::LORD(df$pval, alpha = 0.05, version = "discard", w0 = 0.025, b0 = 0.025, tau.discard = 0.5)[c('alphai', 'R')], digits = 6)
 

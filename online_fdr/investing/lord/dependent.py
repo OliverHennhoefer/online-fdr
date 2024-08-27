@@ -29,15 +29,15 @@ class LordDependent(AbstractOnlineTest):
 
         self.seq = DependentLordGammaSequence(c=0.139307, b0=self.reward)
 
-        self.num_test: int = 1
         self.last_reject: int = 0  # tau
         self.wealth_reject: float = self.wealth  # wealth at tau
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
+        self.num_test += 1
 
         self.alpha = (  # fmt: skip
-            self.seq.calc_gamma(self.num_test, self.alpha0)  # fmt: skip
+            self.seq.calc_gamma(self.num_test)  # fmt: skip
             * self.wealth_reject
         )
 
@@ -48,5 +48,4 @@ class LordDependent(AbstractOnlineTest):
         self.last_reject = self.num_test if is_rejected else self.last_reject
         self.wealth_reject = self.wealth if is_rejected else self.wealth_reject
 
-        self.num_test += 1
         return is_rejected

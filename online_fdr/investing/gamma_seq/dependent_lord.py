@@ -22,5 +22,5 @@ class DependentLordGammaSequence(AbstractGammaSequence):
     def __init__(self, c: float, b0: float):
         super().__init__(c=c, b0=b0)
 
-    def calc_gamma(self, j: int, alpha: float) -> float:
+    def calc_gamma(self, j: int, alpha: None = None) -> float:
         return self.c / (j * (math.log(max(j, 2)) ** 3))

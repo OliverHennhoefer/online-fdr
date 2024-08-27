@@ -17,6 +17,6 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
     def __init__(self, gamma_exp, c):
         super().__init__(gamma_exp=gamma_exp, c=c)
 
-    def calc_gamma(self, j: int, alpha: float | None):
+    def calc_gamma(self, j: int, alpha: None = None):
         return j**self.gamma_exp if self.c is None \
             else self.c / j**self.gamma_exp  # fmt: skip
