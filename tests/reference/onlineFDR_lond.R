@@ -1,9 +1,9 @@
 # Note:
-# Added for clarity regarding LOND 1/2/3 tests and implementation
-# The newer c++ version implemented in the R package 'onlineFDR' seems faulty.
+# Added for clarity regarding LORD test and implementation.
+# The current C++ implementation in the R package 'onlineFDR' seems faulty.
 # The original R version implemented in 'onlineFDR' seems to be correct.
 #
-# Compare:
+# See Commit:
 # https://github.com/dsrobertson/onlineFDR/commit/cefcdad4f3fa7b78def9ff2feda401391ba0d963#diff-a801e455839ea3a17ba9843d9433ce2b16cfe157d52adada2017a3eea19d5140
 
 
@@ -140,9 +140,9 @@ LORD <- function(d, alpha=0.05, gammai, version=3, w0=alpha/10, b0=alpha-w0,
   return(d.out)
 }
 
-# Version 1 (not implemented)
-round(LORD(d=df, alpha=0.05, version=1, w0=0.025, b0=0.025, random=FALSE)[c('alphai', 'R')], digits = 6)
-# Version 2 (not implemented)
-round(LORD(d=df, alpha=0.05, version=2, w0=0.025, b0=0.025, random=FALSE)[c('alphai', 'R')], digits = 6)
-# Version 3 (implemented)
+# LORD 1 (not implemented)
+# round(LORD(d=df, alpha=0.05, version=1, w0=0.025, b0=0.025, random=FALSE)[c('alphai', 'R')], digits = 6)
+# LORD 2 (not implemented)
+# round(LORD(d=df, alpha=0.05, version=2, w0=0.025, b0=0.025, random=FALSE)[c('alphai', 'R')], digits = 6)
+# LORD 3 (implemented)
 round(LORD(d=df, alpha=0.05, version=3, w0=0.025, b0=0.025, random=FALSE)[c('alphai', 'R')], digits = 6)
