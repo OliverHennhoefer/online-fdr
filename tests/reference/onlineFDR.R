@@ -1,3 +1,6 @@
+# Documentation:
+# https://bioconductor.org/packages/devel/bioc/vignettes/onlineFDR/inst/doc/theory.html
+
 library(onlineFDR)
 
 set.seed(1)

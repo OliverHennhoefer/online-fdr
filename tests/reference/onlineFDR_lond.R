@@ -5,6 +5,9 @@
 #
 # See Commit:
 # https://github.com/dsrobertson/onlineFDR/commit/cefcdad4f3fa7b78def9ff2feda401391ba0d963#diff-a801e455839ea3a17ba9843d9433ce2b16cfe157d52adada2017a3eea19d5140
+#
+# Documentation:
+# https://bioconductor.org/packages/devel/bioc/vignettes/onlineFDR/inst/doc/theory.html
 
 
 df <- data.frame(
