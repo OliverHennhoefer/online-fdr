@@ -19,20 +19,10 @@ class DataGeneratingProcess(abc.ABC):
         raise NotImplementedError
 
 
-class GaussianProcess(DataGeneratingProcess):
-    """Data generating process as proposed i.e. in [1]_.
-
-    References
-    ----------
-    Zrnic, T., D. Jiang, A. Ramdas, and M. I. Jordan.
-    The power of batching in multiple hypothesis testing.
-    In Proceedings of the International Conference on AI and Statistics
-    (AISTATS 2019), 2019."""
+class StandardGaussianProcess(DataGeneratingProcess):
 
     def __init__(
         self,
-        null_mean: float = 0,
-        null_sd: float = 1,
         alt_mean: float = 3,
         alt_sd: float = 1,
         seed: int = 1,
@@ -40,13 +30,11 @@ class GaussianProcess(DataGeneratingProcess):
         super().__init__(seed)
         random.seed(seed)
 
-        self.null_mean: float = null_mean
-        self.null_sd: float = null_sd
         self.alt_mean: float = alt_mean
         self.alt_sd: float = alt_sd
 
     def generate_normal(self) -> float:
-        sample = random.gauss(self.null_mean, self.null_sd)
+        sample = random.gauss(0, 1)
         return self.gaussian_cdf(-sample)
 
     def generate_anomaly(self) -> float:
@@ -55,17 +43,18 @@ class GaussianProcess(DataGeneratingProcess):
 
     @staticmethod
     def gaussian_cdf(x) -> float:
+        """Standard Gaussian CDF."""
         return 0.5 * (1 + math.erf(x / math.sqrt(2)))
 
 
 class DataGenerator:
-    """Generates data according to the underlying data generating process."""
+    """Generates data according to the given data generating process."""
 
     def __init__(
         self,  # fmt: skip
-            n: int,  # fmt: skip
-            contamination: float,  # fmt: skip
-            dgp: DataGeneratingProcess  # fmt: skip
+        n: int,  # fmt: skip
+        contamination: float,  # fmt: skip
+        dgp: DataGeneratingProcess  # fmt: skip
     ):
         self.n: int = n
         self.contamination: float = contamination
@@ -80,7 +69,7 @@ class DataGenerator:
 
     def sample_one(self) -> (float, bool):
         if self.current_sample >= self.n_samples:
-            raise StopIteration("All samples have been generated")
+            raise StopIteration("All samples have been generated.")
 
         remaining_samples = self.n_samples - self.current_sample
         remaining_anomalies = self.n_anomalies - self.current_anomalies
@@ -89,7 +78,6 @@ class DataGenerator:
         p_anomaly = remaining_ratio if remaining_samples > 0 else 0
 
         is_anomaly = random.random() < p_anomaly
-
         if is_anomaly:
             sample = self.dgp.generate_anomaly()
             self.current_anomalies += 1
