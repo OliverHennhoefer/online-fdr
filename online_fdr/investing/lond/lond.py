@@ -1,11 +1,9 @@
-from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
-from online_fdr.investing.gamma_seq.default_lond import (
-    DefaultLondGammaSequence,
-)
+from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
 from online_fdr.utils import validity
+from online_fdr.utils.sequence.default_lond import DefaultLondGammaSequence
 
 
-class Lond(AbstractOnlineTest):
+class Lond(AbstractSequentialTest):
     """Implements the original variant of '[Significance] Levels based
     On Number of Discoveries', short LOND[1]_. For beta(i), the equation
     proposed in [2]_ (equation 31) is implemented.

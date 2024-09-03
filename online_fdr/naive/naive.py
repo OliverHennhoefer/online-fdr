@@ -1,8 +1,8 @@
-from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
+from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
 from online_fdr.utils.validity import check_p_val
 
 
-class NaiveTest(AbstractOnlineTest):
+class NaiveTest(AbstractSequentialTest):
     """Reference procedure without accounting for multiplicity."""
 
     def test_one(self, p_val: float) -> bool:

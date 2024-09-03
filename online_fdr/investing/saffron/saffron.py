@@ -1,11 +1,11 @@
-from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
-from online_fdr.investing.gamma_seq.default_saffron import (
+from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
+from online_fdr.utils import validity
+from online_fdr.utils.sequence.default_saffron import (
     DefaultSaffronGammaSequence,
 )
-from online_fdr.utils import validity
 
 
-class Saffron(AbstractOnlineTest):
+class Saffron(AbstractSequentialTest):
     """Implements SAFFRON[1].
 
     References

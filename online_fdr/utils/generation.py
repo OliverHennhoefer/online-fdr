@@ -35,16 +35,16 @@ class StandardGaussianProcess(DataGeneratingProcess):
 
     def generate_normal(self) -> float:
         sample = random.gauss(0, 1)
-        return self.gaussian_cdf(-sample)
+        return self.gaussian_cdf(sample)
 
     def generate_anomaly(self) -> float:
         sample = random.gauss(self.alt_mean, self.alt_sd)
-        return self.gaussian_cdf(-sample)
+        return self.gaussian_cdf(sample)
 
     @staticmethod
     def gaussian_cdf(x) -> float:
         """Standard Gaussian CDF."""
-        return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+        return 1 - (0.5 * (1 + math.erf(x / math.sqrt(2))))
 
 
 class DataGenerator:

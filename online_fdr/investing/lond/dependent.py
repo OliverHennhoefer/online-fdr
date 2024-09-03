@@ -1,11 +1,11 @@
-from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
-from online_fdr.investing.gamma_seq.default_lond import (
+from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
+from online_fdr.utils.sequence import (
     DefaultLondGammaSequence,
 )
 from online_fdr.utils import validity
 
 
-class LondDependent(AbstractOnlineTest):
+class LondDependent(AbstractSequentialTest):
     """Implements the a variant of '[Significance] Levels based
     On Number of Discoveries', short LOND[1]_, for arbitrarily
     dependent p-values.

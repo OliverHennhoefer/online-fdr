@@ -1,9 +1,9 @@
-from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
+from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
 from online_fdr.abstract.abstract_spend_func import AbstractSpendFunc
 from online_fdr.utils import validity
 
 
-class AlphaSpending(AbstractOnlineTest):
+class AlphaSpending(AbstractSequentialTest):
     """Implements Alpha Spending[1]_[2]_.
 
     References

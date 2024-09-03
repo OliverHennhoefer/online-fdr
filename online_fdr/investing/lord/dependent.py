@@ -1,11 +1,11 @@
-from online_fdr.abstract.abstract_online_test import AbstractOnlineTest
-from online_fdr.investing.gamma_seq.dependent_lord import (
+from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
+from online_fdr.utils.sequence.dependent_lord import (
     DependentLordGammaSequence,
 )
 from online_fdr.utils import validity
 
 
-class LordDependent(AbstractOnlineTest):
+class LordDependent(AbstractSequentialTest):
     """Implements a variant of LORD for dependent p-values[1]_.
 
     References
