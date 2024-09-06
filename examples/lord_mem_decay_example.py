@@ -6,7 +6,7 @@ from online_fdr.utils.generation import DataGenerator, StandardGaussianProcess
 
 N = 100_000
 generator = DataGenerator(n=N, contamination=0.001, dgp=StandardGaussianProcess())
-mem_decay_lord = LORDMemoryDecay(alpha=0.05, wealth=0.025, delta=0.99, eta=0.01)
+mem_decay_lord = LORDMemoryDecay(alpha=0.05, wealth=0.025, delta=0.99, eta=0.1)
 
 false_positive = 0
 true_positive = 0

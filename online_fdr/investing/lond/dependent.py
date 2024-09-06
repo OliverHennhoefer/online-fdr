@@ -1,8 +1,6 @@
 from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
-from online_fdr.utils.sequence import (
-    DefaultLondGammaSequence,
-)
 from online_fdr.utils import validity
+from online_fdr.utils.sequence import DefaultLondGammaSequence
 
 
 class LondDependent(AbstractSequentialTest):
@@ -37,7 +35,7 @@ class LondDependent(AbstractSequentialTest):
         validity.check_p_val(p_val)
         self.num_test += 1
 
-        self.alpha = self.seq.calc_gamma(self.num_test, self.alpha0)
+        self.alpha = self.seq.calc_gamma(self.num_test)
         self.alpha /= (
             sum(1 / i for i in range(1, self.num_test + 1))
             if self.dependent

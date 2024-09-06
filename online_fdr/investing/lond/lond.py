@@ -1,14 +1,12 @@
 from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
 from online_fdr.utils import validity
-from online_fdr.utils.sequence.default_lond import DefaultLondGammaSequence
+from online_fdr.utils.sequence import DefaultLondGammaSequence
 
 
 class Lond(AbstractSequentialTest):
     """Implements the original variant of '[Significance] Levels based
-    On Number of Discoveries', short LOND[1]_. For beta(i), the equation
-    proposed in [2]_ (equation 31) is implemented.
-
-    The R package 'reference' [3]_[4]_ implements this variant for 'LOND'.
+    On Number of Discoveries', short LOND[1]_. As gamma sequence, the
+    equation proposed in [2]_ (Equation 31) is implemented.
 
     References
     ----------
@@ -16,12 +14,7 @@ class Lond(AbstractSequentialTest):
     On online control of false discovery rate. arXiv preprint, 2015.
     [2] Javanmard, A., and A. Montanari.
     Online rules for control of false discovery rate and false discovery
-    exceedance. Annals of Statistics, 46(2):526-554, 2018.
-    [3] Robertson, D. S., Liou, L., Ramdas, A., and Karp, N. A.
-    reference: Online error control. R package, 2.12.0, 2022.
-    [4] Robertson, D. S., Wildenhain, J., Javanmard, A., and Karp, N. A.
-    reference: an R package to control the false discovery rate for
-    growing data repositories. Bioinformatics, 35:4196-4199, 2019."""
+    exceedance. Annals of Statistics, 46(2):526-554, 2018."""
 
     def __init__(
         self,  # fmt: skip
@@ -44,7 +37,7 @@ class Lond(AbstractSequentialTest):
         validity.check_p_val(p_val)
         self.num_test += 1
 
-        self.alpha = self.seq.calc_gamma(self.num_test, self.alpha0)
+        self.alpha = self.seq.calc_gamma(self.num_test, alpha=self.alpha0)
         self.alpha /= (
             sum(1 / i for i in range(1, self.num_test + 1))
             if self.dependent

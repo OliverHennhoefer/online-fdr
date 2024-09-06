@@ -16,7 +16,8 @@ class DefaultLondGammaSequence(AbstractGammaSequence):
     def __init__(self, c: float):
         super().__init__(c)
 
-    def calc_gamma(self, j: int, alpha: float):
+    def calc_gamma(self, j: int, **kwargs):
+        alpha = kwargs.get("alpha")
         return (
             self.c
             * alpha
@@ -37,7 +38,7 @@ class DefaultLordGammaSequence(AbstractGammaSequence):
     def __init__(self, c: float):
         super().__init__(c)
 
-    def calc_gamma(self, j: int, alpha: None = None):
+    def calc_gamma(self, j: int, **kwargs):
         return (
             self.c  # fmt: skip
             * math.log(max(j, 2))
@@ -55,7 +56,7 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
     def __init__(self, gamma_exp, c):
         super().__init__(gamma_exp=gamma_exp, c=c)
 
-    def calc_gamma(self, j: int, alpha: None = None):
+    def calc_gamma(self, j: int, *args):
         return j**self.gamma_exp if self.c is None \
             else self.c / j**self.gamma_exp  # fmt: skip
 
@@ -73,5 +74,39 @@ class DependentLordGammaSequence(AbstractGammaSequence):
     def __init__(self, c: float, b0: float):
         super().__init__(c=c, b0=b0)
 
-    def calc_gamma(self, j: int, alpha: None = None) -> float:
+    def calc_gamma(self, j: int, **kwargs) -> float:
         return self.c / (j * (math.log(max(j, 2)) ** 3))
+
+
+class BatchGammaSequenceSmall(AbstractGammaSequence):
+    """Proposed default gamma sequence for Batch-BH and Batch-StBH [1]_
+    with batche sizes up to 100.
+
+    References
+    ----------
+    [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2019).
+    The Power of Batching in Multiple Hypothesis Testing.
+    International Conference on Artificial Intelligence and Statistics."""
+
+    def __init__(self, gamma_exp):
+        super().__init__(gamma_exp=gamma_exp)
+
+    def calc_gamma(self, j: int, **kwargs):
+        return j**self.gamma_exp
+
+
+class BatchGammaSequenceLarge(AbstractGammaSequence):
+    """Proposed default gamma sequence for Batch-BH and Batch-StBH [1]_
+    with batche sizes of more than 100.
+
+    References
+    ----------
+    [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2019).
+    The Power of Batching in Multiple Hypothesis Testing.
+    International Conference on Artificial Intelligence and Statistics."""
+
+    def __init__(self):
+        super().__init__()
+
+    def calc_gamma(self, j: int, **kwargs):
+        return (j < 3) / 2

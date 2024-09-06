@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Any
 
 
 class AbstractGammaSequence(ABC):
@@ -14,12 +15,11 @@ class AbstractGammaSequence(ABC):
         self.gamma_exp: float | None = gamma_exp
         self.b0: float | None = b0
 
-    def calc_gamma(self, j: int, alpha: float | None):
+    def calc_gamma(self, j: int, *args: Any, **kwargs: Any):
         """
         Calculate gamma for timestep j in the gamma sequence.
 
         :param j: timestep (number of tests conducted)
-        :param alpha: significance level
         :return: gamma at timestep j
         """
         raise NotImplementedError

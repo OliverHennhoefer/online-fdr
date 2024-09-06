@@ -1,8 +1,6 @@
 from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
-from online_fdr.utils.sequence.dependent_lord import (
-    DependentLordGammaSequence,
-)
 from online_fdr.utils import validity
+from online_fdr.utils.sequence import DependentLordGammaSequence
 
 
 class LordDependent(AbstractSequentialTest):

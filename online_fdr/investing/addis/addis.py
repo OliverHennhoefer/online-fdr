@@ -1,8 +1,6 @@
 from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
 from online_fdr.utils import validity
-from online_fdr.utils.sequence.default_saffron import (
-    DefaultSaffronGammaSequence,
-)
+from online_fdr.utils.sequence import DefaultSaffronGammaSequence
 
 
 class Addis(AbstractSequentialTest):
