@@ -51,6 +51,4 @@ def get_test_data() -> dict:
             0.72342,
             0.54757,
         ],
-        "decision_times": list(range(2, 17)),
-        "lags": [1] * 15,
     }

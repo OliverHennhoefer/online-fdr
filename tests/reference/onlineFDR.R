@@ -18,7 +18,8 @@ df <- data.frame(
            3.61e-05, 0.79149, 0.27201, 0.28295, 7.59e-08,
            0.69274, 0.30443, 0.000487, 0.72342, 0.54757),
   decision.times = seq_len(15) + 1,
-  lags = rep(1, 15))
+  lags = rep(1, 15),
+  batch = c(rep(1,5), rep(2,6), rep(3,4)))
 
 # test_addis.py
 round(onlineFDR::ADDIS(df$pval, alpha = 0.05, w0 = 0.025, lambda = 0.25, tau = 0.5)[c('alphai', 'R')], digits = 6)
@@ -45,3 +46,6 @@ round(onlineFDR::Alpha_spending(df$pval, alpha = 0.05)[c('alphai', 'R')], digits
 
 # test_online_fallback.py
 round(onlineFDR::online_fallback(df$pval, alpha = 0.05)[c('alphai', 'R')], digits = 6)
+
+# test_batch.py
+round(onlineFDR::BatchBH(df, alpha = 0.05)[c('alphai', 'R')], digits = 6)
