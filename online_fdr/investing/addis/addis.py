@@ -16,11 +16,11 @@ class Addis(AbstractSequentialTest):
 
     def __init__(
         self,
-        alpha: float,  # fmt: skip
-        wealth: float,  # fmt: skip
-        lambda_: float,  # fmt: skip
+        alpha: float,
+        wealth: float,
+        lambda_: float,
         tau: float,
-    ):
+    ):  # fmt: skip
         super().__init__(alpha)
         self.alpha0: float = alpha
         self.wealth0: float = wealth

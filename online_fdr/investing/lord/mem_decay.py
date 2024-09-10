@@ -14,13 +14,13 @@ class LORDMemoryDecay(AbstractSequentialTest):
     vol. 34, pp. 26487-26498. Curran Associates, Inc., 2021."""
 
     def __init__(
-        self,  # fmt: skip
-        alpha: float,  # fmt: skip
-        wealth: float,  # fmt: skip
-        delta: float = 0.99,  # fmt: skip
-        eta: float = 0.0001,  # fmt: skip
-        l: float = None  # fmt: skip
-    ):
+        self,
+        alpha: float,
+        wealth: float,
+        delta: float = 0.99,
+        eta: float = 0.0001,
+        l: float = None
+    ):  # fmt: skip
         super().__init__(alpha)
         self.alpha0: float = alpha
         self.wealth0: float = wealth

@@ -17,11 +17,11 @@ class Lond(AbstractSequentialTest):
     exceedance. Annals of Statistics, 46(2):526-554, 2018."""
 
     def __init__(
-        self,  # fmt: skip
-            alpha: float,  # fmt: skip
-            original: bool = True,  # fmt: skip
-            dependent: bool = False  # fmt: skip
-    ):
+        self,
+            alpha: float,
+            original: bool = True,
+            dependent: bool = False
+    ):  # fmt: skip
         super().__init__(alpha)
         self.alpha0: float = alpha
 

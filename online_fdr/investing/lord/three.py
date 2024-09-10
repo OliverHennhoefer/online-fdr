@@ -19,11 +19,11 @@ class LordThree(AbstractSequentialTest):
     Annals of Statistics, 46(2):526-554, 2018."""
 
     def __init__(
-        self,  # fmt: skip
-        alpha: float,  # fmt: skip
-        wealth: float,  # fmt: skip
-        reward: float,  # fmt: skip
-    ):
+        self,
+        alpha: float,
+        wealth: float,
+        reward: float,
+    ):  # fmt: skip
         super().__init__(alpha)
         self.wealth: float = wealth
         self.reward: float = reward

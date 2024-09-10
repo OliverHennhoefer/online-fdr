@@ -9,8 +9,8 @@ class AbstractSequentialTest(abc.ABC):
     def __init__(self, alpha: float):
         check_alpha(alpha)
 
-        self.alpha: float = alpha
-        self.num_test: int = 0
+        self.alpha: float = alpha  # TODO Remove alpha from interface
+        self.num_test: int = 0  # TODO Remove num_test from interface
 
     @abc.abstractmethod
     def test_one(self, p_val: float) -> bool:
