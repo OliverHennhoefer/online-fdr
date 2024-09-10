@@ -19,3 +19,8 @@ hypothesis testing with an intuitive `test_one()` method:
 - [**LORD**](https://projecteuclid.org/journals/annals-of-statistics/volume-46/issue-2/Online-rules-for-control-of-false-discovery-rate-and-false/10.1214/17-AOS1559.full) (LORD3, LOND++, D-LORD, Dependent, [DecayLORD](https://papers.nips.cc/paper_files/paper/2021/file/def130d0b67eb38b7a8f4e7121ed432c-Paper.pdf))
 - [**SAFFRON**](https://proceedings.mlr.press/v80/ramdas18a/ramdas18a.pdf) (Standard, [DecaySAFFRON](https://papers.nips.cc/paper_files/paper/2021/file/def130d0b67eb38b7a8f4e7121ed432c-Paper.pdf))
 - [**ADDIS**](https://proceedings.neurips.cc/paper_files/paper/2019/file/1d6408264d31d453d556c60fe7d0459e-Paper.pdf) (Standard, [DecayADDIS](https://papers.nips.cc/paper_files/paper/2021/file/def130d0b67eb38b7a8f4e7121ed432c-Paper.pdf))
+- [**Batch-BH**](https://proceedings.mlr.press/v108/zrnic20a/zrnic20a.pdf) and [**Batch-StBH**](https://proceedings.mlr.press/v108/zrnic20a/zrnic20a.pdf)
+
+_This work is inspired by the R package '[onlineFDR](https://dsrobertson.github.io/onlineFDR/)'. 
+This package, and most of its methods, are largely validated by the [implementations](https://github.com/dsrobertson/onlineFDR) of said package.
+Key differentiator is the design choice in regard to method calls for sequential testing, as this package allows for truly temporal applications ('onlineFDR' requires a [static] data.frame for testing)._

@@ -1,16 +1,18 @@
 from online_fdr.abstract.abstract_batching_test import AbstractBatchingTest
 from online_fdr.utils.sequence import DefaultSaffronGammaSequence
-from online_fdr.utils.static import bh
+from online_fdr.utils.static import storey_bh
 
 
-class BatchBH(AbstractBatchingTest):
+class BatchStoreyBH(AbstractBatchingTest):
 
-    def __init__(self, alpha: float):
+    def __init__(self, alpha: float, lambda_: float):
         super().__init__(alpha)
         self.alpha0: float = alpha
         self.num_test: int = 1
+        self.lambda_: float = lambda_
 
         self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
+        self.candidate: [int] = []
         self.r_s_plus: [float] = []
         self.r_s: [bool] = []
         self.r_total: int = 0
@@ -18,6 +20,11 @@ class BatchBH(AbstractBatchingTest):
         self.alpha_s: [float] = []
 
     def test_batch(self, p_vals: list[float]) -> list[bool]:
+
+        cand_sum = sum([i > self.lambda_ for i in p_vals])
+        self.candidate.append(
+            cand_sum / (cand_sum + (max(p_vals) <= self.lambda_))
+        )  # fmt: skip
 
         n_batch = len(p_vals)
         if self.num_test == 1:
@@ -35,6 +42,7 @@ class BatchBH(AbstractBatchingTest):
             self.alpha -= sum(
                 [
                     self.alpha_s[i]
+                    * self.candidate[i]
                     * self.r_s_plus[i]
                     / (self.r_s_plus[i] + self.r_sums[i + 1])
                     for i in range(0, self.num_test - 1)
@@ -42,7 +50,7 @@ class BatchBH(AbstractBatchingTest):
             )
             self.alpha *= (n_batch + self.r_total) / n_batch
 
-        num_reject, threshold = bh(p_vals, self.alpha)
+        num_reject, threshold = storey_bh(p_vals, self.alpha, self.lambda_)
 
         self.r_sums.append(self.r_total)
         self.r_sums[1:self.num_test] = \
@@ -53,7 +61,7 @@ class BatchBH(AbstractBatchingTest):
         r_plus = 0
         for i, p_val in enumerate(p_vals):
             p_vals[i] = 0
-            r_plus = max(r_plus, bh(p_vals, self.alpha)[0])
+            r_plus = max(r_plus, storey_bh(p_vals, self.alpha, self.lambda_)[0])
             p_vals[i] = p_val
         self.r_s_plus.append(r_plus)
 
