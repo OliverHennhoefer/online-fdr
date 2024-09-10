@@ -50,3 +50,4 @@ round(onlineFDR::online_fallback(df$pval, alpha = 0.05)[c('alphai', 'R')], digit
 # test_batch.py
 round(onlineFDR::BatchBH(df, alpha = 0.05)[c('alphai', 'R')], digits = 6)
 round(onlineFDR::BatchStBH(df, alpha = 0.05, lambda = 0.5)[c('alphai', 'R')], digits = 6)
+round(onlineFDR::BatchPRDS(df, alpha = 0.05)[c('alphai', 'R')], digits = 6)
