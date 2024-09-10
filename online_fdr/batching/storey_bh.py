@@ -61,7 +61,9 @@ class BatchStoreyBH(AbstractBatchingTest):
         r_plus = 0
         for i, p_val in enumerate(p_vals):
             p_vals[i] = 0
-            r_plus = max(r_plus, storey_bh(p_vals, self.alpha, self.lambda_)[0])
+            r_plus = max(
+                r_plus, storey_bh(p_vals, self.alpha, self.lambda_)[0]
+            )  # fmt: skip
             p_vals[i] = p_val
         self.r_s_plus.append(r_plus)
 
