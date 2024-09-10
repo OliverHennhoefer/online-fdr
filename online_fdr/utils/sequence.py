@@ -92,7 +92,10 @@ class BatchGammaSequenceSmall(AbstractGammaSequence):
         super().__init__(gamma_exp=gamma_exp)
 
     def calc_gamma(self, j: int, **kwargs):
-        return j**self.gamma_exp
+        batch_size = kwargs.get("batch_size")
+        sum_gamma = sum([s ** (-2) for s in range(1, batch_size + 1)])
+        normalization_factor = 1 / sum_gamma
+        return (j**self.gamma_exp) / normalization_factor
 
 
 class BatchGammaSequenceLarge(AbstractGammaSequence):
