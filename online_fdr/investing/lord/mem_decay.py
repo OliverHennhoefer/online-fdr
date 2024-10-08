@@ -19,14 +19,14 @@ class LORDMemoryDecay(AbstractSequentialTest):
         wealth: float,
         delta: float = 0.99,
         eta: float = 0.0001,
-        l: float = None
+        l: float = 0
     ):  # fmt: skip
         super().__init__(alpha)
         self.alpha0: float = alpha
         self.wealth0: float = wealth
         self.delta: float = delta  # decay factor
         self.eta: float = eta  # smoothing factor
-        self.l: float = 0 if l is None else l  # dependency window
+        self.l: float = 0  # dependency window
 
         validity.check_decay_factor(delta)
 
