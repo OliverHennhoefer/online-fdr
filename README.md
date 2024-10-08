@@ -22,6 +22,26 @@ hypothesis testing with an intuitive `test_one()` method:
 - [**ADDIS**](https://proceedings.neurips.cc/paper_files/paper/2019/file/1d6408264d31d453d556c60fe7d0459e-Paper.pdf) (Standard, [DecayADDIS](https://papers.nips.cc/paper_files/paper/2021/file/def130d0b67eb38b7a8f4e7121ed432c-Paper.pdf))
 - [**Batch-BH**](https://proceedings.mlr.press/v108/zrnic20a/zrnic20a.pdf) and [**Batch-StBH**](https://proceedings.mlr.press/v108/zrnic20a/zrnic20a.pdf)
 
+Instantiate a online testing procedure (e.g. `Addis()`) and simply test _p_-values sequentially with `.test_one()`:
+```python
+from online_fdr.investing.addis.addis import Addis
+from online_fdr.utils.generation import DataGenerator, StandardGaussianProcess
+
+N = 100
+generator = DataGenerator(n=N, contamination=0.1, dgp=StandardGaussianProcess())
+
+addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)  # procedure
+
+for i in range(0, N):
+    p_value, label = generator.sample_one()
+    result = addis.test_one(p_value)  # sequential testing
+```
+
 _This work is inspired by the R package '[onlineFDR](https://dsrobertson.github.io/onlineFDR/)'. 
 This package, and most of its methods, are largely validated by the [implementations](https://github.com/dsrobertson/onlineFDR) of said package.
-Key differentiator is the design choice in regard to method calls for sequential testing, as this package allows for truly temporal applications ('onlineFDR' requires a [static] data.frame for testing)._
+**Key differentiator is the design choice in regard to method calls for sequential testing, as this implementation allows for truly temporal applications** ('onlineFDR' requires a [static] data.frame for testing)._
+
+# Getting started
+
+The code does not require external dependencies. It's recommended to use with Python 3.12, although previous versions (at least until 3.9) should generally be compatible.
+
