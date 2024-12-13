@@ -1,7 +1,7 @@
 import random
 import unittest
 
-from online_fdr.utils.static import bh, storey_bh
+from online_fdr.utils.static import bh, storey_bh, by
 
 
 class TestSuiteAlphaSpending(unittest.TestCase):
@@ -24,6 +24,13 @@ class TestSuiteAlphaSpending(unittest.TestCase):
 
         self.assertEqual(rejections, 2)
         self.assertEqual(threshold, 0.0021060533511106927)
+
+    def test_by(self):
+
+        rejections, threshold = by(self.p_values, alpha=0.095)
+
+        self.assertEqual(rejections, 2)
+        self.assertEqual(threshold, 0.0022121651565474923)
 
 
 if __name__ == "__main__":

@@ -31,3 +31,23 @@ def storey_bh(p_vals: [float], alpha: float, lambda_: float) -> (int, float):
             i += 1
 
     return i - 1, sorted_p_vals[i - 2] if i > 1 else 0
+
+
+def by(p_vals: [float], alpha: float) -> (int, float):
+    """(Static) Benjamini-Yekutieli Procedure."""
+    n = len(p_vals)
+    sorted_p_vals = sorted(p_vals)
+    harmonic_sum = sum(1 / (i + 1) for i in range(n))
+
+    def condition(i):
+        return sorted_p_vals[i] <= alpha * (i + 1) / (n * harmonic_sum)
+
+    left, right = 0, n
+    while left < right:
+        mid = (left + right) // 2
+        if condition(mid):
+            left = mid + 1
+        else:
+            right = mid
+
+    return left, alpha * left / (n * harmonic_sum) if left else 0

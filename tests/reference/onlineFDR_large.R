@@ -11,6 +11,7 @@ df <- read.csv(file.choose())  # test_data_large.csv
 
 # test_batch.py (_large)
 
+# Batch BH
 res <- onlineFDR::BatchBH(df, alpha=.05)
 sum(res$R)  # 19
 
@@ -19,3 +20,23 @@ result <- res %>%
   summarise(unique_sum = sum(unique(alphai)))
 
 sum(result$unique_sum)  # 0.8400105
+
+# Batch BH-Storey
+res <- onlineFDR::BatchStBH(df, alpha=.05, lambda=0.25)
+sum(res$R)  # 19
+
+result <- res %>%
+  group_by(batch) %>%
+  summarise(unique_sum = sum(unique(alphai)))
+
+sum(result$unique_sum)  # 0.8751455
+
+# Batch PRDS
+res <- onlineFDR::BatchPRDS(df, alpha=.05)
+sum(res$R)  # 19
+
+result <- res %>%
+  group_by(batch) %>%
+  summarise(unique_sum = sum(unique(alphai)))
+
+sum(result$unique_sum)  # 0.05037012
