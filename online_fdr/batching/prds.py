@@ -13,6 +13,8 @@ class BatchPRDS(AbstractBatchingTest):
         self.num_test: int = 1
         self.r_total: int = 0
 
+        self.alpha_s = []  # only for test
+
     def test_batch(self, p_vals: list[float]) -> list[bool]:
 
         batch_size = len(p_vals)
@@ -22,6 +24,7 @@ class BatchPRDS(AbstractBatchingTest):
             / batch_size
             * (batch_size + self.r_total)
         )
+        self.alpha_s.append(self.alpha)
         num_reject, threshold = bh(p_vals, self.alpha)
 
         self.r_total += num_reject

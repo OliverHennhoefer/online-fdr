@@ -1,3 +1,30 @@
+import random
+
+
+def generate_test_data(n, h0_prop, max_batch_size=15, seed=1) -> ([float], [float]):
+    random.seed(seed)
+
+    h1_p = int(n * h0_prop)
+    p_vals = [random.uniform(0, 1) for _ in range(n)]
+
+    for i in range(h1_p):
+        p_vals[i] = random.uniform(0, 0.00005)
+
+    if max_batch_size is not None:
+        batch_sizes = []
+        remaining = n
+        while remaining > 0:
+            batch_size = min(remaining, random.randint(1, max_batch_size))
+            batch_sizes.append(batch_size)
+            remaining -= batch_size
+    else:
+        batch_sizes = [n]
+
+    random.shuffle(p_vals)
+
+    return p_vals, batch_sizes
+
+
 def get_test_data() -> dict:
     return {
         "id": [

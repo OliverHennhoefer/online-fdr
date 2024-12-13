@@ -3,7 +3,7 @@ import unittest
 from online_fdr.batching.bh import BatchBH
 from online_fdr.batching.prds import BatchPRDS
 from online_fdr.batching.storey_bh import BatchStoreyBH
-from online_fdr.utils.testing import get_test_data
+from online_fdr.utils.testing import get_test_data, generate_test_data
 
 
 class TestSuiteBatching(unittest.TestCase):
@@ -54,6 +54,39 @@ class TestSuiteBatching(unittest.TestCase):
             ],
         )
 
+    def test_batch_bh_large(self):
+
+        batch_bh = BatchBH(alpha=0.05)
+
+        p_vals, batch_sizes = generate_test_data(
+            n=1_000, h0_prop=0.025, max_batch_size=15, seed=1
+        )
+
+        decision = []
+        start_index = 0
+        for batch_size in batch_sizes:
+            end_index = start_index + batch_size
+            batch = p_vals[start_index:end_index]
+            start_index = end_index
+
+            result = batch_bh.test_batch(batch)
+            decision += result
+
+        self.assertEqual(sum(decision), 19)
+
+        alpha = [round(i, 6) for i in batch_bh.alpha_s]
+
+        n, d = float.as_integer_ratio(sum(alpha))
+        self.assertEqual(
+            n,
+            1891520850694863,
+        )
+
+        self.assertEqual(
+            d,
+            2251799813685248,
+        )
+
     def test_batch_storey_bh(self):
 
         batch_st_bh = BatchStoreyBH(alpha=0.05, lambda_=0.5)
@@ -98,6 +131,39 @@ class TestSuiteBatching(unittest.TestCase):
             ],
         )
 
+    def test_batch_storey_bh_large(self):
+
+        batch_st_bh = BatchStoreyBH(alpha=0.05, lambda_=0.25)
+
+        p_vals, batch_sizes = generate_test_data(
+            n=1_000, h0_prop=0.025, max_batch_size=15, seed=1
+        )
+
+        decision = []
+        start_index = 0
+        for batch_size in batch_sizes:
+            end_index = start_index + batch_size
+            batch = p_vals[start_index:end_index]
+            start_index = end_index
+
+            result = batch_st_bh.test_batch(batch)
+            decision += result
+
+        self.assertEqual(sum(decision), 19)
+
+        alpha = [round(i, 6) for i in batch_st_bh.alpha_s]
+
+        n, d = float.as_integer_ratio(sum(alpha))
+        self.assertEqual(
+            n,
+            3941284681496643,
+        )
+
+        self.assertEqual(
+            d,
+            4503599627370496,
+        )
+
     def test_batch_prds(self):
 
         batch_prds = BatchPRDS(alpha=0.05)
@@ -140,6 +206,39 @@ class TestSuiteBatching(unittest.TestCase):
                 False,
                 False,
             ],
+        )
+
+    def test_batch_prds_large(self):
+
+        batch_prds = BatchPRDS(alpha=0.05)
+
+        p_vals, batch_sizes = generate_test_data(
+            n=1_000, h0_prop=0.025, max_batch_size=15, seed=1
+        )
+
+        decision = []
+        start_index = 0
+        for batch_size in batch_sizes:
+            end_index = start_index + batch_size
+            batch = p_vals[start_index:end_index]
+            start_index = end_index
+
+            result = batch_prds.test_batch(batch)
+            decision += result
+
+        self.assertEqual(sum(decision), 4)
+
+        alpha = [round(i, 6) for i in batch_prds.alpha_s]
+
+        n, d = float.as_integer_ratio(sum(alpha))
+        self.assertEqual(
+            n,
+            907403267321117,
+        )
+
+        self.assertEqual(
+            d,
+            18014398509481984,
         )
 
 
