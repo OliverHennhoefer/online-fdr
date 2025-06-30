@@ -5,6 +5,26 @@
 .rhistory
 .claude/
 
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Ruff
+.ruff_cache/
+
+# Testing artifacts
+.tox/
+.nox/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

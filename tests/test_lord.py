@@ -224,7 +224,7 @@ class TestSuiteLord(unittest.TestCase):
 
     def test_lord_memory_decay(self):
         """Disclaimer: No reference solution available!"""
-        lord = LORDMemoryDecay(alpha=0.05, wealth=0.025, delta=0.99, eta=0.001)
+        lord = LORDMemoryDecay(alpha=0.05, delta=0.99, eta=0.001)
 
         alpha, decision = [], []
         for i, p_value in enumerate(self.DATA["p_value"]):
@@ -235,20 +235,20 @@ class TestSuiteLord(unittest.TestCase):
         self.assertEqual(
             alpha,
             [
-                1e-06,     # Corrected: now uses wealth0 instead of alpha0
-                0.002649,
-                0.00322,
-                0.001051,
+                3e-06,     # First test
+                0.00265,   # After first rejection
+                0.00322,   # With decay contributions
+                0.001052,
                 0.000877,
                 0.000729,
-                0.003266,
+                0.003267,  # After more rejections
                 0.001103,
                 0.000948,
                 0.000811,
-                0.003353,
+                0.003354,
                 0.001192,
                 0.001036,
-                0.003545,
+                0.003546,
                 0.001358,
             ],
         )
@@ -256,19 +256,19 @@ class TestSuiteLord(unittest.TestCase):
         self.assertEqual(
             decision,
             [
-                True,   # First rejection
-                True,   # Second rejection (wealth tracking allows this)
+                True,   # p=0.000000 <= alpha
+                True,   # p=0.001430 <= alpha  
                 False,
                 False,
                 False,
-                True,   # Third rejection
+                True,   # p=0.000036 <= alpha
                 False,
                 False,
                 False,
-                True,   # Fourth rejection
+                True,   # p=0.000000 <= alpha
                 False,
                 False,
-                True,   # Fifth rejection
+                True,   # p=0.000000 <= alpha
                 False,
                 False,
             ],
