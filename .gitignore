@@ -3,7 +3,7 @@
 .rdata
 .renv
 .rhistory
-
+.claude/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

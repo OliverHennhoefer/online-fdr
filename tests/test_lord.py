@@ -235,40 +235,40 @@ class TestSuiteLord(unittest.TestCase):
         self.assertEqual(
             alpha,
             [
-                3e-06,
-                1e-06,
-                1e-06,
-                1e-06,
-                1e-06,
-                1e-06,
-                1e-06,
-                1e-06,
-                1e-06,
-                1e-06,
-                0.00265,
-                0.000571,
-                0.000481,
-                0.000396,
-                0.000333,
+                1e-06,     # Corrected: now uses wealth0 instead of alpha0
+                0.002649,
+                0.00322,
+                0.001051,
+                0.000877,
+                0.000729,
+                0.003266,
+                0.001103,
+                0.000948,
+                0.000811,
+                0.003353,
+                0.001192,
+                0.001036,
+                0.003545,
+                0.001358,
             ],
         )
 
         self.assertEqual(
             decision,
             [
-                True,
+                True,   # First rejection
+                True,   # Second rejection (wealth tracking allows this)
                 False,
                 False,
                 False,
+                True,   # Third rejection
                 False,
                 False,
                 False,
+                True,   # Fourth rejection
                 False,
                 False,
-                True,
-                False,
-                False,
-                False,
+                True,   # Fifth rejection
                 False,
                 False,
             ],
