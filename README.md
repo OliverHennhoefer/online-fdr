@@ -38,11 +38,11 @@ pip install online-fdr
 
 ```python
 from online_fdr.investing.alpha.alpha import Gai
-from online_fdr.utils.generation import ImprovedDataGenerator, GaussianLocationModel
+from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
 
 # Initialize a data generator for demonstration
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
-generator = ImprovedDataGenerator(n=1000, pi0=0.9, dgp=dgp)  # 10% alternatives
+generator = DataGenerator(n=1000, pi0=0.9, dgp=dgp)  # 10% alternatives
 
 # Create an online FDR procedure
 alpha_investing = Gai(alpha=0.05)
@@ -52,7 +52,7 @@ discoveries = []
 for i in range(100):
     p_value, label = generator.sample_one()
     is_discovery = alpha_investing.test_one(p_value)
-    
+
     if is_discovery:
         discoveries.append(i)
         print(f"Discovery at test {i}: p-value = {p_value:.4f}")
@@ -265,13 +265,14 @@ hypothesis testing with an intuitive `test_one()` method:
 - [**Batch-BH**](https://proceedings.mlr.press/v108/zrnic20a/zrnic20a.pdf) and [**Batch-StBH**](https://proceedings.mlr.press/v108/zrnic20a/zrnic20a.pdf)
 
 Instantiate an online testing procedure (e.g. `Addis()`) and simply test _p_-values sequentially with `.test_one()`:
+
 ```python
 from online_fdr.investing.addis.addis import Addis
-from online_fdr.utils.generation import ImprovedDataGenerator, GaussianLocationModel
+from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
 
 N = 100
 dgp = GaussianLocationModel(alt_mean=3.0)
-generator = ImprovedDataGenerator(n=N, pi0=0.9, dgp=dgp)  # 10% alternatives
+generator = DataGenerator(n=N, pi0=0.9, dgp=dgp)  # 10% alternatives
 
 addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)  # procedure
 

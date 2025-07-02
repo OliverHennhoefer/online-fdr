@@ -244,7 +244,7 @@ class SparseGaussianModel(DataGeneratingProcess):
         return p_null, p_alt
 
 
-class ImprovedDataGenerator:
+class DataGenerator:
     """
     Improved data generator with support for batch generation and various models.
     """
@@ -305,28 +305,28 @@ class ImprovedDataGenerator:
 
 # Convenience functions for common scenarios
 def create_genomics_generator(n: int = 10000, pi0: float = 0.9, 
-                            seed: int = 1) -> ImprovedDataGenerator:
+                            seed: int = 1) -> DataGenerator:
     """Create generator mimicking genomics data (many nulls, beta alternatives)."""
     dgp = BetaMixtureModel(alt_alpha=0.5, alt_beta=10.0, seed=seed)
-    return ImprovedDataGenerator(n, pi0, dgp)
+    return DataGenerator(n, pi0, dgp)
 
 
 def create_screening_generator(n: int = 1000, pi0: float = 0.95,
                              min_effect: float = 2.0, max_effect: float = 5.0,
-                             seed: int = 1) -> ImprovedDataGenerator:
+                             seed: int = 1) -> DataGenerator:
     """Create generator for screening studies (sparse signals)."""
     dgp = SparseGaussianModel(effect_dist="exponential", 
                              min_effect=min_effect, 
                              max_effect=max_effect,
                              seed=seed)
-    return ImprovedDataGenerator(n, pi0, dgp)
+    return DataGenerator(n, pi0, dgp)
 
 
 def create_dependent_generator(n: int = 500, pi0: float = 0.8,
                              correlation: float = 0.5,
                              structure: str = "block",
-                             seed: int = 1) -> ImprovedDataGenerator:
+                             seed: int = 1) -> DataGenerator:
     """Create generator with dependent p-values."""
     dgp = DependentGaussianModel(alt_mean=3.0, correlation=correlation,
                                 structure=structure, seed=seed)
-    return ImprovedDataGenerator(n, pi0, dgp)
+    return DataGenerator(n, pi0, dgp)
