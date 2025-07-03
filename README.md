@@ -115,6 +115,7 @@ for i in range(100):
 
 ```python
 from online_fdr.investing.lond.lond import Lond
+from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
 
 # For independent p-values
 lond_indep = Lond(alpha=0.05)
@@ -122,10 +123,33 @@ lond_indep = Lond(alpha=0.05)
 # For dependent p-values  
 lond_dep = Lond(alpha=0.05, dependent=True)
 
-# Both use the same API
-for p_value, _ in zip([0.01, 0.8, 0.003, 0.9], [True, False, True, False]):
+# Generate test data
+dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
+generator = DataGenerator(n=100, pi0=0.85, dgp=dgp)
+
+print("LOND Independent:")
+discoveries_indep = []
+for i in range(50):
+    p_value, true_label = generator.sample_one()
     result = lond_indep.test_one(p_value)
-    print(f"Independent LOND: p={p_value}, discovery={result}")
+    if result:
+        discoveries_indep.append(i)
+        print(f"  Discovery at test {i}: p={p_value:.4f}")
+
+print(f"\nIndependent LOND made {len(discoveries_indep)} discoveries")
+
+# Reset generator for dependent test
+generator = DataGenerator(n=100, pi0=0.85, dgp=dgp)
+print("\nLOND Dependent:")
+discoveries_dep = []
+for i in range(50):
+    p_value, true_label = generator.sample_one()
+    result = lond_dep.test_one(p_value)
+    if result:
+        discoveries_dep.append(i)
+        print(f"  Discovery at test {i}: p={p_value:.4f}")
+
+print(f"\nDependent LOND made {len(discoveries_dep)} discoveries")
 ```
 
 ### 3. **LORD with Memory Decay for Time Series**
@@ -133,6 +157,7 @@ for p_value, _ in zip([0.01, 0.8, 0.003, 0.9], [True, False, True, False]):
 ```python
 from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
 from online_fdr.utils.evaluation import MemoryDecayFDR
+from online_fdr.utils.generation import GaussianLocationModel, DataGenerator
 
 # For non-stationary time series with decay
 lord_decay = LORDMemoryDecay(alpha=0.1, delta=0.99, eta=0.5)
@@ -140,39 +165,73 @@ lord_decay = LORDMemoryDecay(alpha=0.1, delta=0.99, eta=0.5)
 # Track memory-decay FDR  
 mem_fdr = MemoryDecayFDR(delta=0.99, offset=0)
 
+# Generate test data with higher alternative proportion for more discoveries
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
-generator = DataGenerator(n=500, pi0=0.98, dgp=dgp)
+generator = DataGenerator(n=200, pi0=0.90, dgp=dgp)
 
+discoveries = []
+fdr_values = []
+
+print("LORD Memory Decay Testing:")
 for i in range(100):
     p_value, true_label = generator.sample_one()
     is_discovery = lord_decay.test_one(p_value)
     fdr = mem_fdr.score_one(is_discovery, true_label)
-    print(f"Memory-decay FDR: {fdr:.4f}")
+    
+    if is_discovery:
+        discoveries.append(i)
+        print(f"  Discovery at test {i}: p={p_value:.4f}, FDR={fdr:.4f}")
+    
+    fdr_values.append(fdr)
+
+print(f"\nTotal discoveries: {len(discoveries)}")
+print(f"Final memory-decay FDR: {fdr_values[-1]:.4f}")
+print(f"Average FDR over sequence: {sum(fdr_values)/len(fdr_values):.4f}")
 ```
 
 ### 4. **Batch Testing**
 
 ```python
 from online_fdr.batching.storey_bh import BatchStoreyBH
+from online_fdr.utils.generation import GaussianLocationModel, DataGenerator
 
 batch_proc = BatchStoreyBH(alpha=0.1, lambda_=0.5)
 
-# Generate a batch of p-values
+# Generate test data with higher alternative proportion for more discoveries
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
-generator = DataGenerator(n=250, pi0=0.95, dgp=dgp)
+generator = DataGenerator(n=200, pi0=0.85, dgp=dgp)
 
-# Process in batches of 50
-batch_size = 50
-p_values, labels = [], []
-for _ in range(batch_size):
-    p_value, label = generator.sample_one()
-    p_values.append(p_value)
-    labels.append(label)
+# Process multiple batches to demonstrate batch testing
+batch_size = 25
+total_discoveries = 0
+total_false_discoveries = 0
 
-# Test entire batch at once
-results = batch_proc.test_batch(p_values)
-discoveries = sum(results)
-print(f"Batch discoveries: {discoveries}/{batch_size}")
+print("Batch Storey-BH Testing:")
+for batch_num in range(3):
+    p_values, labels = [], []
+    
+    # Generate one batch
+    for _ in range(batch_size):
+        p_value, label = generator.sample_one()
+        p_values.append(p_value)
+        labels.append(label)
+    
+    # Test entire batch at once
+    results = batch_proc.test_batch(p_values)
+    discoveries = sum(results)
+    
+    # Calculate false discoveries
+    false_discoveries = sum(1 for r, l in zip(results, labels) if r and not l)
+    batch_fdr = false_discoveries / discoveries if discoveries > 0 else 0.0
+    
+    print(f"  Batch {batch_num + 1}: {discoveries} discoveries, FDR = {batch_fdr:.4f}")
+    print(f"    Significant p-values: {[f'{p:.4f}' for p, r in zip(p_values, results) if r]}")
+    
+    total_discoveries += discoveries
+    total_false_discoveries += false_discoveries
+
+overall_fdr = total_false_discoveries / total_discoveries if total_discoveries > 0 else 0.0
+print(f"\nOverall: {total_discoveries} discoveries, FDR = {overall_fdr:.4f}")
 ```
 
 ## Evaluation and Utilities
@@ -224,20 +283,35 @@ from online_fdr.utils.generation import (
     DataGenerator, 
     GaussianLocationModel,
     BetaMixtureModel, 
-    ChiSquaredModel
+    ChiSquaredModel,
+    SparseGaussianModel
 )
 
-# Gaussian location model
+# Gaussian location model (most common for power analysis)
 dgp1 = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
 
-# Beta mixture model  
-dgp2 = BetaMixtureModel(alpha_alt=0.5, beta_alt=1.0)
+# Beta mixture model (common in genomics)
+dgp2 = BetaMixtureModel(alt_alpha=0.5, alt_beta=10.0)
 
-# Chi-squared model
-dgp3 = ChiSquaredModel(df_alt=5)
+# Chi-squared model (for variance/goodness-of-fit testing)
+dgp3 = ChiSquaredModel(df=1, alt_scale=3.0)
 
-# Use with any data generator
-generator = DataGenerator(n=1000, pi0=0.9, dgp=dgp1)
+# Sparse Gaussian model (for screening applications)
+dgp4 = SparseGaussianModel(effect_dist="uniform", min_effect=2.0, max_effect=5.0)
+
+# Example usage with different models
+print("Testing different data generation models:")
+
+for i, (name, dgp) in enumerate([
+    ("Gaussian Location", dgp1),
+    ("Beta Mixture", dgp2), 
+    ("Chi-squared", dgp3),
+    ("Sparse Gaussian", dgp4)
+]):
+    generator = DataGenerator(n=100, pi0=0.9, dgp=dgp)
+    # Sample a few p-values to demonstrate
+    sample_p_values = [generator.sample_one()[0] for _ in range(5)]
+    print(f"  {name}: {[f'{p:.4f}' for p in sample_p_values]}")
 ```
 
 ## Advanced Usage
@@ -247,38 +321,56 @@ generator = DataGenerator(n=1000, pi0=0.9, dgp=dgp1)
 ```python
 from online_fdr.spending.alpha_spending import AlphaSpending
 from online_fdr.spending.functions.bonferroni import Bonferroni
+from online_fdr.investing.lord.three import LordThree
+from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
 
-# Use Bonferroni spending function
-alpha_spending = AlphaSpending(alpha=0.1, spend_func=Bonferroni(1000))
+# Generate test data
+dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
+generator = DataGenerator(n=100, pi0=0.9, dgp=dgp)
 
-# Test sequentially
-for p_value, _ in zip([0.01, 0.8, 0.003], [True, False, True]):
-    result = alpha_spending.test_one(p_value)
-    print(f"Alpha spending result: {result}")
-```
+# Compare Bonferroni spending vs. adaptive LORD3
+k = 50  # Expected number of tests
+alpha = 0.05
 
-## Requirements
+# Bonferroni spending: equal alpha allocation
+bonf_spending = AlphaSpending(alpha=alpha, spend_func=Bonferroni(k))
 
-The library requires:
-- Python 3.8+
-- numpy >= 1.20.0
-- scipy >= 1.9.0
+# LORD3 investing: adaptive thresholds (this is the proper LORD3)
+lord3_adaptive = LordThree(alpha=alpha, wealth=0.04, reward=0.05)
 
-## Development
+print("Alpha Spending vs. Adaptive LORD3 Comparison:")
+print(f"Overall alpha level: {alpha}")
+print(f"Expected tests: {k}")
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/online-fdr.git
-cd online-fdr
+bonf_discoveries = []
+lord3_discoveries = []
 
-# Install in development mode
-pip install -e ".[dev]"
+# Reset generator for fair comparison
+generator = DataGenerator(n=100, pi0=0.9, dgp=dgp)
 
-# Run tests
-python -m pytest
+for i in range(20):
+    p_value, true_label = generator.sample_one()
+    
+    # Test with both methods
+    bonf_result = bonf_spending.test_one(p_value)
+    lord3_result = lord3_adaptive.test_one(p_value)
+    
+    if bonf_result:
+        bonf_discoveries.append(i)
+    if lord3_result:
+        lord3_discoveries.append(i)
+    
+    # Show alpha thresholds for first few tests
+    if i < 5:
+        bonf_threshold = alpha / k
+        lord3_threshold = lord3_adaptive.alpha
+        print(f"  Test {i+1}: p={p_value:.4f}")
+        print(f"    Bonferroni α={bonf_threshold:.6f}, reject={bonf_result}")
+        print(f"    LORD3 α={lord3_threshold:.6f}, reject={lord3_result}")
 
-# Format code
-black online_fdr tests
+print(f"\nBonferroni discoveries: {bonf_discoveries}")
+print(f"LORD3 adaptive discoveries: {lord3_discoveries}")
+print(f"LORD3 typically shows higher power, especially early in the sequence")
 ```
 
 ## Key Features
@@ -288,6 +380,7 @@ black online_fdr tests
 - **Batch Support**: Batch methods use `test_batch()` for multiple p-values
 - **Rich Data Generation**: Multiple data generation models for testing
 - **Performance Evaluation**: Built-in utilities for calculating sFDR and power
+- **Light-weight**: Minimal external dependencies
 
 ## Mathematical Guarantees
 
