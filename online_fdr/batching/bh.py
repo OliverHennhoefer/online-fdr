@@ -12,7 +12,7 @@ from online_fdr.utils.static import bh
 class BatchBH(AbstractBatchingTest):
     """BatchBH algorithm for online batch FDR control.
 
-    This implements Algorithm 1 from "The Power of Batching in Multiple 
+    This implements Algorithm 1 from "The Power of Batching in Multiple
     Hypothesis Testing" by Zrnic et al. (2020).
 
     The algorithm tests batches of hypotheses sequentially while maintaining

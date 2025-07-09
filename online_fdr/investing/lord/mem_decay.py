@@ -5,24 +5,24 @@ from online_fdr.utils.sequence import DefaultLordGammaSequence
 
 class LORDMemoryDecay(AbstractSequentialTest):
     """LORD variant with memory decay for time series anomaly detection.
-    
+
     This variant is designed for non-stationary time series where recent
     discoveries are more relevant than older ones. Unlike standard LORD
     variants, it does NOT track wealth. Instead, it uses a decay factor
     to down-weight older rejections and a smoothing parameter to control
     the base detection threshold.
-    
+
     The algorithm spends:
-        alpha_t = alpha * eta * max(gamma(t), 1-delta) 
+        alpha_t = alpha * eta * max(gamma(t), 1-delta)
                   + alpha * sum_r decay(t,r) * gamma(t-r-l)
-    
+
     where the sum is over past rejections r, and decay(t,r) = delta^(t-r-l).
-    
+
     Key differences from standard LORD:
     - No wealth tracking or accumulation
     - Uses decay to forget old discoveries
     - Ensures minimum spending via max(gamma(t), 1-delta)
-    
+
     References
     ----------
     [1] Rebjock, Q., B. Kurt, T. Januschowski, and L. Callot.
@@ -31,13 +31,7 @@ class LORDMemoryDecay(AbstractSequentialTest):
     vol. 34, pp. 26487-26498. Curran Associates, Inc., 2021.
     """
 
-    def __init__(
-        self,
-        alpha: float,
-        delta: float = 0.99,
-        eta: float = 0.5,
-        l: int = 0
-    ):
+    def __init__(self, alpha: float, delta: float = 0.99, eta: float = 0.5, l: int = 0):
         """
         Parameters
         ----------
@@ -62,7 +56,7 @@ class LORDMemoryDecay(AbstractSequentialTest):
         self.delta: float = delta
         self.eta: float = eta
         self.l: int = l
-        
+
         validity.check_decay_factor(delta)
         if not 0 < eta <= 1:
             raise ValueError(f"eta must be in (0, 1], got {eta}")
@@ -79,14 +73,10 @@ class LORDMemoryDecay(AbstractSequentialTest):
         # Base component with smoothing and minimum threshold
         if self.num_test not in self._gamma_cache:
             self._gamma_cache[self.num_test] = self.seq.calc_gamma(self.num_test)
-        
+
         gamma_t = self._gamma_cache[self.num_test]
-        self.alpha = (
-            self.alpha0
-            * self.eta
-            * max(gamma_t, 1 - self.delta)
-        )
-        
+        self.alpha = self.alpha0 * self.eta * max(gamma_t, 1 - self.delta)
+
         # Add decayed contributions from past rejections
         for reject_idx in self.rejection_times:
             time_diff = self.num_test - reject_idx - self.l
@@ -94,14 +84,14 @@ class LORDMemoryDecay(AbstractSequentialTest):
                 # Cache gamma values for efficiency
                 if time_diff not in self._gamma_cache:
                     self._gamma_cache[time_diff] = self.seq.calc_gamma(time_diff)
-                
-                decay_weight = self.delta ** time_diff
+
+                decay_weight = self.delta**time_diff
                 gamma_val = self._gamma_cache[time_diff]
                 self.alpha += self.alpha0 * decay_weight * gamma_val
 
         is_rejected = p_val <= self.alpha
-        
+
         if is_rejected:
             self.rejection_times.append(self.num_test)
-        
+
         return is_rejected

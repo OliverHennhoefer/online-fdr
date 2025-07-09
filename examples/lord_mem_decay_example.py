@@ -6,7 +6,9 @@ from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
 
 N = 500
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
-generator = DataGenerator(n=N, pi0=0.98, dgp=dgp)  # pi0 = 1 - contamination = 1 - 0.02 = 0.98
+generator = DataGenerator(
+    n=N, pi0=0.98, dgp=dgp
+)  # pi0 = 1 - contamination = 1 - 0.02 = 0.98
 # Create LORD Memory Decay instance
 # eta=0.5 is the new default (moderate detection threshold)
 # For more aggressive detection, use eta=1.0

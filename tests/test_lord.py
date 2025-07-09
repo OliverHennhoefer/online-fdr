@@ -235,9 +235,9 @@ class TestSuiteLord(unittest.TestCase):
         self.assertEqual(
             alpha,
             [
-                3e-06,     # First test
-                0.00265,   # After first rejection
-                0.00322,   # With decay contributions
+                3e-06,  # First test
+                0.00265,  # After first rejection
+                0.00322,  # With decay contributions
                 0.001052,
                 0.000877,
                 0.000729,
@@ -256,19 +256,19 @@ class TestSuiteLord(unittest.TestCase):
         self.assertEqual(
             decision,
             [
-                True,   # p=0.000000 <= alpha
-                True,   # p=0.001430 <= alpha  
+                True,  # p=0.000000 <= alpha
+                True,  # p=0.001430 <= alpha
                 False,
                 False,
                 False,
-                True,   # p=0.000036 <= alpha
+                True,  # p=0.000036 <= alpha
                 False,
                 False,
                 False,
-                True,   # p=0.000000 <= alpha
+                True,  # p=0.000000 <= alpha
                 False,
                 False,
-                True,   # p=0.000000 <= alpha
+                True,  # p=0.000000 <= alpha
                 False,
                 False,
             ],

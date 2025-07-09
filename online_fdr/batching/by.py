@@ -1,5 +1,8 @@
 from online_fdr.abstract.abstract_batching_test import AbstractBatchingTest
-from online_fdr.utils.sequence import DefaultSaffronGammaSequence, DefaultLondGammaSequence
+from online_fdr.utils.sequence import (
+    DefaultSaffronGammaSequence,
+    DefaultLondGammaSequence,
+)
 from online_fdr.utils.static import by
 
 

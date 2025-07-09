@@ -17,7 +17,10 @@ same core algorithm, but this version provides the exact behavior of the authors
 
 import numpy as np
 from online_fdr.abstract.abstract_batching_test import AbstractBatchingTest
-from online_fdr.utils.sequence import BatchBHPolynomialGammaSequence, BatchBHHalfGammaSequence
+from online_fdr.utils.sequence import (
+    BatchBHPolynomialGammaSequence,
+    BatchBHHalfGammaSequence,
+)
 from online_fdr.utils.static import bh
 
 
@@ -52,11 +55,11 @@ class BatchBHOfficial(AbstractBatchingTest):
         super().__init__(alpha)
         self.alpha0 = alpha
         self.num_test = 0
-        
+
         # Initialize gamma sequences for adaptive selection
         self.poly_seq = BatchBHPolynomialGammaSequence()
         self.half_seq = BatchBHHalfGammaSequence()
-        
+
         # Initialize lists for online processing (no pre-allocation)
         self.r_s_plus = []  # R^+ values for each batch
         self.r_total_sum = 0  # Total rejections across all batches
@@ -75,7 +78,9 @@ class BatchBHOfficial(AbstractBatchingTest):
         rejections, _, _, _ = self.test_batch_extended(p_vals)
         return rejections
 
-    def test_batch_extended(self, p_vals: list[float]) -> tuple[list[bool], float, float, float]:
+    def test_batch_extended(
+        self, p_vals: list[float]
+    ) -> tuple[list[bool], float, float, float]:
         """Test a batch of p-values using the official BatchBH procedure with extended output.
 
         Args:
@@ -100,26 +105,33 @@ class BatchBHOfficial(AbstractBatchingTest):
         else:
             # Calculate gamma sum for batches 1 to t+1
             gamma_sum = sum(
-                self._get_gamma(j=i, batch_size=batch_size) 
-                for i in range(1, t + 2)
+                self._get_gamma(j=i, batch_size=batch_size) for i in range(1, t + 2)
             )
-            
+
             # Calculate beta_t using official formula
             beta_t = 0
             for s in range(t):
                 denominator = self.r_s_plus[s] + self.r_s_cumulative[s]
                 if denominator > 0:
                     beta_t += self.alpha_s[s] * self.r_s_plus[s] / denominator
-            
+
             # α_t = (α × Σγ_s - β_t) × (n_t + R_total) / n_t
-            alpha_t = (self.alpha0 * gamma_sum - beta_t) * (batch_size + self.r_total_sum) / batch_size
+            alpha_t = (
+                (self.alpha0 * gamma_sum - beta_t)
+                * (batch_size + self.r_total_sum)
+                / batch_size
+            )
 
         # Run BH procedure on current batch
         num_rejections, threshold = bh(p_vals, alpha_t)
 
         # Update cumulative tracking (matches official implementation)
-        self.r_s_cumulative.append(self.r_total_sum)  # Store total rejections before this batch
-        for i in range(len(self.r_s_cumulative) - 1):  # Add current rejections to all previous batches
+        self.r_s_cumulative.append(
+            self.r_total_sum
+        )  # Store total rejections before this batch
+        for i in range(
+            len(self.r_s_cumulative) - 1
+        ):  # Add current rejections to all previous batches
             self.r_s_cumulative[i] += num_rejections
         self.r_total_sum += num_rejections  # Update total
         self.alpha_s.append(alpha_t)  # Store alpha used
@@ -156,4 +168,3 @@ class BatchBHOfficial(AbstractBatchingTest):
             return self.poly_seq.calc_gamma(j)
         else:
             return self.half_seq.calc_gamma(j)
-

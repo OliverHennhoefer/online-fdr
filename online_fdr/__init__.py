@@ -31,10 +31,9 @@ from online_fdr.spending.online_fallback import OnlineFallback
 __all__ = [
     # Version
     "__version__",
-    
     # Sequential methods
     "Addis",
-    "Gai", 
+    "Gai",
     "Lond",
     "LordThree",
     "LordPlusPlus",
@@ -42,13 +41,11 @@ __all__ = [
     "LordDiscard",
     "LordDependent",
     "Saffron",
-    
     # Batch methods
     "BatchBH",
     "BatchBY",
     "BatchPRDS",
     "BatchStoreyBH",
-    
     # Spending methods
     "AlphaSpending",
     "OnlineFallback",

@@ -7,7 +7,9 @@ from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
 N = 250
 B = 50
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
-generator = DataGenerator(n=N, pi0=0.95, dgp=dgp)  # pi0 = 1 - contamination = 1 - 0.05 = 0.95
+generator = DataGenerator(
+    n=N, pi0=0.95, dgp=dgp
+)  # pi0 = 1 - contamination = 1 - 0.05 = 0.95
 batch_stbh = BatchStoreyBH(alpha=0.1, lambda_=0.5)
 
 false_positive = 0

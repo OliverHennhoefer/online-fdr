@@ -5,18 +5,18 @@ from online_fdr.utils.static import bh
 
 class BatchPRDS(AbstractBatchingTest):
     """Batch FDR control under Positive Regression Dependency on a Subset (PRDS).
-    
+
     This algorithm controls the FDR when p-values within each batch satisfy the
     PRDS condition (positive regression dependency on a subset), with independence
     across batches. It applies a modified Benjamini-Hochberg procedure to each batch
     with adaptively calculated significance levels.
-    
+
     References
     ----------
     [1] Zrnic, T., Ramdas, A., and Jordan, M.I. (2018).
     "Asynchronous Online Testing of Multiple Hypotheses."
     arXiv preprint arXiv:1812.05068.
-    
+
     [2] Benjamini, Y., and Yekutieli, D. (2001).
     "The control of the false discovery rate in multiple testing under dependency."
     Annals of Statistics, 29(4):1165-1188.
