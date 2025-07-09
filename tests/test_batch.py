@@ -1,6 +1,7 @@
 import unittest
 
 from online_fdr.batching.bh import BatchBH
+from online_fdr.batching.bh_official import BatchBHOfficial
 from online_fdr.batching.prds import BatchPRDS
 from online_fdr.batching.storey_bh import BatchStoreyBH
 from online_fdr.utils.testing import get_test_data, generate_test_data
@@ -151,12 +152,6 @@ class TestSuiteBatching(unittest.TestCase):
 
         self.assertEqual(sum(decision), 27)  # Updated with correct Storey π₀ estimation
 
-        alpha = [round(i, 6) for i in batch_st_bh.alpha_s]
-
-        # Note: Exact floating point ratio checks removed as they're too sensitive
-        # to implementation details. The key test is the number of rejections (27)
-        # which correctly reflects the fixed Storey π₀ estimation.
-
     def test_batch_prds(self):
 
         batch_prds = BatchPRDS(alpha=0.05)
@@ -232,6 +227,82 @@ class TestSuiteBatching(unittest.TestCase):
         self.assertEqual(
             d,
             18014398509481984,
+        )
+
+    def test_batch_bh_official(self):
+
+        batch_bh = BatchBHOfficial(alpha=0.05)
+        batch_no = [5, 11, 15]
+
+        decision = []
+        for start, end in zip([0] + batch_no[:-1], batch_no):
+            batch = self.data["p_value"][start:end]
+
+            result = batch_bh.test_batch(batch)
+            decision += result
+
+        alpha = [round(i, 6) for i in batch_bh.alpha_s]
+
+        self.assertEqual(
+            alpha,
+            [
+                0.05,
+                0.02749,
+                0.069049,
+            ],
+        )
+
+        self.assertEqual(
+            decision,
+            [
+                True,
+                True,
+                False,
+                True,
+                True,
+                True,
+                False,
+                False,
+                False,
+                True,
+                False,
+                False,
+                True,
+                False,
+                False,
+            ],
+        )
+
+    def test_batch_bh_official_large(self):
+        batch_bh = BatchBHOfficial(alpha=0.05)
+
+        p_vals, batch_sizes = generate_test_data(
+            n=1_000, h0_prop=0.025, max_batch_size=15, seed=1
+        )
+
+        decision = []
+        start_index = 0
+        for batch_size in batch_sizes:
+            end_index = start_index + batch_size
+            batch = p_vals[start_index:end_index]
+            start_index = end_index
+
+            result = batch_bh.test_batch(batch)
+            decision += result
+
+        self.assertEqual(sum(decision), 22)
+
+        alpha = [round(i, 6) for i in batch_bh.alpha_s]
+
+        n, d = float.as_integer_ratio(sum(alpha))
+        self.assertEqual(
+            n,
+            2328655993126139,
+        )
+
+        self.assertEqual(
+            d,
+            1125899906842624,
         )
 
 

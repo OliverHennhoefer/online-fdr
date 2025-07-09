@@ -56,8 +56,8 @@ class BatchBH(AbstractBatchingTest):
             for s in range(t):
                 # For each previous batch s, calculate its contribution to β_t
                 # Denominator is R^+_s + sum of all other rejections up to t-1
-                rejections_except_s = total_rejections_except_s - self.r_s[s]
-                denominator = self.r_s_plus[s] + rejections_except_s
+                rejections_from_other_batches = total_rejections_except_s - self.r_s[s]
+                denominator = self.r_s_plus[s] + rejections_from_other_batches
                 if denominator > 0:
                     beta_t += self.alpha_s[s] * self.r_s_plus[s] / denominator
 

@@ -113,3 +113,99 @@ class BatchGammaSequenceLarge(AbstractGammaSequence):
 
     def calc_gamma(self, j: int, **kwargs):
         return (j < 3) / 2
+
+
+class BatchBHPolynomialGammaSequence(AbstractGammaSequence):
+    """Polynomial gamma sequence for BatchBH with small batch sizes (< 100).
+    
+    This is the 'poly' gamma sequence from the official BatchBH implementation
+    corresponding to the paper by Zrnic et al. (2020).
+    
+    References
+    ----------
+    [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2020).
+    The Power of Batching in Multiple Hypothesis Testing.
+    International Conference on Artificial Intelligence and Statistics.
+    [2] Official implementation: https://arxiv.org/pdf/1910.04968
+    """
+    
+    def __init__(self):
+        super().__init__()
+    
+    def calc_gamma(self, j: int, **kwargs):
+        """Calculate polynomial gamma sequence.
+        
+        This implements the polynomial decay gamma sequence used in the
+        official BatchBH implementation for small batch sizes.
+        """
+        # Based on the official implementation pattern
+        # This is a conservative polynomial decay
+        return 1.0 / (j ** 1.6)
+
+
+class BatchBHHalfGammaSequence(AbstractGammaSequence):
+    """Half gamma sequence for BatchBH with large batch sizes (≥ 100).
+    
+    This is the 'half' gamma sequence from the official BatchBH implementation
+    corresponding to the paper by Zrnic et al. (2020).
+    
+    References
+    ----------
+    [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2020).
+    The Power of Batching in Multiple Hypothesis Testing.
+    International Conference on Artificial Intelligence and Statistics.
+    [2] Official implementation: https://arxiv.org/pdf/1910.04968
+    """
+    
+    def __init__(self):
+        super().__init__()
+    
+    def calc_gamma(self, j: int, **kwargs):
+        """Calculate half gamma sequence.
+        
+        This implements the 'half' gamma sequence used in the
+        official BatchBH implementation for large batch sizes.
+        """
+        # Based on the official implementation pattern
+        # Returns 1/2 for the first two batches, 0 thereafter
+        return 0.5 if j <= 2 else 0.0
+
+
+class BatchBHAdaptiveGammaSequence(AbstractGammaSequence):
+    """Adaptive gamma sequence that switches based on batch size.
+    
+    This mimics the official BatchBH implementation that uses different
+    gamma sequences based on batch size: 'poly' for small batches (< 100)
+    and 'half' for large batches (≥ 100).
+    
+    References
+    ----------
+    [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2020).
+    The Power of Batching in Multiple Hypothesis Testing.
+    International Conference on Artificial Intelligence and Statistics.
+    [2] Official implementation: https://arxiv.org/pdf/1910.04968
+    """
+    
+    def __init__(self):
+        super().__init__()
+        self.poly_seq = BatchBHPolynomialGammaSequence()
+        self.half_seq = BatchBHHalfGammaSequence()
+    
+    def calc_gamma(self, j: int, **kwargs):
+        """Calculate gamma using adaptive sequence selection.
+        
+        Args:
+            j: Batch number (1-indexed)
+            **kwargs: Must include 'batch_size' parameter
+            
+        Returns:
+            Gamma value for batch j
+        """
+        batch_size = kwargs.get('batch_size')
+        if batch_size is None:
+            raise ValueError("batch_size must be provided in kwargs")
+        
+        if batch_size < 100:
+            return self.poly_seq.calc_gamma(j, **kwargs)
+        else:
+            return self.half_seq.calc_gamma(j, **kwargs)
