@@ -2,7 +2,7 @@
 Improved data generation utilities for online FDR control simulations.
 
 This module provides various data generating processes commonly used in the
-FDR control literature, including support for dependent p-values and 
+FDR control literature, including support for dependent p-values and
 different alternative distributions.
 """
 

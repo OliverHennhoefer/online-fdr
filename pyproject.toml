@@ -46,17 +46,12 @@ dependencies = [
     "scipy>=1.9.0",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
-    "black>=23.0",
     "ruff>=0.1.0",
     "mypy>=1.0",
-    "scipy>=1.9.0",
-]
-data = [
-    "scipy>=1.9.0"
 ]
 docs = [
     "mkdocs-material>=9.0",
@@ -115,14 +110,16 @@ exclude_lines = [
     "if TYPE_CHECKING:",
 ]
 
-[tool.black]
-line-length = 88
-target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
-include = '\.pyi?$'
 
 [tool.ruff]
 target-version = "py38"
 line-length = 88
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.ruff.lint]
 select = [
@@ -137,7 +134,6 @@ select = [
     "SIM",  # flake8-simplify
 ]
 ignore = [
-    "E501",  # line too long (handled by black)
     "B008",  # do not perform function calls in argument defaults
     "C901",  # too complex
 ]

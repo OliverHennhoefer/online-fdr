@@ -8,11 +8,9 @@ from online_fdr.utils.testing import generate_test_data, get_test_data
 
 
 class TestSuiteBatching(unittest.TestCase):
-
     data: dict = get_test_data()
 
     def test_batch_bh(self):
-
         batch_bh = BatchBH(alpha=0.05)
         batch_no = [5, 11, 15]
 
@@ -56,7 +54,6 @@ class TestSuiteBatching(unittest.TestCase):
         )
 
     def test_batch_bh_large(self):
-
         batch_bh = BatchBH(alpha=0.05)
 
         p_vals, batch_sizes = generate_test_data(
@@ -89,7 +86,6 @@ class TestSuiteBatching(unittest.TestCase):
         )
 
     def test_batch_storey_bh(self):
-
         batch_st_bh = BatchStoreyBH(alpha=0.05, lambda_=0.5)
         batch_no = [5, 11, 15]
 
@@ -133,7 +129,6 @@ class TestSuiteBatching(unittest.TestCase):
         )
 
     def test_batch_storey_bh_large(self):
-
         batch_st_bh = BatchStoreyBH(alpha=0.05, lambda_=0.25)
 
         p_vals, batch_sizes = generate_test_data(
@@ -153,7 +148,6 @@ class TestSuiteBatching(unittest.TestCase):
         self.assertEqual(sum(decision), 27)  # Updated with correct Storey π₀ estimation
 
     def test_batch_prds(self):
-
         batch_prds = BatchPRDS(alpha=0.05)
         batch_no = [5, 11, 15]
 
@@ -197,7 +191,6 @@ class TestSuiteBatching(unittest.TestCase):
         )
 
     def test_batch_prds_large(self):
-
         batch_prds = BatchPRDS(alpha=0.05)
 
         p_vals, batch_sizes = generate_test_data(
@@ -230,7 +223,6 @@ class TestSuiteBatching(unittest.TestCase):
         )
 
     def test_batch_bh_official(self):
-
         batch_bh = BatchBHOfficial(alpha=0.05)
         batch_no = [5, 11, 15]
 

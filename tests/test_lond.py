@@ -5,11 +5,9 @@ from online_fdr.utils.testing import get_test_data
 
 
 class TestSuiteLond(unittest.TestCase):
-
     DATA: dict = get_test_data()
 
     def test_lond_original(self):
-
         lond = Lond(alpha=0.05, original=True, dependent=False)
 
         alpha, decision = [], []
@@ -61,7 +59,6 @@ class TestSuiteLond(unittest.TestCase):
         )
 
     def test_lond_original_dependent(self):
-
         lond = Lond(alpha=0.05, original=True, dependent=True)
 
         alpha, decision = [], []

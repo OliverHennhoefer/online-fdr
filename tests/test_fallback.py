@@ -5,7 +5,6 @@ from online_fdr.utils.testing import get_test_data
 
 
 class TestSuiteOnlineFallback(unittest.TestCase):
-
     DATA: dict = get_test_data()
 
     def test_online_fallback(self):

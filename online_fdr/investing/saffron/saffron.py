@@ -5,23 +5,23 @@ from online_fdr.utils.sequence import DefaultSaffronGammaSequence
 
 class Saffron(AbstractSequentialTest):
     """SAFFRON: Serial estimate of the Alpha Fraction that is Futilely Rationed On true Nulls.
-    
-    SAFFRON is an adaptive algorithm for online FDR control that estimates the proportion 
-    of true null hypotheses and uses this estimate to set more powerful rejection thresholds. 
+
+    SAFFRON is an adaptive algorithm for online FDR control that estimates the proportion
+    of true null hypotheses and uses this estimate to set more powerful rejection thresholds.
     It can be seen as an online analogue of the famous offline Storey-BH adaptive procedure.
-    
-    Like alpha-investing algorithms, SAFFRON starts with alpha-wealth that it intelligently 
-    allocates to different tests over time, earning back wealth on discoveries. However, 
-    unlike older methods, SAFFRON's threshold sequence is based on a novel estimate of the 
+
+    Like alpha-investing algorithms, SAFFRON starts with alpha-wealth that it intelligently
+    allocates to different tests over time, earning back wealth on discoveries. However,
+    unlike older methods, SAFFRON's threshold sequence is based on a novel estimate of the
     alpha fraction allocated to true null hypotheses.
-    
-    SAFFRON typically achieves higher power than non-adaptive methods like LORD under 
+
+    SAFFRON typically achieves higher power than non-adaptive methods like LORD under
     independence, similar to how Storey-BH typically outperforms Benjamini-Hochberg.
 
     Args:
         alpha: Target FDR level (e.g., 0.05 for 5% FDR). Must be in (0, 1).
         wealth: Initial alpha-wealth for purchasing rejection thresholds.
-                Must satisfy 0 ≤ wealth ≤ alpha.  
+                Must satisfy 0 ≤ wealth ≤ alpha.
         lambda_: Candidate threshold for estimating the proportion of nulls.
                  P-values ≤ lambda_ are considered "candidates". Must be in (0, 1).
 
@@ -38,18 +38,18 @@ class Saffron(AbstractSequentialTest):
         >>> saffron = Saffron(alpha=0.05, wealth=0.025, lambda_=0.5)
         >>> decision = saffron.test_one(0.01)  # Test a small p-value
         >>> print(f"Rejected: {decision}")
-        
+
         >>> # Sequential testing
         >>> p_values = [0.001, 0.3, 0.02, 0.8, 0.005]
         >>> decisions = [saffron.test_one(p) for p in p_values]
         >>> discoveries = sum(decisions)
 
     References:
-        Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan (2018). 
-        "SAFFRON: an adaptive algorithm for online control of the FDR." 
-        Proceedings of the 35th International Conference on Machine Learning (ICML), 
+        Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan (2018).
+        "SAFFRON: an adaptive algorithm for online control of the FDR."
+        Proceedings of the 35th International Conference on Machine Learning (ICML),
         Proceedings of Machine Learning Research, vol. 80, pp. 4286-4294, PMLR.
-        
+
         ArXiv: https://arxiv.org/abs/1802.09098
         ICML: https://proceedings.mlr.press/v80/ramdas18a.html
     """
@@ -71,21 +71,21 @@ class Saffron(AbstractSequentialTest):
 
     def test_one(self, p_val: float) -> bool:
         """Test a single p-value using the SAFFRON procedure.
-        
+
         The SAFFRON algorithm processes p-values sequentially:
         1. Calculate adaptive rejection threshold based on candidate estimate
-        2. Determine if p-value is a candidate (≤ lambda_) 
+        2. Determine if p-value is a candidate (≤ lambda_)
         3. Reject if p-value ≤ adaptive threshold
-        
+
         Args:
             p_val: P-value to test. Must be in [0, 1].
-            
+
         Returns:
             True if the null hypothesis is rejected (discovery), False otherwise.
-            
+
         Raises:
             ValueError: If p_val is not in [0, 1].
-            
+
         Examples:
             >>> saffron = Saffron(alpha=0.05, wealth=0.025, lambda_=0.5)
             >>> saffron.test_one(0.01)  # Small p-value, likely rejected
@@ -106,16 +106,16 @@ class Saffron(AbstractSequentialTest):
 
     def calc_alpha_t(self):
         """Calculate the adaptive rejection threshold for the current test.
-        
-        The SAFFRON threshold is based on estimating the alpha-wealth allocated to 
+
+        The SAFFRON threshold is based on estimating the alpha-wealth allocated to
         true null hypotheses using the candidate fraction. The threshold adapts based on:
         1. Initial wealth allocation and candidate estimate (first test)
         2. Updated wealth based on discoveries and candidate history (subsequent tests)
         3. Compensation factor (1 - lambda_) for candidate selection
-        
+
         Returns:
             The adaptive rejection threshold alpha_t, bounded by lambda_.
-            
+
         Note:
             This is an internal method called by test_one(). The threshold formula
             follows the SAFFRON procedure in Ramdas et al. (2018).

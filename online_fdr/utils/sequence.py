@@ -45,7 +45,7 @@ class DefaultLondGammaSequence(AbstractGammaSequence):
         """Calculate the gamma value for the j-th test.
 
         Args:
-            j: Test index (1-based). 
+            j: Test index (1-based).
             **kwargs: Must contain 'alpha' - the target FDR level.
 
         Returns:
@@ -78,7 +78,7 @@ class DefaultLordGammaSequence(AbstractGammaSequence):
         c: Normalization constant controlling sequence scale.
 
     Examples:
-        >>> # Standard LORD gamma sequence  
+        >>> # Standard LORD gamma sequence
         >>> gamma_seq = DefaultLordGammaSequence(c=0.07720838)
         >>> gamma_values = [gamma_seq.calc_gamma(j) for j in range(1, 6)]
         >>> print(f"First 5 gamma values: {gamma_values}")
@@ -122,7 +122,7 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
     with or without a normalization constant c.
 
     The sequence is defined as:
-    - With c: γⱼ = c / j^(gamma_exp)  
+    - With c: γⱼ = c / j^(gamma_exp)
     - Without c: γⱼ = j^(gamma_exp)
 
     Args:

@@ -84,7 +84,7 @@ def check_candidate_threshold(lambda_: float) -> None:
         ValueError: If lambda_ is not in (0, 1).
 
     Examples:
-        >>> check_candidate_threshold(0.5)  # Valid - no exception  
+        >>> check_candidate_threshold(0.5)  # Valid - no exception
         >>> check_candidate_threshold(0.0)  # Raises ValueError
         >>> check_candidate_threshold(1.0)  # Raises ValueError
     """

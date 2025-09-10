@@ -20,7 +20,6 @@ false_negatives = 0
 
 mem_fdr = MemoryDecayFDR(delta=0.99, offset=0)
 for i in range(0, N):
-
     p_value, label = generator.sample_one()  # sample generation
     result = mem_decay_lord.test_one(p_value)  # mem-decay LORD
 

@@ -5,11 +5,9 @@ from online_fdr.utils.testing import get_test_data
 
 
 class TestSuiteAlphaInvesting(unittest.TestCase):
-
     DATA: dict = get_test_data()
 
     def test_generalized_alpha_investing(self):
-
         gai = Gai(alpha=0.05, wealth=0.025)
 
         alpha, decision = [], []

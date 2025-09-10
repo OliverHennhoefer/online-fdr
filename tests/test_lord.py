@@ -9,7 +9,6 @@ from online_fdr.utils.testing import get_test_data
 
 
 class TestSuiteLord(unittest.TestCase):
-
     DATA: dict = get_test_data()
 
     def test_lord_three(self):

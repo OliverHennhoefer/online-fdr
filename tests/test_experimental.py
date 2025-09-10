@@ -12,7 +12,6 @@ class TestSuiteExperimental(unittest.TestCase):
     """
 
     def test_batch_bh_large(self):
-
         batch_bh = BatchBY(alpha=0.05)
 
         p_vals, batch_sizes = generate_test_data(

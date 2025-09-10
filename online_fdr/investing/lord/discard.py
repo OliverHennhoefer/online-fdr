@@ -39,13 +39,18 @@ class LordDiscard(AbstractSequentialTest):
         self.alpha += (
             (self.tau * self.alpha0 - self.wealth0)
             * self.seq.calc_gamma(self.num_test - self.first_reject)
-            if self.first_reject is not None else 0  # fmt: skip
+            if self.first_reject is not None
+            else 0  # fmt: skip
         )
         self.alpha += (
-            self.tau * self.alpha0
-            * sum(self.seq.calc_gamma(self.num_test - reject_idx)
-                  for reject_idx in self.last_reject)
-            if self.last_reject else 0  # fmt: skip
+            self.tau
+            * self.alpha0
+            * sum(
+                self.seq.calc_gamma(self.num_test - reject_idx)
+                for reject_idx in self.last_reject
+            )
+            if self.last_reject
+            else 0  # fmt: skip
         )
 
         is_rejected = p_val <= min(self.tau, self.alpha)

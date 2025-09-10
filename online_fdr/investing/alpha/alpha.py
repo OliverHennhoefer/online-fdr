@@ -5,19 +5,19 @@ from online_fdr.utils.sequence import DefaultSaffronGammaSequence
 
 class Gai(AbstractSequentialTest):
     """GAI: Generalized Alpha-Investing for online FDR control with SAFFRON updates.
-    
-    Generalized Alpha-Investing (GAI) extends the original alpha-investing procedure 
+
+    Generalized Alpha-Investing (GAI) extends the original alpha-investing procedure
     of Foster and Stine (2008) for sequential control of expected false discoveries.
-    This implementation uses SAFFRON-style update rules for improved power while 
+    This implementation uses SAFFRON-style update rules for improved power while
     maintaining the core alpha-investing philosophy.
-    
-    Alpha-investing resembles alpha-spending but with a key difference: when a test 
-    rejects a null hypothesis, the procedure earns additional probability toward 
-    subsequent tests. This allows incorporation of domain knowledge and improved power 
+
+    Alpha-investing resembles alpha-spending but with a key difference: when a test
+    rejects a null hypothesis, the procedure earns additional probability toward
+    subsequent tests. This allows incorporation of domain knowledge and improved power
     over non-adaptive methods.
-    
-    The GAI framework has become fundamental for online hypothesis testing, providing 
-    a robust, computationally efficient approach that requires no parametric assumptions 
+
+    The GAI framework has become fundamental for online hypothesis testing, providing
+    a robust, computationally efficient approach that requires no parametric assumptions
     about underlying null and alternative distributions.
 
     Args:
@@ -37,20 +37,20 @@ class Gai(AbstractSequentialTest):
         >>> gai = Gai(alpha=0.05, wealth=0.025)
         >>> decision = gai.test_one(0.01)  # Test a small p-value
         >>> print(f"Rejected: {decision}")
-        
+
         >>> # Sequential testing with wealth dynamics
         >>> p_values = [0.001, 0.3, 0.02, 0.8, 0.005]
         >>> decisions = [gai.test_one(p) for p in p_values]
         >>> discoveries = sum(decisions)
 
     References:
-        Foster, D., and R. Stine (2008). "α-investing: a procedure for sequential 
-        control of expected false discoveries." Journal of the Royal Statistical 
+        Foster, D., and R. Stine (2008). "α-investing: a procedure for sequential
+        control of expected false discoveries." Journal of the Royal Statistical
         Society (Series B), 70(2):429-444.
-        
-        Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan (2018). 
-        "SAFFRON: an adaptive algorithm for online control of the FDR." 
-        Proceedings of the 35th International Conference on Machine Learning (ICML), 
+
+        Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan (2018).
+        "SAFFRON: an adaptive algorithm for online control of the FDR."
+        Proceedings of the 35th International Conference on Machine Learning (ICML),
         Proceedings of Machine Learning Research, vol. 80, pp. 4286-4294, PMLR.
     """
 
@@ -81,7 +81,6 @@ class Gai(AbstractSequentialTest):
         return is_rejected
 
     def calc_alpha_t(self):
-
         if self.num_test == 1:
             alpha_t = (
                 self.seq.calc_gamma(1, None)  # fmt: skip

@@ -9,7 +9,6 @@ def calculate_power(tp: int, fn: int) -> float:
 
 
 class MemoryDecayFDR:
-
     def __init__(self, delta: float = 0.99, offset: float = 0):
         self.delta: float = delta
         self.offset: float = offset
@@ -20,7 +19,6 @@ class MemoryDecayFDR:
         self.cumulative: bool = False
 
     def score_one(self, label: bool, ground_truth: bool):
-
         self.labels.append(label)
         self.ground_truth.append(ground_truth)
 

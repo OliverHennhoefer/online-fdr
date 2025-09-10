@@ -15,7 +15,6 @@ true_positive = 0
 false_negatives = 0
 
 for i in range(0, N):
-
     p_value, label = generator.sample_one()  # sample generation
     result = addis.test_one(p_value)  # addis
 

@@ -16,7 +16,6 @@ true_positive = 0
 false_negatives = 0
 
 for i in range(0, N):
-
     p_value, label = generator.sample_one()  # sample generation
     result = alpha_spending.test_one(p_value)  # generalized alpha spending
 

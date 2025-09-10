@@ -5,11 +5,9 @@ from online_fdr.utils.testing import get_test_data
 
 
 class TestSuiteAddis(unittest.TestCase):
-
     DATA: dict = get_test_data()
 
     def test_addis(self):
-
         addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
 
         alpha, decision = [], []

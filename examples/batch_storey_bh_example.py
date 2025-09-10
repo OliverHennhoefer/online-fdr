@@ -17,7 +17,6 @@ false_negatives = 0
 
 results = []
 for i in range(0, N // B):
-
     p_values, labels = [], []
     for _ in range(B):  # batch generation
         p_value, label = generator.sample_one()

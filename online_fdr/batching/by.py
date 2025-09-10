@@ -131,9 +131,7 @@ class BatchBY(AbstractBatchingTest):
             )
         else:
             self.alpha = (
-                sum(
-                    self.seq.calc_gamma(i) for i in range(1, self.num_test + 1)
-                )
+                sum(self.seq.calc_gamma(i) for i in range(1, self.num_test + 1))
                 * self.alpha0  # fmt: skip
             )
             self.alpha -= sum(

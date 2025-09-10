@@ -96,6 +96,8 @@ class OnlineFallback(AbstractSequentialTest):
         self.alpha += self.alpha0 * self.seq.calc_gamma(self.num_test)
 
         is_rejected = p_val < self.alpha
-        self.last_rejected = bool(is_rejected)  # Fix SIM210: Use bool() instead of True if else False
+        self.last_rejected = bool(
+            is_rejected
+        )  # Fix SIM210: Use bool() instead of True if else False
 
         return is_rejected

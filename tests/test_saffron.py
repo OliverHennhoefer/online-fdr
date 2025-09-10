@@ -5,11 +5,9 @@ from online_fdr.utils.testing import get_test_data
 
 
 class TestSuiteSaffron(unittest.TestCase):
-
     DATA: dict = get_test_data()
 
     def test_saffron(self):
-
         saffron = Saffron(alpha=0.05, wealth=0.025, lambda_=0.5)
 
         alpha, decision = [], []

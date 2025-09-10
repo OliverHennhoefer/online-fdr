@@ -7,11 +7,9 @@ from online_fdr.utils.testing import get_test_data
 
 
 class TestSuiteAlphaSpending(unittest.TestCase):
-
     DATA: dict = get_test_data()
 
     def test_alpha_spending_bonferroni(self):
-
         k = len(self.DATA["p_value"])
         alpha_spending = AlphaSpending(alpha=0.05, spend_func=Bonferroni(k=k))
 
