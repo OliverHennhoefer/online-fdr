@@ -8,8 +8,8 @@ edit_uri: edit/main/docs/
 
 copyright: Copyright © 2024 Oliver Hennhöfer
 
-docs_dir: .
-site_dir: ../site
+docs_dir: docs
+site_dir: site
 
 theme:
   name: material
@@ -104,7 +104,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: [..] # Add the parent directory to Python path
+          paths: [.] # Add the project root to Python path
           options:
             docstring_style: numpy
             show_root_heading: true
@@ -189,6 +189,6 @@ extra:
       link: https://pypi.org/project/online-fdr/
 
 extra_javascript:
-  - javascripts/mathjax.js
+  - docs/javascripts/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
