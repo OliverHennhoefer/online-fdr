@@ -1,0 +1,194 @@
+site_name: Online FDR
+site_description: Online False Discovery Rate (FDR) control algorithms for multiple hypothesis testing
+site_author: Oliver Hennhöfer
+site_url: https://oliverhennhoefer.github.io/online-fdr
+repo_url: https://github.com/OliverHennhoefer/online-fdr
+repo_name: OliverHennhoefer/online-fdr
+edit_uri: edit/main/docs/
+
+copyright: Copyright © 2024 Oliver Hennhöfer
+
+docs_dir: .
+site_dir: ../site
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    # Dark mode as default
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    # Light mode toggle
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - header.autohide
+    - search.highlight
+    - search.suggest
+    - search.share
+    - content.code.copy
+    - content.code.select
+    - content.code.annotate
+    - content.tooltips
+    - content.action.edit
+    - content.action.view
+    - toc.follow
+    - announce.dismiss
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Quick Start: quickstart.md
+  - User Guide:
+      - user_guide/index.md
+      - Concepts: user_guide/concepts.md
+      - Sequential Testing: user_guide/sequential.md
+      - Batch Testing: user_guide/batch.md
+      - Data Generation: user_guide/data_generation.md
+      - Performance Evaluation: user_guide/evaluation.md
+  - Examples:
+      - examples/index.md
+      - Basic Usage: examples/basic_usage.md
+      - Advanced Scenarios: examples/advanced.md
+      - Method Comparisons: examples/comparison.md
+  - API Reference:
+      - api/index.md
+      - Investing Methods:
+          - api/investing/index.md
+          - Alpha Investing: api/investing/alpha.md
+          - ADDIS: api/investing/addis.md
+          - SAFFRON: api/investing/saffron.md
+          - LORD Family: api/investing/lord.md
+          - LOND: api/investing/lond.md
+      - Spending Methods:
+          - api/spending/index.md
+          - Alpha Spending: api/spending/alpha_spending.md
+          - Online Fallback: api/spending/online_fallback.md
+      - Batch Methods:
+          - api/batching/index.md
+          - Batch BH: api/batching/bh.md
+          - Batch Storey-BH: api/batching/storey_bh.md
+          - Batch PRDS: api/batching/prds.md
+          - Batch BY: api/batching/by.md
+      - Utilities:
+          - api/utils/index.md
+          - Data Generation: api/utils/generation.md
+          - Evaluation: api/utils/evaluation.md
+          - Formatting: api/utils/format.md
+          - Validation: api/utils/validity.md
+  - Theory:
+      - theory/index.md
+      - FDR Control: theory/fdr_control.md
+      - Algorithms: theory/algorithms.md
+      - Statistical Guarantees: theory/guarantees.md
+  - Contributing: contributing.md
+
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [..] # Add the parent directory to Python path
+          options:
+            docstring_style: numpy
+            show_root_heading: true
+            show_root_toc_entry: false
+            show_object_full_path: false
+            show_category_heading: true
+            show_bases: true
+            show_source: true
+            members_order: source
+            group_by_category: true
+            show_submodules: false
+            filters:
+              - "!^_"
+              - "!^__"
+  - social:
+      cards_layout_options:
+        background_color: "#1e293b"
+        color: "#f1f5f9"
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: datetime
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: OliverHennhoefer
+      repo: online-fdr
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/mkdocs.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra:
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/OliverHennhoefer/online-fdr
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/online-fdr/
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

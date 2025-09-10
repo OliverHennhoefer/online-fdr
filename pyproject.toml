@@ -59,17 +59,18 @@ data = [
     "scipy>=1.9.0"
 ]
 docs = [
-    "sphinx>=5.0",
-    "sphinx-rtd-theme>=1.0",
-    "myst-parser>=0.18",
+    "mkdocs-material>=9.0",
+    "mkdocstrings[python]>=0.20",
+    "mkdocs-git-revision-date-localized-plugin>=1.2",
+    "mkdocs-minify-plugin>=0.6",
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/online-fdr"
-Documentation = "https://online-fdr.readthedocs.io"
-Repository = "https://github.com/yourusername/online-fdr.git"
-Issues = "https://github.com/yourusername/online-fdr/issues"
-Changelog = "https://github.com/yourusername/online-fdr/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/OliverHennhoefer/online-fdr"
+Documentation = "https://oliverhennhoefer.github.io/online-fdr"
+Repository = "https://github.com/OliverHennhoefer/online-fdr.git"
+Issues = "https://github.com/OliverHennhoefer/online-fdr/issues"
+Changelog = "https://github.com/OliverHennhoefer/online-fdr/blob/main/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "online_fdr/__init__.py"
