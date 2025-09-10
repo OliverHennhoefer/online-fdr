@@ -64,38 +64,27 @@ nav:
   - Examples:
       - examples/index.md
       - Basic Usage: examples/basic_usage.md
-      - Advanced Scenarios: examples/advanced.md
-      - Method Comparisons: examples/comparison.md
   - API Reference:
       - api/index.md
       - Investing Methods:
           - api/investing/index.md
-          - Alpha Investing: api/investing/alpha.md
           - ADDIS: api/investing/addis.md
           - SAFFRON: api/investing/saffron.md
-          - LORD Family: api/investing/lord.md
+          - LORD: api/investing/lord.md
           - LOND: api/investing/lond.md
+          - GAI: api/investing/gai.md
       - Spending Methods:
           - api/spending/index.md
           - Alpha Spending: api/spending/alpha_spending.md
           - Online Fallback: api/spending/online_fallback.md
-      - Batch Methods:
+      - Batching Methods:
           - api/batching/index.md
-          - Batch BH: api/batching/bh.md
-          - Batch Storey-BH: api/batching/storey_bh.md
-          - Batch PRDS: api/batching/prds.md
-          - Batch BY: api/batching/by.md
       - Utilities:
           - api/utils/index.md
-          - Data Generation: api/utils/generation.md
-          - Evaluation: api/utils/evaluation.md
-          - Formatting: api/utils/format.md
-          - Validation: api/utils/validity.md
   - Theory:
       - theory/index.md
       - FDR Control: theory/fdr_control.md
       - Algorithms: theory/algorithms.md
-      - Statistical Guarantees: theory/guarantees.md
   - Contributing: contributing.md
 
 plugins:
@@ -106,7 +95,7 @@ plugins:
         python:
           paths: [.] # Add the project root to Python path
           options:
-            docstring_style: numpy
+            docstring_style: google
             show_root_heading: true
             show_root_toc_entry: false
             show_object_full_path: false

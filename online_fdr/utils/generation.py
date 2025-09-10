@@ -7,10 +7,9 @@ different alternative distributions.
 """
 
 import abc
-import math
-import random
+from typing import Optional, Tuple
+
 import numpy as np
-from typing import Tuple, List, Optional, Union
 from scipy import stats
 
 

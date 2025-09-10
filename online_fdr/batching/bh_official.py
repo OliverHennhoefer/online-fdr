@@ -16,10 +16,11 @@ same core algorithm, but this version provides the exact behavior of the authors
 """
 
 import numpy as np
+
 from online_fdr.abstract.abstract_batching_test import AbstractBatchingTest
 from online_fdr.utils.sequence import (
-    BatchBHPolynomialGammaSequence,
     BatchBHHalfGammaSequence,
+    BatchBHPolynomialGammaSequence,
 )
 from online_fdr.utils.static import bh
 

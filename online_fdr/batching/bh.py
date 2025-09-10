@@ -10,20 +10,72 @@ from online_fdr.utils.static import bh
 
 
 class BatchBH(AbstractBatchingTest):
-    """BatchBH algorithm for online batch FDR control.
+    """Benjamini-Hochberg procedure for online batch FDR control.
 
-    This implements Algorithm 1 from "The Power of Batching in Multiple
-    Hypothesis Testing" by Zrnic et al. (2020).
+    BatchBH extends the classical Benjamini-Hochberg (BH) procedure to the online
+    batching setting, where hypotheses arrive in batches over time and must be
+    tested sequentially while maintaining overall FDR control across all batches.
 
-    The algorithm tests batches of hypotheses sequentially while maintaining
-    FDR control at level alpha across all batches.
+    This implements Algorithm 1 from "The Power of Batching in Multiple Hypothesis
+    Testing" by Zrnic, Jiang, Ramdas, and Jordan (2020). The key innovation is
+    the calculation of adaptive alpha levels that account for the interdependence
+    between batches while preserving the BH optimality within each batch.
+
+    The algorithm maintains FDR control by:
+    1. Allocating alpha budget using a gamma sequence
+    2. Adjusting for dependencies between batches via β_t correction
+    3. Computing R^+ (maximum possible rejections) for power optimization
+    4. Applying standard BH procedure within each batch
+
+    Args:
+        alpha: Target FDR level (e.g., 0.05 for 5% FDR). Must be in (0, 1).
+
+    Attributes:
+        alpha0: Original target FDR level.
+        num_test: Number of batches tested so far.
+        seq: Gamma sequence for alpha allocation across batches.
+        r_s: Number of rejections in each batch.
+        r_s_plus: Maximum possible rejections for each batch (R^+ values).
+        alpha_s: Alpha level used for each batch.
+
+    Examples:
+        >>> # Basic batch testing
+        >>> bh = BatchBH(alpha=0.05)
+        >>> batch1 = [0.001, 0.02, 0.15, 0.8]
+        >>> decisions1 = bh.test_batch(batch1)
+        >>> print(f"Batch 1 discoveries: {sum(decisions1)}")
+
+        >>> # Sequential batches with adaptive alpha
+        >>> batch2 = [0.03, 0.9, 0.006, 0.4]
+        >>> decisions2 = bh.test_batch(batch2)  # Alpha adjusted based on batch1
+        >>> print(f"Batch 2 discoveries: {sum(decisions2)}")
+
+        >>> # Multiple batches
+        >>> batches = [[0.001, 0.8], [0.02, 0.3], [0.005, 0.9]]
+        >>> all_decisions = []
+        >>> for i, batch in enumerate(batches):
+        ...     decisions = bh.test_batch(batch)
+        ...     all_decisions.append(decisions)
+        ...     print(f"Batch {i+1}: {sum(decisions)} discoveries")
+
+    References:
+        Zrnic, T., D. Jiang, A. Ramdas, and M. I. Jordan (2020). "The Power of
+        Batching in Multiple Hypothesis Testing." Proceedings of the 37th
+        International Conference on Machine Learning (ICML), PMLR, 119:11504-11515.
+
+        Benjamini, Y., and Y. Hochberg (1995). "Controlling the False Discovery Rate:
+        A Practical and Powerful Approach to Multiple Testing." Journal of the Royal
+        Statistical Society: Series B, 57(1):289-300.
     """
 
     def __init__(self, alpha: float):
         """Initialize BatchBH with FDR control level alpha.
 
         Args:
-            alpha: Target FDR control level (between 0 and 1)
+            alpha: Target FDR control level. Must be in (0, 1).
+
+        Raises:
+            ValueError: If alpha is not in (0, 1).
         """
         super().__init__(alpha)
         self.alpha0 = alpha

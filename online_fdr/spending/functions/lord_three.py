@@ -1,4 +1,4 @@
-from math import log, exp, sqrt
+from math import exp, log, sqrt
 
 from online_fdr.abstract.abstract_spend_func import AbstractSpendFunc
 

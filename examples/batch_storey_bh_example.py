@@ -1,7 +1,6 @@
 from online_fdr.batching.storey_bh import BatchStoreyBH
-
+from online_fdr.utils.evaluation import calculate_power, calculate_sfdr
 from online_fdr.utils.format import format_result
-from online_fdr.utils.evaluation import calculate_sfdr, calculate_power
 from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
 
 N = 250

@@ -4,7 +4,7 @@ from online_fdr.batching.bh import BatchBH
 from online_fdr.batching.bh_official import BatchBHOfficial
 from online_fdr.batching.prds import BatchPRDS
 from online_fdr.batching.storey_bh import BatchStoreyBH
-from online_fdr.utils.testing import get_test_data, generate_test_data
+from online_fdr.utils.testing import generate_test_data, get_test_data
 
 
 class TestSuiteBatching(unittest.TestCase):

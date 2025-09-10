@@ -1,7 +1,7 @@
 import random
 import unittest
 
-from online_fdr.utils.static import bh, storey_bh, by
+from online_fdr.utils.static import bh, by, storey_bh
 
 
 class TestSuiteAlphaSpending(unittest.TestCase):

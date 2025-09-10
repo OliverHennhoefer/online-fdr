@@ -1,9 +1,9 @@
 import unittest
 
 from online_fdr.investing.lord.dependent import LordDependent
+from online_fdr.investing.lord.discard import LordDiscard
 from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
 from online_fdr.investing.lord.plus_plus import LordPlusPlus
-from online_fdr.investing.lord.discard import LordDiscard
 from online_fdr.investing.lord.three import LordThree
 from online_fdr.utils.testing import get_test_data
 
