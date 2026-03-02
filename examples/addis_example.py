@@ -24,4 +24,4 @@ for i in range(0, N):
     format_result(i, result, p_value, addis.alpha)
 
 print(f"Empirical sFDR: {calculate_sfdr(tp=true_positive, fp=false_positive)}")
-print(f"Empirical Power: {calculate_power(tp=true_positive, fn=false_positive)}")
+print(f"Empirical Power: {calculate_power(tp=true_positive, fn=false_negatives)}")

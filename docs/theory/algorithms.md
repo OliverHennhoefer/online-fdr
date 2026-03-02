@@ -226,9 +226,9 @@ $$\text{Power}_{\text{ADDIS}} \geq \text{Power}_{\text{SAFFRON}} \geq \text{Powe
 
 ### Parameter Sensitivity
 
-**Most sensitive**: ADDIS (τ, λ, W₀ all matter)
-**Moderately sensitive**: SAFFRON (λ, W₀)  
-**Least sensitive**: LOND (only α matters)
+**Most sensitive**: ADDIS (, , W all matter)
+**Moderately sensitive**: SAFFRON (, W)  
+**Least sensitive**: LOND (only  matters)
 
 ## Advanced Theoretical Topics
 
@@ -309,16 +309,16 @@ $$\text{Power}_{\text{ADDIS}} \geq \text{Power}_{\text{SAFFRON}} \geq \text{Powe
 
 4. **Tian, J., and A. Ramdas** (2019). "ADDIS: an adaptive discarding algorithm for online FDR control with conservative nulls." *Advances in Neural Information Processing Systems (NeurIPS)*, 32.
 
-5. **Foster, D. P., and R. A. Stine** (2008). "α-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
+5. **Foster, D. P., and R. A. Stine** (2008). "-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
 
 ### Theoretical Analysis
 
-6. **Aharoni, E., and D. Rosset** (2014). "Generalized α-investing: definitions, optimality results and application to public databases." *Journal of the Royal Statistical Society: Series B*, 76(4):771-794.
+6. **Aharoni, E., and D. Rosset** (2014). "Generalized -investing: definitions, optimality results and application to public databases." *Journal of the Royal Statistical Society: Series B*, 76(4):771-794.
 
 7. **Ramdas, A., R. F. Barber, M. J. Wainwright, and M. I. Jordan** (2019). "A unified treatment of multiple testing with prior knowledge using the p-filter." *Annals of Statistics*, 47(5):2790-2821.
 
 ## See Also
 
 - **[Mathematical Foundations](fdr_control.md)**: Basic FDR theory and definitions
-- **[Theoretical Guarantees](guarantees.md)**: Detailed analysis of FDR control properties
+- **[Guarantee Matrix](guarantee_matrix.md)**: Method-by-method assumptions and guarantee status
 - **[API Reference](../api/investing/index.md)**: Implementation details for each algorithm

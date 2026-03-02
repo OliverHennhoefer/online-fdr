@@ -1,4 +1,4 @@
-# Performance Evaluation
+﻿# Performance Evaluation
 
 Evaluating FDR control methods requires careful measurement of statistical performance, computational efficiency, and robustness. This guide covers the evaluation utilities and best practices for assessing method performance.
 
@@ -27,7 +27,7 @@ print(f"Discoveries: {total_discoveries}")
 print(f"False discoveries: {false_positives}")
 print(f"Empirical FDR: {empirical_fdr:.3f}")
 print(f"Target FDR: 0.05")
-print(f"FDR controlled: {'✓' if empirical_fdr <= 0.05 else '✗'}")
+print(f"FDR controlled: {'yes' if empirical_fdr <= 0.05 else 'no'}")
 ```
 
 ### Statistical Power
@@ -111,7 +111,7 @@ for metric, value in performance.items():
     if isinstance(value, float):
         print(f"{metric:>20}: {value:.3f}")
     elif isinstance(value, bool):
-        print(f"{metric:>20}: {'✓' if value else '✗'}")
+        print(f"{metric:>20}: {'yes' if value else 'no'}")
     else:
         print(f"{metric:>20}: {value}")
 ```
@@ -199,7 +199,7 @@ for i in range(50):
     current_fdr, current_power = tracker.update(decision, is_alternative)
     
     if decision:
-        print(f"Test {i+1}: Discovery! FDR={current_fdr:.3f}, Power={current_power:.3f}")
+        print(f"Test {i+1}: Discovery: FDR={current_fdr:.3f}, Power={current_power:.3f}")
 
 print(f"\nFinal FDR: {tracker.fdr_history[-1]:.3f}")
 print(f"Final Power: {tracker.power_history[-1]:.3f}")
@@ -310,8 +310,8 @@ def compare_methods_simulation(methods, simulation_configs, n_reps=100):
             'fdr_control_rate': fdr_control_rate
         }
         
-        print(f"{method_name:>12}: FDR={mean_fdr:.3f}±{se_fdr:.3f}, "
-              f"Power={mean_power:.3f}±{se_power:.3f}, "
+        print(f"{method_name:>12}: FDR={mean_fdr:.3f} +/- {se_fdr:.3f}, "
+              f"Power={mean_power:.3f} +/- {se_power:.3f}, "
               f"Discoveries={mean_discoveries:.1f}, "
               f"Control={fdr_control_rate:.0%}")
     
@@ -384,7 +384,7 @@ def benchmark_method_performance(method, p_values, n_runs=10):
     # Throughput
     throughput = len(p_values) / mean_time
     
-    print(f"  Mean time: {mean_time:.4f} ± {std_time:.4f} seconds")
+    print(f"  Mean time: {mean_time:.4f} +/- {std_time:.4f} seconds")
     print(f"  Throughput: {throughput:.0f} tests/second")
     print(f"  Memory usage: {memory_usage/1024:.1f} KB")
     print(f"  Time per test: {mean_time/len(p_values)*1000:.3f} ms")
@@ -512,7 +512,7 @@ def test_dependency_robustness(method, dependency_scenarios):
     results = {}
     
     for scenario_name, correlation in dependency_scenarios.items():
-        print(f"\nTesting {scenario_name} (ρ={correlation}):")
+        print(f"\nTesting {scenario_name} (rho={correlation}):")
         
         # Generate correlated test statistics
         if correlation == 0:
@@ -552,7 +552,7 @@ def test_dependency_robustness(method, dependency_scenarios):
         
         print(f"  FDR: {performance['empirical_fdr']:.3f}")
         print(f"  Power: {performance['power']:.3f}")
-        print(f"  FDR controlled: {'✓' if performance['fdr_controlled'] else '✗'}")
+        print(f"  FDR controlled: {'yes' if performance['fdr_controlled'] else 'no'}")
     
     return results
 
@@ -573,21 +573,21 @@ dependency_results = test_dependency_robustness(bh, dependency_scenarios)
 ### Comprehensive Evaluation Checklist
 
 !!! tip "Statistical Performance"
-    - ✅ FDR control under null (empirical FDR ≤ α)
-    - ✅ Power comparison across effect sizes
-    - ✅ Robustness to parameter misspecification
-    - ✅ Performance under different dependency structures
+    - FDR control under null (empirical FDR <= alpha)
+    - Power comparison across effect sizes
+    - Robustness to parameter misspecification
+    - Performance under different dependency structures
 
 !!! tip "Computational Performance"  
-    - ✅ Scalability to large numbers of tests
-    - ✅ Memory efficiency
-    - ✅ Real-time processing capability (for online methods)
+    - Scalability to large numbers of tests
+    - Memory efficiency
+    - Real-time processing capability (for online methods)
 
 !!! tip "Practical Considerations"
-    - ✅ Parameter sensitivity analysis
-    - ✅ Robustness to model misspecification
-    - ✅ Performance with realistic effect sizes
-    - ✅ Behavior in edge cases (no discoveries, all discoveries)
+    - Parameter sensitivity analysis
+    - Robustness to model misspecification
+    - Performance with realistic effect sizes
+    - Behavior in edge cases (no discoveries, all discoveries)
 
 ### Reporting Guidelines
 
@@ -601,14 +601,14 @@ Method Evaluation Report: {method_name}
 
 Simulation Configuration:
 - Number of tests: {simulation_config.get('n_tests', 'Unknown')}
-- Null proportion (π₀): {simulation_config.get('pi0', 'Unknown')}
+- Null proportion (pi0): {simulation_config.get('pi0', 'Unknown')}
 - Effect size: {simulation_config.get('effect_size', 'Unknown')}
-- Target FDR (α): {simulation_config.get('alpha', 'Unknown')}
+- Target FDR (alpha): {simulation_config.get('alpha', 'Unknown')}
 - Replications: {simulation_config.get('n_reps', 'Unknown')}
 
 Performance Results:
-- Empirical FDR: {results.get('mean_fdr', 0):.3f} ± {results.get('se_fdr', 0):.3f}
-- Statistical Power: {results.get('mean_power', 0):.3f} ± {results.get('se_power', 0):.3f}
+- Empirical FDR: {results.get('mean_fdr', 0):.3f} +/- {results.get('se_fdr', 0):.3f}
+- Statistical Power: {results.get('mean_power', 0):.3f} +/- {results.get('se_power', 0):.3f}
 - Average Discoveries: {results.get('mean_discoveries', 0):.1f}
 - FDR Control Rate: {results.get('fdr_control_rate', 0):.1%}
 
@@ -618,23 +618,23 @@ Interpretation:
     # Add interpretation
     fdr_controlled = results.get('mean_fdr', 1) <= simulation_config.get('alpha', 0.05) * 1.1
     if fdr_controlled:
-        report += "✓ FDR is successfully controlled\n"
+        report += "FDR is successfully controlled\n"
     else:
-        report += "✗ FDR control violation detected\n"
+        report += "FDR control violation detected\n"
     
     power = results.get('mean_power', 0)
     if power >= 0.8:
-        report += "✓ High statistical power achieved\n"
+        report += "High statistical power achieved\n"
     elif power >= 0.5:
-        report += "~ Moderate statistical power\n"
+        report += "Moderate statistical power\n"
     else:
-        report += "✗ Low statistical power\n"
+        report += "Low statistical power\n"
     
     control_rate = results.get('fdr_control_rate', 0)
     if control_rate >= 0.95:
-        report += "✓ Consistent FDR control across replications\n"
+        report += "Consistent FDR control across replications\n"
     else:
-        report += f"⚠ FDR control inconsistent ({control_rate:.0%} of replications)\n"
+        report += f"FDR control inconsistent ({control_rate:.0%} of replications)\n"
     
     return report
 
@@ -673,4 +673,4 @@ print(generate_evaluation_report(sample_results, "ADDIS", sample_config))
 
 - **Apply evaluation techniques in [examples](../examples/comparison.md)**
 - **Learn about [data generation](data_generation.md)** for simulation studies  
-- **Explore [theory](../theory/guarantees.md)** for theoretical foundations of guarantees
+- **Explore [theory](../theory/guarantee_matrix.md)** for method-specific guarantee assumptions

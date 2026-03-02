@@ -1,10 +1,10 @@
-# Examples
+﻿# Examples
 
 This section provides practical, real-world examples of using **online-fdr** for various applications. Each example includes complete code, explanations, and interpretations to help you apply online FDR control in your domain.
 
 ## Example Categories
 
-### 🚀 [Basic Usage](basic_usage.md)
+### [Basic Usage](basic_usage.md)
 **Getting started with online FDR control**
 
 - Simple sequential testing workflow
@@ -12,7 +12,7 @@ This section provides practical, real-world examples of using **online-fdr** for
 - Parameter tuning and sensitivity analysis
 - Performance evaluation and metrics
 
-### 🏭 [Advanced Scenarios](advanced.md)
+### [Advanced Scenarios](advanced.md)
 **Real-world applications and complex use cases**
 
 - A/B testing in tech companies
@@ -21,7 +21,7 @@ This section provides practical, real-world examples of using **online-fdr** for
 - Financial anomaly detection
 - Web analytics and conversion optimization
 
-### 📊 [Method Comparisons](comparison.md)
+### [Method Comparisons](comparison.md)
 **Systematic comparison of different approaches**
 
 - Online vs batch method performance
@@ -47,7 +47,7 @@ significant_results = []
 for i, p_val in enumerate(p_values):
     if addis.test_one(p_val):
         significant_results.append((i, p_val))
-        print(f"✓ Significant: Test {i+1} with p-value {p_val:.4f}")
+        print(f" Significant: Test {i+1} with p-value {p_val:.4f}")
 
 print(f"\nFound {len(significant_results)} significant results out of {len(p_values)} tests")
 ```
@@ -81,7 +81,7 @@ def ab_test_with_fdr_control(variants, control_data, alpha=0.05):
         }
         
         if is_significant:
-            print(f"🎯 {variant_name}: Significant effect detected!")
+            print(f" {variant_name}: Significant effect detected!")
             print(f"   P-value: {p_value:.4f}, Effect: {results[variant_name]['effect_size']:.3f}")
     
     return results
@@ -202,7 +202,7 @@ def interim_analysis(endpoints, alpha=0.05):
         }
         
         if is_significant:
-            print(f"🏥 {endpoint_name}: Significant treatment effect!")
+            print(f" {endpoint_name}: Significant treatment effect!")
             print(f"   Treatment rate: {treatment_rate:.3f}")
             print(f"   Control rate: {control_rate:.3f}")
             print(f"   Relative risk: {relative_risk:.3f}")
@@ -420,7 +420,7 @@ def plot_fdr_control(p_values, true_labels, method, alpha=0.05):
     plt.subplot(1, 2, 1)
     plt.plot(cumulative_fdr, label='Empirical FDR', linewidth=2)
     plt.axhline(y=alpha, color='red', linestyle='--', 
-               label=f'Target FDR (α={alpha})')
+               label=f'Target FDR (={alpha})')
     plt.xlabel('Test Number')
     plt.ylabel('Cumulative FDR')
     plt.title('FDR Control Over Time')

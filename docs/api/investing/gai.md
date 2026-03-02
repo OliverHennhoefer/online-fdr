@@ -1,9 +1,9 @@
-# GAI: Generalized Alpha-Investing
+﻿# GAI: Generalized Alpha-Investing
 
 **GAI** (Generalized Alpha-Investing) extends the original alpha-investing procedure of Foster and Stine (2008) for sequential control of expected false discoveries, using SAFFRON-style update rules for improved power.
 
 !!! quote "Original Papers"
-    **Foster, D., and R. Stine.** "α-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society (Series B)*, 70(2):429-444, 2008.
+    **Foster, D., and R. Stine.** "Alpha-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society (Series B)*, 70(2):429-444, 2008.
     
     **Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan.** "SAFFRON: an adaptive algorithm for online control of the FDR." *Proceedings of the 35th International Conference on Machine Learning (ICML)*, 2018.
 
@@ -15,7 +15,7 @@ Alpha-investing introduced a paradigm shift in sequential hypothesis testing: in
 
 ### Key Innovation
 
-The fundamental insight is that when you reject a null hypothesis, you gain evidence that not all hypotheses are null, justifying spending more α-wealth on future tests. This creates a **virtuous cycle** where discoveries beget more discoveries.
+The fundamental insight is that when you reject a null hypothesis, you gain evidence that not all hypotheses are null, justifying spending more alpha-wealth on future tests. This creates a **virtuous cycle** where discoveries beget more discoveries.
 
 ### GAI Enhancement
 
@@ -46,9 +46,9 @@ for i, p_value in enumerate(p_values):
     
     if decision:
         discoveries.append(i + 1)
-        print(f"✓ Test {i+1}: p={p_value:.3f} → DISCOVERY!")
+        print(f" Test {i+1}: p={p_value:.3f}  discovery")
     else:
-        print(f"  Test {i+1}: p={p_value:.3f} → no rejection")
+        print(f"  Test {i+1}: p={p_value:.3f}  no rejection")
 
 print(f"\nTotal discoveries: {len(discoveries)}")
 print(f"Discovery indices: {discoveries}")
@@ -83,17 +83,17 @@ def demonstrate_gai_mechanism():
             gai.candidates.append(p_val <= gai.alpha0)  # Assuming p_val as candidate check
             gai.reject_idx.append(gai.num_test)
             
-        print(f"Test {i}: p={p_val:.3f}, threshold={threshold:.6f} → {'REJECT' if decision else 'ACCEPT'}")
+        print(f"Test {i}: p={p_val:.3f}, threshold={threshold:.6f}  {'REJECT' if decision else 'ACCEPT'}")
     
     # Fixed-level testing for comparison
-    print(f"\nFixed-Level (α=0.05):")
+    print(f"\nFixed-Level (alpha=0.05):")
     fixed_discoveries = 0
     
     for i, p_val in enumerate(test_sequence, 1):
         decision = p_val <= 0.05
         if decision:
             fixed_discoveries += 1
-        print(f"Test {i}: p={p_val:.3f}, threshold=0.050000 → {'REJECT' if decision else 'ACCEPT'}")
+        print(f"Test {i}: p={p_val:.3f}, threshold=0.050000  {'REJECT' if decision else 'ACCEPT'}")
     
     print(f"\nComparison:")
     print(f"GAI discoveries: {gai_discoveries}")
@@ -131,9 +131,9 @@ def gai_with_prior_knowledge():
         decision = gai.test_one(p_val)
         if decision:
             early_discoveries += 1
-            print(f"✓ Test {i}: p={p_val:.3f} → DISCOVERY")
+            print(f" Test {i}: p={p_val:.3f}  discovery")
         else:
-            print(f"  Test {i}: p={p_val:.3f} → no rejection (conservative)")
+            print(f"  Test {i}: p={p_val:.3f}  no rejection (conservative)")
     
     print(f"\nTransition to promising region...")
     print("Later phase (expected more alternatives):")
@@ -143,9 +143,9 @@ def gai_with_prior_knowledge():
         decision = gai.test_one(p_val)
         if decision:
             later_discoveries += 1
-            print(f"✓ Test {i}: p={p_val:.3f} → DISCOVERY")
+            print(f" Test {i}: p={p_val:.3f}  discovery")
         else:
-            print(f"  Test {i}: p={p_val:.3f} → no rejection")
+            print(f"  Test {i}: p={p_val:.3f}  no rejection")
     
     print(f"\nResults:")
     print(f"Early discoveries: {early_discoveries}")
@@ -234,14 +234,14 @@ def simulate_ab_testing_with_gai():
         if decision:
             if is_alternative:
                 true_positives += 1
-                result_type = "TRUE effect ✓"
+                result_type = "true effect"
             else:
                 false_positives += 1
-                result_type = "FALSE alarm ✗"
+                result_type = "false alarm"
                 
             # Show significant results
             effect_type = "REAL" if is_alternative else "NULL"
-            print(f"Test {i+1:3d}: p={p_value:.4f} ({effect_type}) → SIGNIFICANT ({result_type})")
+            print(f"Test {i+1:3d}: p={p_value:.4f} ({effect_type})  significant ({result_type})")
     
     # Calculate business metrics
     total_discoveries = true_positives + false_positives
@@ -255,14 +255,14 @@ def simulate_ab_testing_with_gai():
     print(f"False alarms: {false_positives}")
     print(f"False Discovery Rate: {empirical_fdr:.3f}")
     print(f"Target FDR: {gai.alpha0}")
-    print(f"FDR controlled: {'✓' if empirical_fdr <= gai.alpha0 else '✗'}")
+    print(f"FDR controlled: {'yes' if empirical_fdr <= gai.alpha0 else 'no'}")
     
     # Business interpretation
     print(f"\nBusiness Impact:")
     if true_positives > 0:
-        print(f"✓ Found {true_positives} real improvements to implement")
+        print(f"Found {true_positives} real improvements to implement")
     if false_positives > 0:
-        print(f"⚠ {false_positives} false alarms avoided implementing bad changes")
+        print(f"{false_positives} false alarms avoided implementing bad changes")
     
     efficiency = true_positives / max(total_discoveries, 1)
     print(f"Discovery efficiency: {efficiency:.1%}")
@@ -290,7 +290,7 @@ The wealth allocation adapts based on candidate history and discovery patterns.
 
 ### Theoretical Guarantees
 
-**Theorem (Alpha-Investing FDR Control)**: Under independence, GAI controls the False Discovery Rate (FDR) at level α.
+**Theorem (Alpha-Investing FDR Control)**: Under independence, GAI controls the False Discovery Rate (FDR) at level alpha.
 
 The proof relies on the **martingale property** of the wealth process under the null hypothesis.
 
@@ -319,9 +319,9 @@ The proof relies on the **martingale property** of the wealth process under the 
 ### Parameter Selection
 
 !!! tip "Wealth Selection Guidelines"
-    - **Conservative**: W₀ = α/4 (preserves wealth for later)
-    - **Moderate**: W₀ = α/2 (balanced approach)
-    - **Aggressive**: W₀ = α (spends wealth early)
+    - **Conservative**: W = alpha/4 (preserves wealth for later)
+    - **Moderate**: W = alpha/2 (balanced approach)
+    - **Aggressive**: W = 3*alpha/4 (spends wealth early)
 
 !!! tip "Domain Knowledge Integration"
     - Start conservatively if expecting null-heavy early tests
@@ -337,7 +337,7 @@ The proof relies on the **martingale property** of the wealth process under the 
     - **Computational constraints**: Simpler than adaptive methods
 
 !!! warning "Consider Alternatives"
-    - **Unknown π₀**: SAFFRON adapts better to null proportion
+    - **Unknown pi0**: SAFFRON adapts better to null proportion
     - **Conservative nulls**: ADDIS handles better
     - **Batch setting**: Standard BH procedures are optimal
 
@@ -350,11 +350,11 @@ The proof relies on the **martingale property** of the wealth process under the 
 
 ## References
 
-1. **Foster, D. P., and R. A. Stine** (2008). "α-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
+1. **Foster, D. P., and R. A. Stine** (2008). "Alpha-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
 
 2. **Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan** (2018). "SAFFRON: an adaptive algorithm for online control of the FDR." *Proceedings of the 35th International Conference on Machine Learning (ICML)*, PMLR, 80:4286-4294.
 
-3. **Aharoni, E., and D. Rosset** (2014). "Generalized α-investing: definitions, optimality results and application to public databases." *Journal of the Royal Statistical Society: Series B*, 76(4):771-794.
+3. **Aharoni, E., and D. Rosset** (2014). "Generalized alpha-investing: definitions, optimality results and application to public databases." *Journal of the Royal Statistical Society: Series B*, 76(4):771-794.
 
 4. **Li, L., and J. G. Canner** (2007). "Modified alpha-investing: a procedure for multiple testing with prior knowledge." *Computational Statistics & Data Analysis*, 51(7):3598-3607.
 

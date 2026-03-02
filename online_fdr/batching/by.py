@@ -1,4 +1,5 @@
 from online_fdr.abstract.abstract_batching_test import AbstractBatchingTest
+from online_fdr.utils import validity
 from online_fdr.utils.sequence import (
     DefaultSaffronGammaSequence,
 )
@@ -88,11 +89,11 @@ class BatchBY(AbstractBatchingTest):
         self.num_test: int = 1
 
         self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
-        self.r_s_plus: [float] = []
-        self.r_s: [bool] = []
+        self.r_s_plus: list[int] = []
+        self.r_s: list[int] = []
         self.r_total: int = 0
-        self.r_sums: [float] = [0]
-        self.alpha_s: [float] = []
+        self.r_sums: list[int] = [0]
+        self.alpha_s: list[float] = []
 
     def test_batch(self, p_vals: list[float]) -> list[bool]:
         """Test a batch of p-values using the Benjamini-Yekutieli procedure.
@@ -123,7 +124,11 @@ class BatchBY(AbstractBatchingTest):
             The BY procedure is more conservative than BH but maintains FDR
             control even when p-values are positively dependent.
         """
-        n_batch = len(p_vals)
+        p_vals_local = list(p_vals)
+        n_batch = len(p_vals_local)
+        if n_batch == 0:
+            return []
+        validity.check_p_vals_batch(p_vals_local)
         if self.num_test == 1:
             self.alpha = (
                 self.alpha0  # fmt: skip
@@ -144,7 +149,7 @@ class BatchBY(AbstractBatchingTest):
             )
             self.alpha *= (n_batch + self.r_total) / n_batch
 
-        num_reject, threshold = by(p_vals, self.alpha)
+        num_reject, threshold = by(p_vals_local, self.alpha)
 
         self.r_sums.append(self.r_total)
         self.r_sums[1:self.num_test] = \
@@ -153,11 +158,12 @@ class BatchBY(AbstractBatchingTest):
         self.alpha_s.append(self.alpha)
 
         r_plus = 0
-        for i, p_val in enumerate(p_vals):
-            p_vals[i] = 0
-            r_plus = max(r_plus, by(p_vals, self.alpha)[0])
-            p_vals[i] = p_val
+        adjusted = list(p_vals_local)
+        for i, p_val in enumerate(adjusted):
+            adjusted[i] = 0.0
+            r_plus = max(r_plus, by(adjusted, self.alpha)[0])
+            adjusted[i] = p_val
         self.r_s_plus.append(r_plus)
 
         self.num_test += 1
-        return [p_val <= threshold for p_val in p_vals]
+        return [p_val <= threshold for p_val in p_vals_local]

@@ -1,33 +1,29 @@
-import random
-import unittest
+﻿import random
 
 from online_fdr.utils.static import bh, by, storey_bh
 
-
-class TestSuiteAlphaSpending(unittest.TestCase):
-    random.seed(1)
-    p_values = [random.uniform(0, 1) for _ in range(20)] + [
-        random.uniform(0, 0.05) for _ in range(3)
-    ]
-
-    def test_bh(self):
-        rejections, threshold = bh(self.p_values, alpha=0.05)
-
-        self.assertEqual(rejections, 2)
-        self.assertEqual(threshold, 0.004347826086956522)
-
-    def test_storey_bh(self):
-        rejections, threshold = storey_bh(self.p_values, alpha=0.05, lambda_=0.5)
-
-        self.assertEqual(rejections, 2)
-        self.assertEqual(threshold, 0.0021060533511106927)
-
-    def test_by(self):
-        rejections, threshold = by(self.p_values, alpha=0.095)
-
-        self.assertEqual(rejections, 2)
-        self.assertEqual(threshold, 0.0022121651565474923)
+_rng = random.Random(1)
+_P_VALUES = [_rng.uniform(0, 1) for _ in range(20)] + [
+    _rng.uniform(0, 0.05) for _ in range(3)
+]
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_bh() -> None:
+    rejections, threshold = bh(_P_VALUES, alpha=0.05)
+
+    assert rejections == 2
+    assert threshold == 0.004347826086956522
+
+
+def test_storey_bh() -> None:
+    rejections, threshold = storey_bh(_P_VALUES, alpha=0.05, lambda_=0.5)
+
+    assert rejections == 2
+    assert threshold == 0.0021060533511106927
+
+
+def test_by() -> None:
+    rejections, threshold = by(_P_VALUES, alpha=0.095)
+
+    assert rejections == 2
+    assert threshold == 0.0022121651565474923

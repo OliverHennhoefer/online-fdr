@@ -1,4 +1,4 @@
-# User Guide
+﻿# User Guide
 
 Welcome to the comprehensive **online-fdr** user guide. This section provides in-depth explanations of concepts, methods, and best practices for online false discovery rate control.
 
@@ -10,7 +10,7 @@ Online FDR control is essential when hypotheses arrive sequentially and decision
 
 This user guide is organized into the following sections:
 
-### 📊 [Concepts](concepts.md)
+### [Concepts](concepts.md)
 **Fundamental concepts and terminology**
 
 - False Discovery Rate (FDR) vs Family-Wise Error Rate (FWER)
@@ -18,7 +18,7 @@ This user guide is organized into the following sections:
 - Alpha spending and alpha investing principles
 - Dependency structures and their implications
 
-### ⚡ [Sequential Testing](sequential.md)
+### [Sequential Testing](sequential.md)
 **Methods that test one hypothesis at a time**
 
 - Alpha Investing Family (GAI, SAFFRON, ADDIS)
@@ -26,26 +26,33 @@ This user guide is organized into the following sections:
 - LOND methods for different dependency structures
 - Alpha spending approaches
 
-### 📦 [Batch Testing](batch.md)
+### [Batch Testing](batch.md)
 **Methods that test multiple hypotheses simultaneously**
 
 - Benjamini-Hochberg and adaptive variants
 - Methods for dependent test statistics
 - When to choose batch vs online approaches
 
-### 🎲 [Data Generation](data_generation.md)
+### [Data Generation](data_generation.md)
 **Simulation utilities for testing and validation**
 
 - Built-in data generating processes
 - Creating custom simulation scenarios
 - Power analysis and method evaluation
 
-### 📈 [Performance Evaluation](evaluation.md)
+### [Performance Evaluation](evaluation.md)
 **Tools for assessing method performance**
 
 - FDR and power calculations
 - Metrics for online settings
 - Benchmarking and comparison frameworks
+
+### onlineFDR Parity
+**Method-level parity and intentional differences**
+
+- Mapping to Bioconductor `onlineFDR` release semantics
+- Explicit `Parity` / `IntentionalDivergence` / `Extension` labels
+- Notes on true-online API differences in this package
 
 ## Quick Navigation
 
@@ -82,25 +89,25 @@ graph TD
 
 Most methods require careful parameter tuning:
 
-- **Alpha level (α)**: Your desired FDR level (typically 0.05 or 0.1)
-- **Initial wealth (W₀)**: Controls early power (start with α/2)  
-- **Lambda (λ)**: Candidate threshold for ADDIS/SAFFRON (try 0.25-0.5)
-- **Tau (τ)**: Discarding threshold for ADDIS (try 0.5)
+- **Alpha level (alpha)**: Your desired FDR level (typically 0.05 or 0.1)
+- **Initial wealth (W)**: Controls early power (start with `alpha/2`)  
+- **Lambda (lambda)**: Candidate threshold for ADDIS/SAFFRON (try 0.25-0.5)
+- **Tau (tau)**: Discarding threshold for ADDIS (try 0.5)
 
 ### 3. **Performance Monitoring**
 
 Track key metrics during online testing:
 
 ```python
-from online_fdr.utils.evaluation import OnlineFDR
+from online_fdr.utils.evaluation import MemoryDecayFDR
 
 # Initialize tracking
-fdr_tracker = OnlineFDR()
+fdr_tracker = MemoryDecayFDR(delta=0.99, offset=0)
 
 # During testing
 for p_value, true_label in data_stream:
     decision = method.test_one(p_value)
-    current_fdr = fdr_tracker.update(decision, true_label)
+    current_fdr = fdr_tracker.score_one(decision, true_label)
     
     # Optional: Stop if FDR exceeds threshold
     if current_fdr > target_alpha * 1.2:  # 20% buffer
@@ -109,14 +116,14 @@ for p_value, true_label in data_stream:
 
 ## Best Practices
 
-### ✅ **Do's**
+###  **Do's**
 - Choose methods appropriate for your dependency structure
 - Validate with simulations before real applications  
 - Monitor FDR in real-time for early stopping
 - Use consistent random seeds for reproducibility
 - Document method parameters and their rationale
 
-### ❌ **Don'ts**  
+###  **Don'ts**  
 - Don't switch methods mid-stream without theoretical justification
 - Don't ignore dependency when present
 - Don't use overly aggressive parameters without validation
@@ -182,3 +189,6 @@ If you're stuck or need clarification:
 4. **Consult the referenced papers** for theoretical details
 
 Ready to dive deeper? Choose a section above or continue with [Concepts](concepts.md) for the theoretical foundations.
+
+
+

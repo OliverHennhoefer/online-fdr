@@ -1,4 +1,4 @@
-# LORD: Levels based On Recent Discovery
+﻿# LORD: Levels based On Recent Discovery
 
 **LORD** (significance Levels based On Recent Discovery) is a family of procedures for online FDR control that use alpha-investing principles, where test levels depend on the timing and wealth from previous discoveries.
 
@@ -51,9 +51,9 @@ for i, p_value in enumerate(p_values):
     
     if decision:
         discoveries.append(i + 1)
-        print(f"✓ Test {i+1}: p={p_value:.3f} → DISCOVERY! (wealth: {lord3.wealth:.4f})")
+        print(f" Test {i+1}: p={p_value:.3f}  discovery (wealth: {lord3.wealth:.4f})")
     else:
-        print(f"  Test {i+1}: p={p_value:.3f} → no rejection (wealth: {lord3.wealth:.4f})")
+        print(f"  Test {i+1}: p={p_value:.3f}  no rejection (wealth: {lord3.wealth:.4f})")
 
 print(f"\nTotal discoveries: {len(discoveries)}")
 print(f"Final wealth: {lord3.wealth:.4f}")
@@ -89,7 +89,7 @@ def demonstrate_wealth_dynamics():
         
         print(f"Test {i}: p={p_value:.3f} ({description})")
         print(f"  Decision: {status}")
-        print(f"  Wealth: {wealth_before:.4f} → {wealth_after:.4f} (change: {wealth_change:+.4f})")
+        print(f"  Wealth: {wealth_before:.4f}  {wealth_after:.4f} (change: {wealth_change:+.4f})")
         print()
 
 demonstrate_wealth_dynamics()
@@ -121,7 +121,7 @@ def compare_lord_parameters():
         decisions = [lord3.test_one(p) for p in test_p_values]
         discoveries = sum(decisions)
         
-        print(f"{config['name']:>12} (W₀={config['wealth']:.3f}, R={config['reward']:.3f}): "
+        print(f"{config['name']:>12} (W={config['wealth']:.3f}, R={config['reward']:.3f}): "
               f"{discoveries} discoveries")
 
 compare_lord_parameters()
@@ -214,7 +214,7 @@ def lord_with_correlation():
     empirical_fdr = false_positives / max(total_discoveries, 1)
     power = true_positives / n_alternatives
     
-    print(f"Correlation (ρ): {rho}")
+    print(f"Correlation (rho): {rho}")
     print(f"True alternatives: {n_alternatives}")
     print(f"Total discoveries: {total_discoveries}")
     print(f"True positives: {true_positives}")
@@ -237,9 +237,9 @@ LORD 3 maintains wealth W_t that evolves as:
 $$W_{t+1} = W_t - \alpha_t + R \cdot \mathbf{1}_{\text{reject at time } t}$$
 
 where:
-- α_t is the rejection threshold at time t
+- alpha_t is the rejection threshold at time t
 - R is the fixed reward earned per discovery
-- W₀ is the initial wealth
+- W0 is the initial wealth
 
 ### Threshold Formula
 
@@ -248,13 +248,13 @@ The rejection threshold at time t is:
 $$\alpha_t = \gamma(t - \tau_{\text{last}}) \cdot W_{\tau_{\text{last}}}$$
 
 where:
-- τ_last is the time of the last discovery (0 if no discoveries)
-- W_{τ_last} is the wealth at the time of the last discovery
-- γ(·) is a gamma sequence (typically declining)
+- tau_last is the time of the last discovery (0 if no discoveries)
+- W_{tau_last} is the wealth at the time of the last discovery
+- gamma(.) is a gamma sequence (typically declining)
 
 ### FDR Guarantee
 
-**Theorem (LORD FDR Control)**: For independent p-values, LORD procedures control FDR at level α.
+**Theorem (LORD FDR Control)**: For independent p-values, LORD procedures control FDR at level alpha.
 
 ## Best Practices
 
@@ -263,12 +263,12 @@ where:
 !!! tip "Wealth vs Reward Trade-off"
     - **High initial wealth, low reward**: Strong early power, slower wealth recovery
     - **Low initial wealth, high reward**: Conservative start, builds momentum with discoveries  
-    - **Balanced**: W₀ = R = α/2 is often a good starting point
+    - **Balanced**: W = R = alpha/2 is often a good starting point
 
 !!! tip "Practical Recommendations"
-    - For α = 0.05: Start with W₀ = 0.025, R = 0.025
+    - For alpha = 0.05: Start with W = 0.025, R = 0.025
     - Adjust based on expected discovery pattern
-    - Higher W₀ for expected early discoveries
+    - Higher W for expected early discoveries
     - Higher R for sparse discovery scenarios
 
 ### When to Use LORD 3
@@ -282,14 +282,14 @@ where:
 
 !!! warning "Potential Problems"
     - **Wealth depletion**: Too aggressive parameters can exhaust wealth quickly
-    - **Poor parameter choice**: Mismatched W₀ and R can hurt performance
+    - **Poor parameter choice**: Mismatched W and R can hurt performance
     - **Non-adaptive**: Doesn't adapt to unknown proportion of nulls
 
 ## References
 
 1. **Javanmard, A., and A. Montanari** (2018). "Online rules for control of false discovery rate and false discovery exceedance." *Annals of Statistics*, 46(2):526-554.
 
-2. **Foster, D. P., and R. A. Stine** (2008). "α-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
+2. **Foster, D. P., and R. A. Stine** (2008). "Alpha-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
 
 3. **Ramdas, A., F. Ruf, M. Reeb, and A. Ramdas** (2017). "A unified treatment of multiple testing with prior knowledge using the p-filter." *Annals of Statistics*, 47(5):2790-2821.
 

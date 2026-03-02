@@ -325,7 +325,7 @@ class DataGenerator:
         label = self.labels[self.current_idx]
         self.current_idx += 1
 
-        return p_val, label
+        return float(p_val), bool(label)
 
     def sample_batch(self, size: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
         """Sample a batch of p-values."""

@@ -31,9 +31,9 @@ class AlphaSpending(AbstractSequentialTest):
         alpha: Current alpha level for the next test.
 
     Examples:
-        >>> from online_fdr.spending.functions.bonferroni import BonferroniSpendFunc
+        >>> from online_fdr.spending.functions.bonferroni import Bonferroni
         >>> # Create Bonferroni spending function for 5 planned analyses
-        >>> spend_func = BonferroniSpendFunc(max_analyses=5)
+        >>> spend_func = Bonferroni(k=5)
         >>> alpha_spending = AlphaSpending(alpha=0.05, spend_func=spend_func)
         >>> # Test p-values sequentially
         >>> decision1 = alpha_spending.test_one(0.01)  # First interim analysis
@@ -83,7 +83,12 @@ class AlphaSpending(AbstractSequentialTest):
             False
         """
         validity.check_p_val(p_val)
+        if self.rule.k is not None and self.num_test >= self.rule.k:
+            raise ValueError(
+                "AlphaSpending horizon exceeded for finite-k spend function. "
+                "Increase k or choose an adaptive spend rule."
+            )
 
         self.alpha = self.rule.spend(index=self.num_test, alpha=self.alpha0)
         self.num_test += 1
-        return p_val < self.alpha
+        return p_val <= self.alpha

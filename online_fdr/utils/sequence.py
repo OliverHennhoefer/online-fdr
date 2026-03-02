@@ -41,7 +41,7 @@ class DefaultLondGammaSequence(AbstractGammaSequence):
         """
         super().__init__(c)
 
-    def calc_gamma(self, j: int, **kwargs):
+    def calc_gamma(self, j: int, **kwargs: object) -> float:
         """Calculate the gamma value for the j-th test.
 
         Args:
@@ -56,9 +56,11 @@ class DefaultLondGammaSequence(AbstractGammaSequence):
             >>> gamma_5 = seq.calc_gamma(5, alpha=0.05)
         """
         alpha = kwargs.get("alpha")
+        if not isinstance(alpha, int | float):
+            raise ValueError("alpha must be provided as a numeric value for LOND gamma sequence.")
         return (
             self.c
-            * alpha
+            * float(alpha)
             * (math.log(max(j, 2)) / (j * math.exp(math.sqrt(math.log(j)))))
         )
 
@@ -97,7 +99,7 @@ class DefaultLordGammaSequence(AbstractGammaSequence):
         """
         super().__init__(c)
 
-    def calc_gamma(self, j: int, **kwargs):
+    def calc_gamma(self, j: int, **kwargs: object) -> float:
         """Calculate the gamma value for position j in the sequence.
 
         Args:
@@ -142,7 +144,7 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
         PMLR, 80:4286-4294.
     """
 
-    def __init__(self, gamma_exp, c):
+    def __init__(self, gamma_exp: float, c: float | None):
         """Initialize the SAFFRON gamma sequence.
 
         Args:
@@ -150,9 +152,15 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
             c: Normalization constant. Recommended value: 0.4374901658.
                If None, uses pure power law without normalization.
         """
+        if c is None:
+            raise ValueError(
+                "DefaultSaffronGammaSequence requires a finite normalization constant c."
+            )
+        if gamma_exp <= 1:
+            raise ValueError("gamma_exp must be > 1 for a summable gamma sequence.")
         super().__init__(gamma_exp=gamma_exp, c=c)
 
-    def calc_gamma(self, j: int, *args):
+    def calc_gamma(self, j: int, *args: object) -> float:
         """Calculate gamma value for position j.
 
         Args:
@@ -162,8 +170,7 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
         Returns:
             Gamma value for position j.
         """
-        return j**self.gamma_exp if self.c is None \
-            else self.c / j**self.gamma_exp  # fmt: skip
+        return float(self.c / math.pow(float(j), self.gamma_exp))
 
 
 class DependentLordGammaSequence(AbstractGammaSequence):
@@ -193,14 +200,19 @@ class BatchGammaSequenceSmall(AbstractGammaSequence):
     The Power of Batching in Multiple Hypothesis Testing.
     International Conference on Artificial Intelligence and Statistics."""
 
-    def __init__(self, gamma_exp):
+    def __init__(self, gamma_exp: float):
         super().__init__(gamma_exp=gamma_exp)
 
-    def calc_gamma(self, j: int, **kwargs):
+    def calc_gamma(self, j: int, **kwargs) -> float:
         batch_size = kwargs.get("batch_size")
-        sum_gamma = sum([s ** (-2) for s in range(1, batch_size + 1)])
-        normalization_factor = 1 / sum_gamma
-        return (j**self.gamma_exp) / normalization_factor
+        if batch_size is None:
+            raise ValueError("batch_size must be provided in kwargs.")
+        batch_size = int(batch_size)
+        if self.gamma_exp <= 1:
+            raise ValueError("gamma_exp must be > 1 for a summable gamma sequence.")
+        sum_gamma = sum(s ** (-self.gamma_exp) for s in range(1, batch_size + 1))
+        normalization_factor = 1.0 / sum_gamma
+        return float(normalization_factor * math.pow(float(j), -self.gamma_exp))
 
 
 class BatchGammaSequenceLarge(AbstractGammaSequence):
@@ -216,8 +228,8 @@ class BatchGammaSequenceLarge(AbstractGammaSequence):
     def __init__(self):
         super().__init__()
 
-    def calc_gamma(self, j: int, **kwargs):
-        return (j < 3) / 2
+    def calc_gamma(self, j: int, **kwargs) -> float:
+        return 0.5 if j < 3 else 0.0
 
 
 class BatchBHPolynomialGammaSequence(AbstractGammaSequence):
@@ -237,7 +249,7 @@ class BatchBHPolynomialGammaSequence(AbstractGammaSequence):
     def __init__(self):
         super().__init__()
 
-    def calc_gamma(self, j: int, **kwargs):
+    def calc_gamma(self, j: int, **kwargs) -> float:
         """Calculate polynomial gamma sequence.
 
         This implements the polynomial decay gamma sequence used in the
@@ -245,7 +257,7 @@ class BatchBHPolynomialGammaSequence(AbstractGammaSequence):
         """
         # Based on the official implementation pattern
         # This is a conservative polynomial decay
-        return 1.0 / (j**1.6)
+        return float(1.0 / math.pow(float(j), 1.6))
 
 
 class BatchBHHalfGammaSequence(AbstractGammaSequence):
@@ -265,7 +277,7 @@ class BatchBHHalfGammaSequence(AbstractGammaSequence):
     def __init__(self):
         super().__init__()
 
-    def calc_gamma(self, j: int, **kwargs):
+    def calc_gamma(self, j: int, **kwargs) -> float:
         """Calculate half gamma sequence.
 
         This implements the 'half' gamma sequence used in the
@@ -293,10 +305,10 @@ class BatchBHAdaptiveGammaSequence(AbstractGammaSequence):
 
     def __init__(self):
         super().__init__()
-        self.poly_seq = BatchBHPolynomialGammaSequence()
-        self.half_seq = BatchBHHalfGammaSequence()
+        self.poly_seq: BatchBHPolynomialGammaSequence = BatchBHPolynomialGammaSequence()
+        self.half_seq: BatchBHHalfGammaSequence = BatchBHHalfGammaSequence()
 
-    def calc_gamma(self, j: int, **kwargs):
+    def calc_gamma(self, j: int, **kwargs) -> float:
         """Calculate gamma using adaptive sequence selection.
 
         Args:

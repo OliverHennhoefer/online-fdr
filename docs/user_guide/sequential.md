@@ -1,4 +1,4 @@
-# Sequential Testing Methods
+﻿# Sequential Testing Methods
 
 Sequential testing methods process hypotheses one at a time as they arrive, making immediate decisions without waiting for future p-values. This is essential for real-time applications like A/B testing, clinical trials, and streaming data analysis.
 
@@ -47,12 +47,12 @@ addis = Addis(
 p_values = [0.001, 0.15, 0.03, 0.8, 0.02]
 for i, p_val in enumerate(p_values):
     decision = addis.test_one(p_val)
-    print(f"Test {i+1}: p={p_val:.3f} → {'REJECT' if decision else 'ACCEPT'}")
+    print(f"Test {i+1}: p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'}")
 ```
 
 **Key features:**
-- **Discarding**: Large p-values (> τ) are discarded without testing
-- **Candidate selection**: Only p-values ≤ λ become candidates for rejection
+- **Discarding**: Large p-values (> tau) are discarded without testing
+- **Candidate selection**: Only p-values <= lambda become candidates for rejection
 - **Conservative null adaptation**: Performs well when nulls are not uniform
 
 #### SAFFRON: Serial Estimate of False Discovery Rate
@@ -73,7 +73,7 @@ discoveries = 0
 for p_val in [0.01, 0.3, 0.02, 0.9, 0.001]:
     if saffron.test_one(p_val):
         discoveries += 1
-        print(f"Discovery! p-value: {p_val:.3f}")
+        print(f"Discovery: p-value: {p_val:.3f}")
 
 print(f"Total discoveries: {discoveries}")
 ```
@@ -110,12 +110,12 @@ p_values = [0.02, 0.3, 0.01, 0.8, 0.005, 0.4]
 print("LORD3 decisions:")
 for p_val in p_values:
     decision = lord3.test_one(p_val)
-    print(f"  p={p_val:.3f} → {'REJECT' if decision else 'ACCEPT'}")
+    print(f"  p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'}")
 
 print("\nLORD++ decisions:")
 for p_val in p_values:
     decision = lord_pp.test_one(p_val)  
-    print(f"  p={p_val:.3f} → {'REJECT' if decision else 'ACCEPT'}")
+    print(f"  p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'}")
 ```
 
 **Variants available:**
@@ -206,7 +206,7 @@ p_values = [0.0001, 0.1, 0.0005, 0.3]
 for i, p_val in enumerate(p_values):
     decision = alpha_spend.test_one(p_val)
     current_alpha = alpha_spend.alpha if alpha_spend.alpha else 0
-    print(f"Test {i+1}: p={p_val:.4f}, α={current_alpha:.6f}, "
+    print(f"Test {i+1}: p={p_val:.4f}, alpha_t={current_alpha:.6f}, "
           f"decision={'REJECT' if decision else 'ACCEPT'}")
 ```
 
@@ -253,33 +253,33 @@ Based on simulation studies:
 
 | Method | Power (Independent) | Power (Dependent) | Parameter Complexity | Robustness |
 |--------|-------------------|------------------|---------------------|------------|
-| ADDIS | ⭐⭐⭐⭐ | ⭐⭐⭐ | Medium | High |
-| SAFFRON | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | Low | Medium |
-| LORD3 | ⭐⭐⭐ | ⭐⭐⭐⭐ | Medium | High |
-| LOND | ⭐⭐⭐ | ⭐⭐⭐⭐ | Low | High |
-| GAI | ⭐⭐ | ⭐⭐ | Low | Medium |
+| ADDIS | Context-dependent | Context-dependent | Medium | High |
+| SAFFRON | Context-dependent | Context-dependent | Low | Medium |
+| LORD3 | Context-dependent | Context-dependent | Medium | High |
+| LOND | Context-dependent | Context-dependent | Low | High |
+| GAI | Context-dependent | Context-dependent | Low | Medium |
 
 ## Parameter Tuning Guidelines
 
 ### Universal Parameters
 
-!!! tip "Alpha (α)"
+!!! tip "Alpha (alpha)"
     **Target FDR level**
     - Standard values: 0.05, 0.1
     - Higher values allow more discoveries but more false positives
 
-!!! tip "Initial Wealth (W₀)"
+!!! tip "Initial Wealth (W)"
     **Starting budget for rejections**
-    - Conservative: α/4
-    - Moderate: α/2
-    - Aggressive: 3α/4
+    - Conservative: alpha/4
+    - Moderate: alpha/2
+    - Aggressive: 3*alpha/4
 
 ### Method-Specific Parameters
 
 === "ADDIS"
-    - **λ (lambda_)**: Lower = fewer candidates, higher bar for rejection
-    - **τ (tau)**: Higher = fewer discarded tests
-    - **Typical values**: λ ∈ [0.1, 0.7], τ ∈ [0.3, 0.8]
+    - **Lambda (`lambda_`)**: Lower = fewer candidates, higher bar for rejection
+    - **Tau (`tau`)**: Higher = fewer discarded tests
+    - **Typical values**: lambda in [0.1, 0.7], tau in [0.3, 0.8]
 
 === "LORD Family"
     - **reward**: Wealth gained per discovery
@@ -287,7 +287,7 @@ Based on simulation studies:
     - **Higher values**: More aggressive after discoveries
 
 === "SAFFRON"  
-    - **λ (lambda_)**: Balance between candidates and threshold
+    - **Lambda (`lambda_`)**: Balance between candidates and threshold
     - **Typical values**: 0.25 to 0.75
 
 ## Common Patterns

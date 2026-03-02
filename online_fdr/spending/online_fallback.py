@@ -92,10 +92,11 @@ class OnlineFallback(AbstractSequentialTest):
         validity.check_p_val(p_val)
         self.num_test += 1
 
-        self.alpha = self.last_rejected * self.alpha
+        prev_alpha = self.alpha if self.alpha is not None else 0.0
+        self.alpha = prev_alpha if self.last_rejected else 0.0
         self.alpha += self.alpha0 * self.seq.calc_gamma(self.num_test)
 
-        is_rejected = p_val < self.alpha
+        is_rejected = p_val <= self.alpha
         self.last_rejected = bool(
             is_rejected
         )  # Fix SIM210: Use bool() instead of True if else False

@@ -71,10 +71,15 @@ class Addis(AbstractSequentialTest):
         self.tau: float = tau
 
         validity.check_initial_wealth(wealth, alpha)
-        validity.check_candidate_threshold(lambda_)
+        validity.check_tau(tau)
+        if not 0 <= lambda_ < tau:
+            raise ValueError("lambda_ must satisfy 0 <= lambda_ < tau.")
 
         self.num_test: int = 0
         self.candidates: list[bool] = []
+        self.selected: list[bool] = []
+        self._candidate_prefix: list[int] = [0]
+        self._selected_prefix: list[int] = [0]
         self.reject_idx: list[int] = []
 
         self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
@@ -82,10 +87,10 @@ class Addis(AbstractSequentialTest):
     def test_one(self, p_val: float) -> bool:
         """Test a single p-value using the ADDIS procedure.
 
-        The ADDIS algorithm processes p-values sequentially with three-step logic:
-        1. Discard: If p_val > tau, discard the hypothesis (don't test)
-        2. Candidate selection: Scale remaining p-value and check if ≤ lambda_
-        3. Rejection: Test scaled p-value against adaptive threshold
+        The ADDIS algorithm processes p-values sequentially with:
+        1. Selected-set tracking via tau (p-values <= tau)
+        2. Candidate tracking via lambda_ (p-values <= lambda_)
+        3. Rejection against the adaptive alpha threshold
 
         Args:
             p_val: P-value to test. Must be in [0, 1].
@@ -100,29 +105,29 @@ class Addis(AbstractSequentialTest):
             >>> addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
             >>> addis.test_one(0.01)  # Small p-value, likely rejected
             True
-            >>> addis.test_one(0.8)   # Large p-value, discarded
+            >>> addis.test_one(0.8)   # Large p-value, not selected
             False
-            >>> addis.test_one(0.3)   # Medium p-value, tested but not rejected
+            >>> addis.test_one(0.3)   # Medium p-value, typically not rejected
             False
         """
         validity.check_p_val(p_val)
 
-        if p_val > self.tau:  # discard
-            self.alpha = None
-            return False
+        self.alpha = self.calc_alpha_t()
+        is_rejected = p_val <= self.alpha  # rejection uses unscaled p-values
+
+        is_selected = p_val <= self.tau
+        is_candidate = p_val <= self.lambda_
+        self.selected.append(is_selected)
+        self.candidates.append(is_candidate)
+        self._selected_prefix.append(self._selected_prefix[-1] + int(is_selected))
+        self._candidate_prefix.append(self._candidate_prefix[-1] + int(is_candidate))
 
         self.num_test += 1
-        self.alpha = self.calc_alpha_t()
-
-        p_val *= 1 / self.tau
-        is_candidate = p_val <= self.lambda_  # candidate
-        self.candidates.append(is_candidate)
-
-        is_rejected = p_val <= self.alpha  # rejection
-        self.reject_idx.append(self.num_test) if is_rejected else None
+        if is_rejected:
+            self.reject_idx.append(self.num_test)
         return is_rejected
 
-    def calc_alpha_t(self):
+    def calc_alpha_t(self) -> float:
         """Calculate the adaptive rejection threshold for the current test.
 
         The ADDIS threshold adapts based on:
@@ -132,28 +137,46 @@ class Addis(AbstractSequentialTest):
         4. Conservative null compensation factor (tau - lambda_)
 
         Returns:
-            The adaptive rejection threshold alpha_t, bounded by tau * lambda_.
+            The adaptive rejection threshold alpha_t, bounded by lambda_.
 
         Note:
             This is an internal method called by test_one(). The threshold formula
             follows Equation (7) in Tian and Ramdas (2019).
         """
-        alpha_t = self.wealth0 * self.seq.calc_gamma(
-            self.num_test - sum(self.candidates), None
+        selected_so_far = self._selected_prefix[-1]
+        candidates_so_far = self._candidate_prefix[-1]
+
+        base_idx = selected_so_far - candidates_so_far
+        alpha_t = (self.tau - self.lambda_) * self.wealth0 * self._gamma_from_offset(
+            base_idx
         )
-        if len(self.reject_idx) >= 1:
-            tau_1 = self.reject_idx[0]
-            c_1_plus = sum(self.candidates[tau_1:])
-            alpha_t += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
-                (self.num_test - tau_1 - c_1_plus), None
-            )
-        if len(self.reject_idx) >= 2:
-            alpha_t += self.alpha0 * sum(
-                self.seq.calc_gamma(
-                    (self.num_test - idx - sum(self.candidates[idx:])),
-                    None,
+
+        if not self.reject_idx:
+            return min(self.lambda_, alpha_t)
+
+        first_reject = self.reject_idx[0]
+        first_term = self._gamma_from_offset(
+            selected_so_far
+            - self._selected_prefix[first_reject]
+            - (candidates_so_far - self._candidate_prefix[first_reject])
+        )
+        alpha_t += (self.tau - self.lambda_) * (self.alpha0 - self.wealth0) * first_term
+
+        if len(self.reject_idx) > 1:
+            tail_terms = sum(
+                self._gamma_from_offset(
+                    selected_so_far
+                    - self._selected_prefix[reject_idx]
+                    - (candidates_so_far - self._candidate_prefix[reject_idx])
                 )
-                for idx in self.reject_idx[1:]
+                for reject_idx in self.reject_idx[1:]
             )
-        alpha_t *= self.tau - self.lambda_
-        return min(self.tau * self.lambda_, alpha_t)
+            alpha_t += (self.tau - self.lambda_) * self.alpha0 * tail_terms
+
+        return min(self.lambda_, alpha_t)
+
+    def _gamma_from_offset(self, offset: int) -> float:
+        """Map zero-based ADDIS gamma offsets to the one-based gamma sequence API."""
+        if offset < 0:
+            raise ValueError("ADDIS gamma offset must be non-negative.")
+        return float(self.seq.calc_gamma(offset + 1, None))

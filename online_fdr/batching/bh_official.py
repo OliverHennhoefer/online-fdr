@@ -15,9 +15,8 @@ the R reference implementation. Both are mathematically valid implementations of
 same core algorithm, but this version provides the exact behavior of the authors' code.
 """
 
-import numpy as np
-
 from online_fdr.abstract.abstract_batching_test import AbstractBatchingTest
+from online_fdr.utils import validity
 from online_fdr.utils.sequence import (
     BatchBHHalfGammaSequence,
     BatchBHPolynomialGammaSequence,
@@ -35,7 +34,7 @@ class BatchBHOfficial(AbstractBatchingTest):
     Key differences from the simplified BatchBH implementation:
     1. Dynamic array resizing with doubling strategy
     2. Cumulative rejection tracking (R_sums stores cumulative values)
-    3. Adaptive gamma sequences based on batch size (<100 vs ≥100)
+    3. Adaptive gamma sequences based on batch size (<100 vs â‰¥100)
     4. Extended return values including FDH estimates
     5. Exact replication of official beta calculation logic
 
@@ -62,10 +61,10 @@ class BatchBHOfficial(AbstractBatchingTest):
         self.half_seq = BatchBHHalfGammaSequence()
 
         # Initialize lists for online processing (no pre-allocation)
-        self.r_s_plus = []  # R^+ values for each batch
+        self.r_s_plus: list[int] = []  # R^+ values for each batch
         self.r_total_sum = 0  # Total rejections across all batches
-        self.r_s_cumulative = []  # Cumulative rejection tracking
-        self.alpha_s = []  # Alpha values used for each batch
+        self.r_s_cumulative: list[int] = []  # Cumulative rejection tracking
+        self.alpha_s: list[float] = []  # Alpha values used for each batch
 
     def test_batch(self, p_vals: list[float]) -> list[bool]:
         """Test a batch of p-values using the official BatchBH procedure.
@@ -94,13 +93,16 @@ class BatchBHOfficial(AbstractBatchingTest):
             - alpha_t: Alpha threshold used for this batch
             - additional_rejections: R_plus - num_rejects (additional possible rejections)
         """
-        p_vals = np.array(p_vals)
+        p_vals = list(p_vals)
         batch_size = len(p_vals)
+        if batch_size == 0:
+            return [], 0.0, 0.0, 0.0
+        validity.check_p_vals_batch(p_vals)
         t = self.num_test
 
         # Calculate alpha_t
         if t == 0:
-            # First batch: α₁ = α × γ₁
+            # First batch: Î±â‚ = Î± Ã— Î³â‚
             gamma_1 = self._get_gamma(j=1, batch_size=batch_size)
             alpha_t = self.alpha0 * gamma_1
         else:
@@ -110,13 +112,13 @@ class BatchBHOfficial(AbstractBatchingTest):
             )
 
             # Calculate beta_t using official formula
-            beta_t = 0
+            beta_t = 0.0
             for s in range(t):
                 denominator = self.r_s_plus[s] + self.r_s_cumulative[s]
                 if denominator > 0:
                     beta_t += self.alpha_s[s] * self.r_s_plus[s] / denominator
 
-            # α_t = (α × Σγ_s - β_t) × (n_t + R_total) / n_t
+            # Î±_t = (Î± Ã— Î£Î³_s - Î²_t) Ã— (n_t + R_total) / n_t
             alpha_t = (
                 (self.alpha0 * gamma_sum - beta_t)
                 * (batch_size + self.r_total_sum)
@@ -152,7 +154,7 @@ class BatchBHOfficial(AbstractBatchingTest):
         self.num_test += 1
 
         # Calculate FDH (False Discovery Hat) estimate
-        fdh = 0
+        fdh = 0.0
         for s in range(t + 1):
             denominator = self.r_s_plus[s] + self.r_s_cumulative[s]
             if denominator > 0:
@@ -169,3 +171,4 @@ class BatchBHOfficial(AbstractBatchingTest):
             return self.poly_seq.calc_gamma(j)
         else:
             return self.half_seq.calc_gamma(j)
+

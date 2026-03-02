@@ -42,10 +42,10 @@ Common spending functions include:
 
 ```python
 from online_fdr.spending import AlphaSpending
-from online_fdr.spending.functions import LinearSpendFunc
+from online_fdr.spending.functions import Bonferroni
 
-# Create linear spending function
-spend_func = LinearSpendFunc(max_analyses=5)
+# Create Bonferroni spending function
+spend_func = Bonferroni(k=5)
 
 # Initialize alpha spending procedure
 alpha_spending = AlphaSpending(alpha=0.05, spend_func=spend_func)

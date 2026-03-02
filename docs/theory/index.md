@@ -1,4 +1,4 @@
-# Mathematical Theory
+﻿# Mathematical Theory
 
 This section provides the mathematical foundations underlying online false discovery rate (FDR) control methods. Understanding the theory helps in choosing appropriate methods, setting parameters correctly, and interpreting results.
 
@@ -8,7 +8,7 @@ Online FDR control addresses the fundamental challenge of multiple hypothesis te
 
 1. **Hypotheses arrive over time**: $H_1, H_2, H_3, \ldots$
 2. **Decisions must be immediate**: Can't wait for future p-values
-3. **Statistical guarantees must hold**: FDR ≤ α at all stopping times
+3. **Statistical guarantees must hold**: FDR <= alpha at all stopping times
 
 This creates a fundamentally different problem from traditional batch multiple testing correction.
 
@@ -53,8 +53,8 @@ where:
 - Sequential testing with discarding
 - Adaptive estimation techniques
 
-### [Statistical Guarantees](guarantees.md)
-**Theoretical guarantees and their assumptions**
+### [Guarantee Matrix](guarantee_matrix.md)
+**Method-by-method guarantees and assumptions**
 
 - Independence and dependence assumptions
 - Uniform and conservative null hypotheses
@@ -255,7 +255,7 @@ Each subsection provides detailed mathematical development:
 
 - **[FDR Control Theory](fdr_control.md)**: Fundamental principles and classical results
 - **[Algorithm Design](algorithms.md)**: Mathematical construction of online methods
-- **[Statistical Guarantees](guarantees.md)**: Formal theorems and their proofs
+- **[Guarantee Matrix](guarantee_matrix.md)**: Formal per-method assumptions and guarantee status
 
 For implementation details, see the [API Reference](../api/index.md).  
 For practical applications, explore [Examples](../examples/index.md).

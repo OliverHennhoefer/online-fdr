@@ -1,6 +1,6 @@
 # Online FDR: Online False Discovery Rate Control Algorithms
 
-[![python](https://img.shields.io/badge/Python-3.8+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
+[![python](https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Code style: black](https://img.shields.io/badge/code_style-black-black)](https://github.com/psf/black)
 [![PyPI version](https://badge.fury.io/py/online-fdr.svg)](https://badge.fury.io/py/online-fdr)
@@ -28,12 +28,12 @@ In many modern applications, hypotheses arrive sequentially and decisions must b
 
 ## Key Features
 
-- ✅ **True Online Processing**: Make immediate decisions without waiting for future data
-- 🔒 **Rigorous Statistical Guarantees**: Maintain FDR control under various dependency structures  
-- 🔄 **Unified API**: Consistent interface across all methods with `test_one()` for sequential testing
-- 📊 **Comprehensive Method Coverage**: State-of-the-art algorithms from recent literature
-- 🚀 **Performance Optimized**: Efficient implementations suitable for high-throughput applications
-- 📚 **Rich Documentation**: Detailed mathematical explanations and practical examples
+-  **True Online Processing**: Make immediate decisions without waiting for future data
+-  **Explicit Guarantee Scope**: Method-by-method assumptions and guarantee status are documented  
+-  **Unified API**: Consistent interface across all methods with `test_one()` for sequential testing
+-  **Comprehensive Method Coverage**: State-of-the-art algorithms from recent literature
+-  **Performance Optimized**: Efficient implementations suitable for high-throughput applications
+-  **Rich Documentation**: Detailed mathematical explanations and practical examples
 
 ## Quick Installation
 
@@ -89,13 +89,15 @@ print(f"Made {len(discoveries)} discoveries")
 
 ## Mathematical Guarantees
 
-All implemented methods provide rigorous theoretical guarantees:
+Guarantees are method-specific and assumption-specific:
 
 !!! theorem "FDR Control"
-    For FDR control methods: $\mathbb{E}[\text{FDR}] \leq \alpha$ under specified conditions
+    For methods in the proven regime, $\mathbb{E}[\text{FDR}] \leq \alpha$ under the documented assumptions.
 
 !!! theorem "FWER Control"  
-    For alpha spending methods: $\mathbb{P}(\text{FWER} > 0) \leq \alpha$
+    For methods in the proven regime, $\mathbb{P}(\text{FWER} > 0) \leq \alpha$ under the documented assumptions.
+
+See [Theory Guarantee Matrix](theory/guarantee_matrix.md) for the exact per-method status.
 
 ## Getting Started
 
@@ -119,10 +121,10 @@ This library is inspired by and validated against the R package [onlineFDR](http
 
 ## Support
 
-- 📖 **Documentation**: Comprehensive guides and API reference
-- 🐛 **Issues**: Report bugs on [GitHub Issues](https://github.com/OliverHennhoefer/online-fdr/issues)  
-- 💬 **Discussions**: Ask questions in [GitHub Discussions](https://github.com/OliverHennhoefer/online-fdr/discussions)
-- 📧 **Contact**: Reach out to the maintainers for collaboration opportunities
+-  **Documentation**: Comprehensive guides and API reference
+-  **Issues**: Report bugs on [GitHub Issues](https://github.com/OliverHennhoefer/online-fdr/issues)  
+-  **Discussions**: Ask questions in [GitHub Discussions](https://github.com/OliverHennhoefer/online-fdr/discussions)
+-  **Contact**: Reach out to the maintainers for collaboration opportunities
 
 ## License
 

@@ -1,4 +1,4 @@
-# Investing Methods
+﻿# Investing Methods
 
 Alpha investing methods form the core of modern online FDR control. These methods maintain a "wealth" that increases with discoveries and is spent on testing, allowing adaptive thresholds that respond to the success of previous tests.
 
@@ -19,7 +19,7 @@ This framework allows methods to be more aggressive when discoveries are being m
 
 | **Method** | **Full Name** | **Key Feature** | **Best For** |
 |------------|---------------|------------------|---------------|
-| **[GAI](alpha.md)** | Generalized Alpha Investing | Simple wealth dynamics | Educational/baseline |
+| **[GAI](gai.md)** | Generalized Alpha Investing | Simple wealth dynamics | Educational/baseline |
 | **[SAFFRON](saffron.md)** | Serial estimate of False Discovery proportiON | Candidate selection | High-throughput screening |
 | **[ADDIS](addis.md)** | ADaptive DIScard | Discarding + candidate selection | General purpose (recommended) |
 
@@ -52,7 +52,7 @@ class InvestingMethod(AbstractSequentialTest):
         alpha : float
             Target FDR level (0 < alpha < 1)
         wealth : float  
-            Initial wealth (0 < wealth ≤ alpha)
+            Initial wealth (0 < wealth <= alpha)
         **kwargs : dict
             Method-specific parameters
         """
@@ -64,7 +64,7 @@ class InvestingMethod(AbstractSequentialTest):
         Parameters
         ----------
         p_value : float
-            P-value to test (0 ≤ p_value ≤ 1)
+            P-value to test (0 <= p_value <= 1)
             
         Returns
         -------
@@ -81,18 +81,18 @@ class InvestingMethod(AbstractSequentialTest):
 
 ### Universal Parameters
 
-!!! tip "Alpha (α)"
+!!! tip "Alpha (alpha)"
     **Target FDR level**  
     - Standard values: 0.05, 0.1, 0.2
     - Choose based on tolerance for false discoveries
-    - Higher values → more discoveries but more false positives
+    - Higher values mean more discoveries but more false positives
 
-!!! tip "Initial Wealth (W₀)"
+!!! tip "Initial Wealth (W)"
     **Starting investment budget**  
-    - Conservative: `α/4`
-    - Moderate: `α/2` 
-    - Aggressive: `3α/4`
-    - Constraint: Must satisfy `W₀ ≤ α`
+    - Conservative: `/4`
+    - Moderate: `/2` 
+    - Aggressive: `3/4`
+    - Constraint: Must satisfy `0 < W <= alpha`
 
 ### Method-Specific Parameters
 
@@ -100,14 +100,14 @@ class InvestingMethod(AbstractSequentialTest):
     ```python
     Addis(
         alpha=0.05,        # Target FDR
-        wealth=0.025,      # Initial wealth (α/2)
+        wealth=0.025,      # Initial wealth (alpha/2)
         lambda_=0.25,      # Candidate threshold  
         tau=0.5           # Discarding threshold
     )
     ```
     
-    - **λ (lambda_)**: Lower values → more candidates, higher bar for rejection
-    - **τ (tau)**: Higher values → fewer discarded tests
+    - **Lambda (`lambda_`)**: Lower values mean more candidates, with a higher bar for rejection
+    - **Tau (`tau`)**: Higher values mean fewer discarded tests
 
 === "SAFFRON"
     ```python
@@ -118,7 +118,7 @@ class InvestingMethod(AbstractSequentialTest):
     )
     ```
     
-    - **λ (lambda_)**: Balance between candidate selection and rejection threshold
+    - **Lambda (`lambda_`)**: Balance between candidate selection and rejection threshold
 
 === "LORD3"
     ```python
@@ -129,7 +129,7 @@ class InvestingMethod(AbstractSequentialTest):
     )
     ```
     
-    - **reward**: Higher values → more aggressive after discoveries
+    - **reward**: Higher values mean more aggressive behavior after discoveries
 
 ## Performance Comparison
 
@@ -138,7 +138,7 @@ Based on simulation studies across various scenarios:
 ### Power (Higher is Better)
 
 ```
-Scenario: π₀ = 0.9, effect size = 2.5
+Scenario: pi0 = 0.9, effect size = 2.5
 
 Method          Independent    Weak Depend.   Strong Depend.
 ADDIS           0.82          0.78           0.71
@@ -148,10 +148,10 @@ GAI             0.71          0.68           0.63
 LOND            0.77          0.73           0.65
 ```
 
-### FDR Control (Should be ≤ α)
+### FDR Control (Should be <= alpha)
 
 ```
-Target α = 0.1
+Target alpha = 0.1
 
 Method          Independent    Weak Depend.   Strong Depend.
 ADDIS           0.089         0.094          0.097
@@ -259,7 +259,7 @@ def monitor_wealth(method, p_values):
         if len(wealth_history) > 1:
             wealth_change = wealth_history[-1] - wealth_history[-2]
             print(f"p={p_value:.3f}, decision={decision}, "
-                  f"wealth={wealth_history[-1]:.3f} (Δ{wealth_change:+.3f})")
+                  f"wealth={wealth_history[-1]:.3f} ({wealth_change:+.3f})")
     
     return wealth_history
 ```
@@ -316,8 +316,8 @@ def early_stopping_fdr(method, p_value_generator, max_tests=1000,
 
 Methods ranked by parameter sensitivity (most to least sensitive):
 
-1. **ADDIS**: Sensitive to λ and τ selection
-2. **SAFFRON**: Moderately sensitive to λ  
+1. **ADDIS**: Sensitive to lambda and tau selection
+2. **SAFFRON**: Moderately sensitive to lambda
 3. **LORD3**: Sensitive to reward parameter
 4. **GAI**: Least sensitive, fewer parameters
 5. **LOND**: Robust to parameter choices

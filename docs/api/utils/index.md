@@ -36,7 +36,7 @@ Input validation and error checking:
 The static module contains implementations of classical FDR control procedures that form the building blocks for online and batch methods:
 
 - **Benjamini-Hochberg (BH)**: The foundational FDR procedure
-- **Storey-BH**: Enhanced power through π₀ estimation  
+- **Storey-BH**: Enhanced power through  estimation  
 - **Benjamini-Yekutieli (BY)**: FDR control under arbitrary dependence
 
 These functions are used internally by batch testing methods and can also be used directly for offline multiple testing.
@@ -72,7 +72,7 @@ alpha = 0.05
 num_rej_bh, threshold_bh = bh(p_values, alpha)
 print(f"BH: {num_rej_bh} rejections at threshold {threshold_bh:.4f}")
 
-# Storey-BH with π₀ estimation
+# Storey-BH with  estimation
 num_rej_storey, threshold_storey = storey_bh(p_values, alpha, lambda_=0.5)
 print(f"Storey-BH: {num_rej_storey} rejections at threshold {threshold_storey:.4f}")
 

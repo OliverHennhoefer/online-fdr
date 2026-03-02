@@ -1,4 +1,4 @@
-# SAFFRON: Adaptive Online FDR Control
+﻿# SAFFRON: Adaptive Online FDR Control
 
 **SAFFRON** (Serial estimate of the Alpha Fraction that is Futilely Rationed On true Nulls) is an adaptive algorithm for online FDR control that estimates the proportion of true null hypotheses to set more powerful rejection thresholds.
 
@@ -22,12 +22,12 @@ SAFFRON can be seen as an online analogue of the famous offline Storey-BH adapti
 
 ### Core Mechanism
 
-SAFFRON starts with alpha-wealth that it allocates to tests over time, earning back wealth on discoveries. Unlike older alpha-investing methods, SAFFRON's thresholds are based on estimating the alpha fraction allocated to true null hypotheses using the **candidate threshold λ**.
+SAFFRON starts with alpha-wealth that it allocates to tests over time, earning back wealth on discoveries. Unlike older alpha-investing methods, SAFFRON's thresholds are based on estimating the alpha fraction allocated to true null hypotheses using the **candidate threshold (`lambda`)**.
 
 ### Wealth Dynamics
 
 The algorithm maintains wealth that:
-- Starts at initial value W₀  
+- Starts at initial value `W0`  
 - Is spent to purchase rejection thresholds
 - Is earned back from discoveries
 - Adapts based on estimated proportion of true nulls via candidates
@@ -57,9 +57,9 @@ for i, p_value in enumerate(p_values):
     
     if decision:
         discoveries.append(i + 1)
-        print(f"✓ Test {i+1}: p={p_value:.3f} → DISCOVERY!")
+        print(f" Test {i+1}: p={p_value:.3f}  discovery")
     else:
-        print(f"  Test {i+1}: p={p_value:.3f} → no rejection")
+        print(f"  Test {i+1}: p={p_value:.3f}  no rejection")
 
 print(f"\nTotal discoveries: {len(discoveries)}")
 print(f"Discovery indices: {discoveries}")
@@ -113,13 +113,13 @@ for i in range(50):
     if decision:
         if is_alternative:
             true_discoveries += 1
-            result = "TRUE discovery ✓"
+            result = "true discovery"
         else:
             false_discoveries += 1
-            result = "FALSE discovery ✗"
+            result = "false discovery"
         
         truth = "ALT" if is_alternative else "NULL"
-        print(f"Test {i+1:2d}: p={p_value:.3f} ({truth}) → REJECT ({result})")
+        print(f"Test {i+1:2d}: p={p_value:.3f} ({truth})  REJECT ({result})")
 
 total_discoveries = true_discoveries + false_discoveries
 empirical_fdr = false_discoveries / max(total_discoveries, 1)
@@ -181,7 +181,7 @@ SAFFRON estimates the proportion of alpha-wealth allocated to true nulls using:
 
 $$\hat{\pi}_0^{(\text{SAFFRON})}(t) = \frac{\text{Number of non-candidates up to time } t}{\text{Total tests up to time } t}$$
 
-where candidates are p-values ≤ λ.
+where candidates are p-values <= lambda.
 
 ### Threshold Formula
 
@@ -196,33 +196,33 @@ The wealth-based component adapts based on:
 
 ### FDR Guarantee
 
-**Theorem (SAFFRON FDR Control)**: Under independence of p-values, SAFFRON controls FDR at level α.
+**Theorem (SAFFRON FDR Control)**: Under independence of p-values, SAFFRON controls FDR at level alpha.
 
 ## Best Practices
 
 ### Parameter Selection Guidelines
 
-!!! tip "Lambda (λ) Selection"
-    - **λ = 0.25**: Conservative, fewer candidates, more selective
-    - **λ = 0.5**: Moderate, balanced (recommended default)
-    - **λ = 0.75**: Aggressive, more candidates, higher power potential
+!!! tip "Lambda (lambda) Selection"
+    - **lambda = 0.25**: Conservative, fewer candidates, more selective
+    - **lambda = 0.5**: Moderate, balanced (recommended default)
+    - **lambda = 0.75**: Aggressive, more candidates, higher power potential
 
-!!! tip "Wealth (W₀) Selection"  
-    - Start with W₀ = α/2 (e.g., 0.025 for α = 0.05)
+!!! tip "Wealth (W) Selection"  
+    - Start with W = alpha/2 (e.g., 0.025 for alpha = 0.05)
     - Increase for more initial power, decrease for more conservative start
-    - Must satisfy 0 ≤ W₀ ≤ α
+    - Must satisfy `0 < W <= alpha`
 
 ### When to Use SAFFRON
 
-- **Recommended for**: Independent p-values with unknown π₀
+- **Recommended for**: Independent p-values with unknown pi0
 - **Advantages**: Higher power than non-adaptive methods, robust performance
-- **Considerations**: Requires tuning λ parameter, assumes independence
+- **Considerations**: Requires tuning the lambda parameter, assumes independence
 
 ### Troubleshooting
 
 !!! warning "Common Issues"
-    - **Low power**: Try increasing λ or W₀
-    - **Too aggressive**: Decrease λ or W₀  
+    - **Low power**: Try increasing lambda or W
+    - **Too aggressive**: Decrease lambda or W  
     - **No early discoveries**: SAFFRON needs some candidates to build momentum
 
 ## References
@@ -231,7 +231,7 @@ The wealth-based component adapts based on:
 
 2. **Storey, J. D.** (2002). "A direct approach to false discovery rates." *Journal of the Royal Statistical Society: Series B*, 64(3):479-498.
 
-3. **Foster, D. P., and R. A. Stine** (2008). "α-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
+3. **Foster, D. P., and R. A. Stine** (2008). "Alpha-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
 
 ## See Also
 

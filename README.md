@@ -1,6 +1,6 @@
-# Online FDR: Online False Discovery Rate Control Algorithms
+﻿# Online FDR: Online False Discovery Rate Control Algorithms
 
-[![python](https://img.shields.io/badge/Python-3.8+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
+[![python](https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Code style: black](https://img.shields.io/badge/code_style-black-black)](https://github.com/psf/black)
 
@@ -365,8 +365,8 @@ for i in range(20):
         bonf_threshold = alpha / k
         lord3_threshold = lord3_adaptive.alpha
         print(f"  Test {i+1}: p={p_value:.4f}")
-        print(f"    Bonferroni α={bonf_threshold:.6f}, reject={bonf_result}")
-        print(f"    LORD3 α={lord3_threshold:.6f}, reject={lord3_result}")
+        print(f"    Bonferroni ={bonf_threshold:.6f}, reject={bonf_result}")
+        print(f"    LORD3 ={lord3_threshold:.6f}, reject={lord3_result}")
 
 print(f"\nBonferroni discoveries: {bonf_discoveries}")
 print(f"LORD3 adaptive discoveries: {lord3_discoveries}")
@@ -384,10 +384,45 @@ print(f"LORD3 typically shows higher power, especially early in the sequence")
 
 ## Mathematical Guarantees
 
-Each implemented method provides rigorous theoretical guarantees:
-- **FDR Control**: Expected FDR ≤ α for all FDR control methods
-- **FWER Control**: Probability of any false rejection ≤ α for alpha spending methods
+Guarantees are method-specific and assumption-specific.
 
+- **Proven FDR/FWER guarantees** are provided where the algorithm and parameter regime match published theory.
+- **Parity methods** align behavior with the `onlineFDR` reference implementation for overlapping scope.
+- **Extension/experimental methods** are documented explicitly and should not be interpreted as universally guaranteed.
+
+See the full matrix: `docs/theory/guarantee_matrix.md`.
+
+## onlineFDR Parity and Differences
+
+This package is grounded against Bioconductor `onlineFDR` release semantics for
+overlapping procedures (see `docs/user_guide/onlinefdr_parity.md`).
+
+- **Parity**: ADDIS, SAFFRON, LORD family variants, LOND, Alpha-investing,
+  Alpha-spending, online-fallback, BatchBH, BatchPRDS, BatchStoreyBH.
+- **Intentional API divergence**: true stateful `test_one`/`test_batch`
+  interface instead of wrapper-style dataset reprocessing.
+- **Not currently mirrored**: internal same-date randomization and
+  asynchronous `*star` wrappers from the R ecosystem.
+
+### Mandatory Live R Parity Checks
+
+The parity suite compares Python outputs directly against the live R
+`onlineFDR` package via `rpy2` (`tests/test_onlinefdr_parity.py`).
+
+Development and CI require all of the following:
+
+- `rpy2` (installed through `uv sync --group dev`)
+- A system R installation on PATH
+- Bioconductor `onlineFDR` pinned to `2.18.0`
+- R `4.5.x` (required for Bioconductor `3.22`)
+
+If any requirement is missing, parity tests fail with setup instructions.
+On Ubuntu/WSL, if `rpy2` build fails with `cannot find -ltirpc`, install
+`libtirpc-dev`.
+
+In CI, the full suite can run in a containerized R+Python environment through
+`.github/workflows/tests-container.yml`, which installs pinned `onlineFDR`
+automatically before running `pytest`.
 ## Acknowledgements
 
 This library is inspired by and validated against the R package [onlineFDR](https://dsrobertson.github.io/onlineFDR/). 
@@ -397,3 +432,5 @@ This library is inspired by and validated against the R package [onlineFDR](http
 ## License
 
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
+
+

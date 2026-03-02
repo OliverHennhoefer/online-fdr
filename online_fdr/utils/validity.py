@@ -1,3 +1,7 @@
+import math
+from collections.abc import Sequence
+
+
 def check_p_val(p_val: float) -> None:
     """Validate that a p-value is in the valid range [0, 1].
 
@@ -19,6 +23,14 @@ def check_p_val(p_val: float) -> None:
             Given p-value must be between [0,1].
             """
         )
+
+
+def check_p_vals_batch(p_vals: Sequence[float]) -> None:
+    """Validate that all batch p-values are finite and in [0, 1]."""
+    for idx, p_val in enumerate(p_vals):
+        if not isinstance(p_val, int | float) or not math.isfinite(float(p_val)):
+            raise ValueError(f"Batch p-value at index {idx} must be a finite number.")
+        check_p_val(float(p_val))
 
 
 def check_alpha(p_val: float) -> None:
@@ -147,3 +159,17 @@ def check_decay_factor(decay_factor: float) -> None:
             Decay factor must be between (0,1).
             """
         )
+
+
+def check_tau(tau: float) -> None:
+    """Validate that tau is in (0, 1)."""
+    if not 0 < tau < 1:
+        raise ValueError("tau must be in (0, 1).")
+
+
+def check_reward_budget(wealth: float, reward: float, alpha: float) -> None:
+    """Validate LORD reward assumptions used in guarantee regimes."""
+    if reward <= 0:
+        raise ValueError("reward must be positive.")
+    if wealth + reward > alpha:
+        raise ValueError("wealth + reward must not exceed alpha.")

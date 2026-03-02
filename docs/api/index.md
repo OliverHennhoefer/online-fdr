@@ -6,27 +6,27 @@ This section provides comprehensive documentation for all classes and functions 
 
 ```
 online_fdr/
-├── investing/          # Alpha investing methods
-│   ├── addis/         # ADDIS algorithm
-│   ├── alpha/         # Generalized Alpha Investing  
-│   ├── lond/          # LOND family methods
-│   ├── lord/          # LORD family methods
-│   └── saffron/       # SAFFRON algorithm
-├── spending/          # Alpha spending methods
-│   ├── alpha_spending.py
-│   ├── functions/     # Spending functions
-│   └── online_fallback.py
-├── batching/          # Batch testing methods
-│   ├── bh.py          # Benjamini-Hochberg variants
-│   ├── storey_bh.py   # Storey adaptive BH
-│   ├── prds.py        # Positive regression dependency
-│   └── by.py          # Benjamini-Yekutieli
-├── utils/             # Utilities and helpers
-│   ├── generation.py  # Data generation
-│   ├── evaluation.py  # Performance metrics
-│   ├── format.py      # Output formatting
-│   └── validity.py    # Input validation
-└── abstract/          # Base classes and interfaces
+ investing/          # Alpha investing methods
+    addis/         # ADDIS algorithm
+    alpha/         # Generalized Alpha Investing  
+    lond/          # LOND family methods
+    lord/          # LORD family methods
+    saffron/       # SAFFRON algorithm
+ spending/          # Alpha spending methods
+    alpha_spending.py
+    functions/     # Spending functions
+    online_fallback.py
+ batching/          # Batch testing methods
+    bh.py          # Benjamini-Hochberg variants
+    storey_bh.py   # Storey adaptive BH
+    prds.py        # Positive regression dependency
+    by.py          # Benjamini-Yekutieli
+ utils/             # Utilities and helpers
+    generation.py  # Data generation
+    evaluation.py  # Performance metrics
+    format.py      # Output formatting
+    validity.py    # Input validation
+ abstract/          # Base classes and interfaces
 ```
 
 ## Common Interface
@@ -116,7 +116,7 @@ Most common parameter combinations for getting started:
 ### [Investing Methods](investing/index.md)
 Alpha investing algorithms that adapt thresholds based on past discoveries.
 
-- **[Alpha Investing](investing/alpha.md)**: Generalized Alpha Investing (GAI)
+- **[Alpha Investing](investing/gai.md)**: Generalized Alpha Investing (GAI)
 - **[ADDIS](investing/addis.md)**: Adaptive discarding algorithm
 - **[SAFFRON](investing/saffron.md)**: Serial estimate of the false discovery proportion  
 - **[LORD Family](investing/lord.md)**: Levels based on recent observations and discoveries
@@ -131,18 +131,12 @@ Alpha spending approaches that pre-allocate significance budget.
 ### [Batch Methods](batching/index.md)
 Traditional batch multiple testing correction methods.
 
-- **[Batch BH](batching/bh.md)**: Benjamini-Hochberg procedure
-- **[Batch Storey-BH](batching/storey_bh.md)**: Adaptive Benjamini-Hochberg
-- **[Batch PRDS](batching/prds.md)**: Positive regression dependency on subset
-- **[Batch BY](batching/by.md)**: Benjamini-Yekutieli procedure
+- **[Batch Methods Overview](batching/index.md)**: Benjamini-Hochberg, Storey-BH, PRDS, and BY procedures
 
 ### [Utilities](utils/index.md)
 Helper functions and utilities for simulation and evaluation.
 
-- **[Data Generation](utils/generation.md)**: Simulate p-values and test scenarios
-- **[Evaluation](utils/evaluation.md)**: Calculate FDR, power, and other metrics  
-- **[Formatting](utils/format.md)**: Output formatting utilities
-- **[Validation](utils/validity.md)**: Input validation functions
+- **[Utilities Overview](utils/index.md)**: Data generation, evaluation, formatting, and validation helpers
 
 ## Usage Examples
 
@@ -158,7 +152,7 @@ method = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
 p_values = [0.01, 0.1, 0.03, 0.8, 0.02]
 for i, p in enumerate(p_values):
     decision = method.test_one(p)
-    print(f"Test {i+1}: p={p:.3f} → {'REJECT' if decision else 'ACCEPT'}")
+    print(f"Test {i+1}: p={p:.3f}  {'REJECT' if decision else 'ACCEPT'}")
 ```
 
 ### Batch Testing
@@ -174,7 +168,7 @@ p_values = [0.01, 0.1, 0.03, 0.8, 0.02]
 decisions = method.test_batch(p_values)
 
 for i, (p, decision) in enumerate(zip(p_values, decisions)):
-    print(f"Test {i+1}: p={p:.3f} → {'REJECT' if decision else 'ACCEPT'}")
+    print(f"Test {i+1}: p={p:.3f}  {'REJECT' if decision else 'ACCEPT'}")
 ```
 
 ### With Data Generation

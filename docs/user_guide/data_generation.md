@@ -373,7 +373,7 @@ class CustomExponentialDGP:
             test_statistic = random.exponential(1/self.null_rate) 
             p_value = random.uniform(0, 1)  # Null p-values are uniform
             
-        return min(p_value, 1.0)  # Ensure p-value ≤ 1
+        return min(p_value, 1.0)  # Ensure p-value  1
 
 # Use custom DGP
 custom_dgp = CustomExponentialDGP(null_rate=1.0, alt_rate=3.0)
@@ -515,7 +515,7 @@ def complete_simulation_study(method_configs, n_simulations=10):
             all_results[method_name]['discoveries'].append(total_discoveries)
     
     # Summarize results
-    print(f"\nSimulation Results (π₀={pi0}, effect size={effect_size}):")
+    print(f"\nSimulation Results (={pi0}, effect size={effect_size}):")
     print("=" * 60)
     
     for method_name, results in all_results.items():
@@ -543,15 +543,15 @@ simulation_results = complete_simulation_study(
     - **A/B Testing**: Use GaussianLocationModel with small effect sizes (0.1-0.5)
     - **Genomics**: Use BetaMixtureModel with conservative nulls
     - **Survival Analysis**: Use ChiSquaredModel or custom exponential DGPs
-    - **High-dimensional**: Use SparseGaussianModel with very low π₁
+    - **High-dimensional**: Use SparseGaussianModel with very low 
 
 ### Simulation Design Principles
 
 1. **Effect Size Realism**: Use effect sizes observed in real data
-2. **Null Proportion**: Most real applications have π₀ > 0.8
+2. **Null Proportion**: Most real applications have  > 0.8
 3. **Sample Size**: Balance realism with computational cost  
-4. **Replication**: Use ≥ 100 replications for stable estimates
-5. **Multiple Scenarios**: Test various π₀ and effect size combinations
+4. **Replication**: Use  100 replications for stable estimates
+5. **Multiple Scenarios**: Test various  and effect size combinations
 
 ### Common Pitfalls
 

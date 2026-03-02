@@ -16,8 +16,16 @@ class Bonferroni(AbstractSpendFunc):
     Journal of the American Statistical Association,
     56(293):52–64, 1961."""
 
-    def __init__(self, k):
+    def __init__(self, k: int):
         super().__init__(k)
+        if self.k is None or self.k <= 0:
+            raise ValueError("Bonferroni spending requires k to be a positive integer.")
 
     def spend(self, index: int, alpha: float) -> float:
+        if index < 0:
+            raise ValueError("index must be non-negative.")
+        if self.k is None or index >= self.k:
+            raise ValueError(
+                "Bonferroni spending horizon exceeded. Increase k for longer runs."
+            )
         return alpha / self.k

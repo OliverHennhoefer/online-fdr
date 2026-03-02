@@ -28,20 +28,20 @@ The batching framework, developed by Zrnic et al. (2020), addresses scenarios wh
 
 ### Alpha Allocation
 
-The batching framework uses a gamma sequence $\{γ_t\}$ to allocate alpha budget across batches:
-- **Batch 1**: $α_1 = γ_1 × α$  
-- **Batch t**: $α_t$ calculated using inter-batch dependency corrections
+The batching framework uses a gamma sequence $\{_t\}$ to allocate alpha budget across batches:
+- **Batch 1**: $_1 = _1  $  
+- **Batch t**: $_t$ calculated using inter-batch dependency corrections
 
-### R⁺ Calculation
+### R Calculation
 
 For each batch, the algorithm computes $R^+$ (maximum possible rejections if one p-value were 0):
 - Used to determine optimal alpha allocation for future batches
 - Balances current discoveries with future testing power
 - Key innovation enabling adaptive power allocation
 
-### β_t Correction
+### _t Correction
 
-The inter-batch dependency correction $β_t$ accounts for:
+The inter-batch dependency correction $_t$ accounts for:
 - Previous batch results affecting current alpha allocation
 - Preventing "double spending" of alpha across batches
 - Maintaining valid FDR control despite dependencies
@@ -52,14 +52,14 @@ The inter-batch dependency correction $β_t$ accounts for:
 |------------|-------------------|----------------|-------|
 | < 10 | BatchBH | Polynomial decay | Small batch penalty |
 | 10-100 | BatchBH/BatchStoreyBH | Polynomial decay | Good balance |
-| ≥ 100 | BatchStoreyBH | Half sequence | π₀ estimation effective |
+|  100 | BatchStoreyBH | Half sequence |  estimation effective |
 | Variable | BatchBH | Adaptive | Handles size variation |
 
 ## Method Comparison
 
 ### Power Under Different Conditions
 
-| Method | Independent | PRDS | Arbitrary Dependence | π₀ < 1 |
+| Method | Independent | PRDS | Arbitrary Dependence |  < 1 |
 |--------|------------|------|-------------------|--------|
 | BatchBH | Excellent | Good | May not control | Good |
 | BatchStoreyBH | Excellent | Good | May not control | Excellent |
@@ -82,7 +82,7 @@ where n = batch size, T = number of batches.
 ### Method Selection
 
 1. **BatchBH**: Default choice for most applications
-2. **BatchStoreyBH**: When π₀ < 1 and batches are reasonably large
+2. **BatchStoreyBH**: When  < 1 and batches are reasonably large
 3. **BatchBY**: When arbitrary dependence within batches is suspected  
 4. **BatchPRDS**: When positive dependence structure is known
 
@@ -90,7 +90,7 @@ where n = batch size, T = number of batches.
 
 - **Alpha**: Set based on desired FDR level (typically 0.05 or 0.1)
 - **Gamma sequence**: Use defaults unless specific decay patterns needed
-- **λ (Storey)**: 0.5 is standard, higher values more conservative
+- ** (Storey)**: 0.5 is standard, higher values more conservative
 
 ### Practical Implementation
 
@@ -115,7 +115,7 @@ for i, batch in enumerate(batches, 1):
     print(f"Batch {i}: {discoveries}/{len(batch)} discoveries")
 
 total_discoveries = sum(all_decisions)
-print(f"Total: {total_discoveries} discoveries with FDR ≤ 0.05")
+print(f"Total: {total_discoveries} discoveries with FDR  0.05")
 ```
 
 ## Advanced Topics
@@ -162,7 +162,7 @@ Converting online methods to batch setting:
 
 ### Memory Management
 - Store only essential statistics between batches
-- Use efficient R⁺ calculation algorithms
+- Use efficient R calculation algorithms
 - Consider streaming for very large batch sequences
 
 ### Numerical Stability  

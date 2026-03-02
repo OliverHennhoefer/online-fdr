@@ -1,30 +1,30 @@
-# Contributing Guide
+﻿# Contributing Guide
 
 We welcome contributions to **online-fdr**! This guide will help you get started with contributing code, documentation, examples, or bug reports.
 
 ## Ways to Contribute
 
-### 🐛 **Bug Reports**
+###  **Bug Reports**
 - Report issues with existing functionality
 - Include minimal reproducible examples
 - Describe expected vs actual behavior
 
-### 🚀 **Feature Requests**  
+###  **Feature Requests**  
 - Suggest new online FDR methods
 - Propose API improvements
 - Request documentation enhancements
 
-### 💻 **Code Contributions**
+###  **Code Contributions**
 - Implement new methods from recent literature
 - Fix bugs and improve performance
 - Add tests and improve test coverage
 
-### 📚 **Documentation**
+###  **Documentation**
 - Improve existing documentation
 - Add examples and tutorials
 - Fix typos and clarify explanations
 
-### 🧪 **Examples and Tutorials**
+###  **Examples and Tutorials**
 - Real-world application examples
 - Method comparison studies
 - Educational content
@@ -41,24 +41,55 @@ We welcome contributions to **online-fdr**! This guide will help you get started
 
 2. **Install Development Dependencies**
    ```bash
-   # Using uv (recommended)
    pip install uv
-   uv sync --all-extras
-   
-   # Or using pip
-   pip install -e ".[dev]"
+   uv sync --group dev
    ```
 
-3. **Install Pre-commit Hooks**
+3. **Install Local R Parity Prerequisites**
+   `uv run pytest` includes mandatory live parity tests against R `onlineFDR`.
+
+   **Shell note:** `apt-get`, `sudo`, `dpkg`, `ldconfig`, and `grep` are Linux
+   commands. Run them in a Linux shell (WSL/Ubuntu), not Windows PowerShell.
+
+   For Ubuntu/WSL, install R and build prerequisites:
+   ```bash
+   sudo apt-get update
+   sudo apt-get install -y build-essential libffi-dev libtirpc-dev r-base r-base-dev
+   ```
+
+   For Windows-only setup, install R for Windows and ensure `R.exe`/`Rscript.exe`
+   are on `PATH`, then continue with the `Rscript` commands below in PowerShell.
+
+   Verify R is available:
+   ```bash
+   which R
+   R --version
+   R RHOME
+   ```
+
+   Ensure the R major/minor version is `4.5.x` (required by Bioconductor `3.22`).
+
+   Install pinned `onlineFDR`:
+   ```bash
+   Rscript -e "if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org')"
+   Rscript -e "BiocManager::install('onlineFDR', version='3.22', ask=FALSE, update=FALSE)"
+   Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
+   ```
+
+   If installation fails with:
+   `Bioconductor version '3.22' requires R version '4.5'`,
+   your local R is too old. Upgrade to R `4.5.x`, then rerun the install
+   commands above.
+
+4. **Install Pre-commit Hooks**
    ```bash
    uv run pre-commit install
    # or: pre-commit install
    ```
 
-4. **Verify Installation**
+5. **Verify Installation**
    ```bash
-   uv run pytest
-   # or: pytest
+   uv run pytest -q
    ```
 
 ### Development Workflow
@@ -106,7 +137,7 @@ We welcome contributions to **online-fdr**! This guide will help you get started
 
 We use **Black** for code formatting with these settings:
 - Line length: 88 characters
-- Target Python versions: 3.8+
+- Target Python versions: 3.10+
 
 ```bash
 # Format code
@@ -142,7 +173,7 @@ def test_one(self, p_value: float) -> bool:
     Parameters
     ----------
     p_value : float
-        P-value to test (0 ≤ p_value ≤ 1)
+        P-value to test (0 <= p_value <= 1)
         
     Returns
     -------
@@ -247,7 +278,7 @@ class NewMethod(AbstractSequentialTest):
         Parameters
         ----------
         p_value : float
-            P-value to test (0 ≤ p_value ≤ 1)
+            P-value to test (0 <= p_value <= 1)
             
         Returns
         -------
@@ -288,7 +319,7 @@ Every new method requires comprehensive tests:
 # tests/test_new_method.py
 import pytest
 import numpy as np
-from online_fdr.investing.new_method import NewMethod
+from your_module_path import NewMethod  # replace with your implementation path
 from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
 
 class TestNewMethod:
@@ -488,7 +519,7 @@ Update `CHANGELOG.md` for all user-facing changes:
 
 ### Maintainer Contact
 
-- **Primary maintainer**: Oliver Hennhöfer
+- **Primary maintainer**: Oliver Hennhfer
 - **GitHub**: [@OliverHennhoefer](https://github.com/OliverHennhoefer)
 - **Email**: oliver.hennhoefer@mail.de
 
@@ -522,11 +553,19 @@ We are committed to providing a welcoming and inclusive environment. All contrib
 
 ```bash
 # Set up development environment
-uv sync --all-extras
+uv sync --group dev
 uv run pre-commit install
 
+# Local R parity setup (Ubuntu/WSL)
+# Run these in a Linux shell, not Windows PowerShell
+sudo apt-get update
+sudo apt-get install -y build-essential libffi-dev libtirpc-dev r-base r-base-dev
+Rscript -e "if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org')"
+Rscript -e "BiocManager::install('onlineFDR', version='3.22', ask=FALSE, update=FALSE)"
+Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
+
 # Run tests
-uv run pytest
+uv run pytest -q
 uv run pytest tests/test_specific.py -v
 
 # Check code quality
@@ -549,4 +588,5 @@ uv run pytest tests/ -k "test_fdr_control"
 - **Documentation**: `kebab-case.md`
 - **Examples**: `descriptive_example_name.py`
 
-Thank you for contributing to **online-fdr**! Your efforts help advance the field of online multiple testing and benefit researchers worldwide. 🚀
+Thank you for contributing to **online-fdr**! Your efforts help advance the field of online multiple testing and benefit researchers worldwide. 
+

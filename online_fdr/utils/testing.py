@@ -1,7 +1,9 @@
 import random
 
 
-def generate_test_data(n, h0_prop, max_batch_size=15, seed=1) -> ([float], [float]):
+def generate_test_data(
+    n: int, h0_prop: float, max_batch_size: int | None = 15, seed: int = 1
+) -> tuple[list[float], list[int]]:
     random.seed(seed)
 
     h1_p = int(n * h0_prop)
@@ -25,7 +27,7 @@ def generate_test_data(n, h0_prop, max_batch_size=15, seed=1) -> ([float], [floa
     return p_vals, batch_sizes
 
 
-def get_test_data() -> dict:
+def get_test_data() -> dict[str, list]:
     return {
         "id": [
             "A15432",

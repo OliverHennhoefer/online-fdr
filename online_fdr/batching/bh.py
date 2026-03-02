@@ -5,6 +5,7 @@ by Zrnic, Jiang, Ramdas, and Jordan (2020)
 """
 
 from online_fdr.abstract.abstract_batching_test import AbstractBatchingTest
+from online_fdr.utils import validity
 from online_fdr.utils.sequence import DefaultSaffronGammaSequence
 from online_fdr.utils.static import bh
 
@@ -23,7 +24,7 @@ class BatchBH(AbstractBatchingTest):
 
     The algorithm maintains FDR control by:
     1. Allocating alpha budget using a gamma sequence
-    2. Adjusting for dependencies between batches via β_t correction
+    2. Adjusting for dependencies between batches via Î²_t correction
     3. Computing R^+ (maximum possible rejections) for power optimization
     4. Applying standard BH procedure within each batch
 
@@ -81,9 +82,9 @@ class BatchBH(AbstractBatchingTest):
         self.alpha0 = alpha
         self.num_test = 0  # Number of batches tested so far
         self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
-        self.r_s_plus = []  # R^+ values for each batch
-        self.r_s = []  # R values (number of rejections) for each batch
-        self.alpha_s = []  # Alpha values used for each batch
+        self.r_s_plus: list[int] = []  # R^+ values for each batch
+        self.r_s: list[int] = []  # R values (number of rejections) for each batch
+        self.alpha_s: list[float] = []  # Alpha values used for each batch
 
     def test_batch(self, p_vals: list[float]) -> list[bool]:
         """Test a batch of p-values using the BatchBH procedure.
@@ -94,26 +95,30 @@ class BatchBH(AbstractBatchingTest):
         Returns:
             List of boolean values indicating which hypotheses are rejected
         """
-        n_batch = len(p_vals)
+        p_vals_local = list(p_vals)
+        n_batch = len(p_vals_local)
+        if n_batch == 0:
+            return []
+        validity.check_p_vals_batch(p_vals_local)
         t = self.num_test  # Current batch index (0-based)
 
         if t == 0:
-            # First batch: α₁ = γ₁α
+            # First batch: Î±â‚ = Î³â‚Î±
             alpha_t = self.alpha0 * self.seq.calc_gamma(j=1)
         else:
-            # Calculate β_t
-            beta_t = 0
+            # Calculate Î²_t
+            beta_t = 0.0
             total_rejections_except_s = sum(self.r_s)  # Total rejections so far
 
             for s in range(t):
-                # For each previous batch s, calculate its contribution to β_t
+                # For each previous batch s, calculate its contribution to Î²_t
                 # Denominator is R^+_s + sum of all other rejections up to t-1
                 rejections_from_other_batches = total_rejections_except_s - self.r_s[s]
                 denominator = self.r_s_plus[s] + rejections_from_other_batches
                 if denominator > 0:
                     beta_t += self.alpha_s[s] * self.r_s_plus[s] / denominator
 
-            # Calculate α_t = (Σ_{s≤t} γ_s α - β_t) × (n_t + Σ_{s<t} R_s) / n_t
+            # Calculate Î±_t = (Î£_{sâ‰¤t} Î³_s Î± - Î²_t) Ã— (n_t + Î£_{s<t} R_s) / n_t
             gamma_sum = sum(self.seq.calc_gamma(j=i + 1) for i in range(t + 1))
             numerator = gamma_sum * self.alpha0 - beta_t
             total_prev_rejections = sum(self.r_s)
@@ -123,18 +128,19 @@ class BatchBH(AbstractBatchingTest):
             alpha_t = max(0, alpha_t)
 
         # Run BH on current batch
-        num_reject, threshold = bh(p_vals, alpha_t)
+        num_reject, threshold = bh(p_vals_local, alpha_t)
 
         # Calculate R^+_t (maximum rejections if one p-value is set to 0)
         r_plus = num_reject  # Start with current rejections
-        for i in range(len(p_vals)):
+        adjusted = list(p_vals_local)
+        for i in range(len(adjusted)):
             # Temporarily set p-value to 0
-            original_p = p_vals[i]
-            p_vals[i] = 0
-            temp_reject, _ = bh(p_vals, alpha_t)
+            original_p = adjusted[i]
+            adjusted[i] = 0.0
+            temp_reject, _ = bh(adjusted, alpha_t)
             r_plus = max(r_plus, temp_reject)
             # Restore original p-value
-            p_vals[i] = original_p
+            adjusted[i] = original_p
 
         # Store results
         self.r_s.append(num_reject)
@@ -143,4 +149,5 @@ class BatchBH(AbstractBatchingTest):
         self.num_test += 1
 
         # Return rejection decisions
-        return [p_val <= threshold for p_val in p_vals]
+        return [p_val <= threshold for p_val in p_vals_local]
+

@@ -10,6 +10,10 @@ copyright: Copyright © 2024 Oliver Hennhöfer
 
 docs_dir: docs
 site_dir: site
+exclude_docs: |
+  README.md
+not_in_nav: |
+  includes/mkdocs.md
 
 theme:
   name: material
@@ -61,9 +65,12 @@ nav:
       - Batch Testing: user_guide/batch.md
       - Data Generation: user_guide/data_generation.md
       - Performance Evaluation: user_guide/evaluation.md
+      - onlineFDR Parity: user_guide/onlinefdr_parity.md
   - Examples:
       - examples/index.md
       - Basic Usage: examples/basic_usage.md
+      - Advanced Scenarios: examples/advanced.md
+      - Method Comparisons: examples/comparison.md
   - API Reference:
       - api/index.md
       - Investing Methods:
@@ -85,6 +92,7 @@ nav:
       - theory/index.md
       - FDR Control: theory/fdr_control.md
       - Algorithms: theory/algorithms.md
+      - Guarantee Matrix: theory/guarantee_matrix.md
   - Contributing: contributing.md
 
 plugins:
@@ -110,6 +118,7 @@ plugins:
               - "!^__"
   - git-revision-date-localized:
       enable_creation_date: true
+      enable_git_follow: false
       type: datetime
   - minify:
       minify_html: true

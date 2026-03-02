@@ -163,4 +163,4 @@ Tian, J., and A. Ramdas (2021). "Online control of the familywise error rate." *
 
 Ramdas, A., T. Zrnic, M. Wainwright, and M. Jordan (2018). "SAFFRON: an adaptive algorithm for online control of the false discovery rate." *Proceedings of the 35th International Conference on Machine Learning*, 80:4286-4294.
 
-Foster, D. P., and R. A. Stine (2008). "α-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
+Foster, D. P., and R. A. Stine (2008). "-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.

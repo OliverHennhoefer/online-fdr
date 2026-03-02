@@ -15,7 +15,6 @@ false_positive = 0
 true_positive = 0
 false_negatives = 0
 
-results = []
 for i in range(0, N // B):
     p_values, labels = [], []
     for _ in range(B):  # batch generation
@@ -29,6 +28,7 @@ for i in range(0, N // B):
         p_value = p_values[j]
         label = labels[j]
         result = results[j]
+        test_idx = i * B + j
 
         # Update counters based on the conditions
         true_positive += label and result
@@ -36,7 +36,7 @@ for i in range(0, N // B):
         false_negatives += label and not result
 
         # Call format_result to handle the formatted output
-        format_result(i, result, p_value, batch_stbh.alpha)
+        format_result(test_idx, result, p_value, batch_stbh.alpha)
 
 print(f"Empirical sFDR: {calculate_sfdr(tp=true_positive, fp=false_positive)}")
-print(f"Empirical Power: {calculate_power(tp=true_positive, fn=false_positive)}")
+print(f"Empirical Power: {calculate_power(tp=true_positive, fn=false_negatives)}")

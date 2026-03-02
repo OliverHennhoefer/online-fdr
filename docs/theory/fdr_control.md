@@ -114,13 +114,13 @@ where $V(T)$ and $R(T)$ are the number of false discoveries and total discoverie
 2. **Spend wealth** to purchase rejection thresholds: $W_t \leftarrow W_t - \alpha_t$
 3. **Earn wealth** from discoveries: $W_t \leftarrow W_t + \text{payout}$
 
-**Theorem (Alpha-Wealth FDR Control)**: If wealth remains non-negative and payouts are properly calibrated, then FDR ≤ α.
+**Theorem (Alpha-Wealth FDR Control)**: If wealth remains non-negative and payouts are properly calibrated, then FDR  .
 
 ## Key Theoretical Results
 
 ### Independence Assumption
 
-**Theorem**: Under independence of p-values, most online FDR procedures (LORD, SAFFRON, ADDIS) control FDR at level α.
+**Theorem**: Under independence of p-values, most online FDR procedures (LORD, SAFFRON, ADDIS) control FDR at level alpha.
 
 **Proof technique**: The procedures are designed so that the wealth process $\{W_t\}$ forms a **supermartingale** under the null hypothesis.
 
@@ -159,8 +159,8 @@ $$\alpha_t = \gamma_t \cdot (\text{available wealth})$$
 ### Optimality Considerations
 
 The choice of gamma sequence affects:
-- **Power**: Faster spending → higher early power, lower late power
-- **Robustness**: Slower spending → more conservative, sustained power
+- **Power**: Faster spending  higher early power, lower late power
+- **Robustness**: Slower spending  more conservative, sustained power
 - **Adaptivity**: Some sequences adapt to discovery history
 
 ## Advanced Topics
@@ -181,7 +181,7 @@ The choice of gamma sequence affects:
 **Problem**: Each experiment may test multiple outcomes simultaneously.
 
 **Approaches**:
-- **Hierarchical testing**: Primary → secondary endpoints
+- **Hierarchical testing**: Primary  secondary endpoints
 - **Composite hypotheses**: Joint null vs. any alternative
 - **Closed testing**: Maintains familywise error rate
 
@@ -201,25 +201,25 @@ This **distribution-free** property is crucial for practical applications.
 **Trade-off**: FDR control inherently trades power for error control.
 
 **Factors affecting power**:
-- **Proportion of nulls** ($\pi_0$): Lower $\pi_0$ → higher power
-- **Effect sizes**: Larger effects → higher power  
+- **Proportion of nulls** ($\pi_0$): Lower $\pi_0$  higher power
+- **Effect sizes**: Larger effects  higher power  
 - **Dependence structure**: Positive dependence can help
 - **Procedure choice**: Adaptive procedures often more powerful
 
 ### Choosing FDR Level
 
 **Guidelines**:
-- **α = 0.05**: Standard for most applications
-- **α = 0.10**: More liberal for exploratory studies
-- **α = 0.01**: Conservative for high-stakes decisions
+- ** = 0.05**: Standard for most applications
+- ** = 0.10**: More liberal for exploratory studies
+- ** = 0.01**: Conservative for high-stakes decisions
 
 **Context matters**: Biological discovery vs. financial decisions require different error tolerances.
 
 ### Interpretation
 
 **FDR = 0.05** means:
-- Among all discoveries made, expect ≤ 5% to be false on average
-- **Not** that each individual discovery has ≤ 5% chance of being false
+- Among all discoveries made, expect  5% to be false on average
+- **Not** that each individual discovery has  5% chance of being false
 - The guarantee is **average case**, not worst case
 
 ## Connections to Other Fields
@@ -252,7 +252,7 @@ This **distribution-free** property is crucial for practical applications.
 
 ### Online FDR Literature
 
-4. **Foster, D. P., and R. A. Stine** (2008). "α-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
+4. **Foster, D. P., and R. A. Stine** (2008). "-investing: a procedure for sequential control of expected false discoveries." *Journal of the Royal Statistical Society: Series B*, 70(2):429-444.
 
 5. **Javanmard, A., and A. Montanari** (2018). "Online rules for control of false discovery rate and false discovery exceedance." *Annals of Statistics*, 46(2):526-554.
 
@@ -267,5 +267,5 @@ This **distribution-free** property is crucial for practical applications.
 ## See Also
 
 - **[Algorithm Details](algorithms.md)**: Specific implementations and proofs
-- **[Theoretical Guarantees](guarantees.md)**: Detailed analysis of FDR control properties
+- **[Guarantee Matrix](guarantee_matrix.md)**: Method-by-method assumptions and guarantee status
 - **[User Guide](../user_guide/concepts.md)**: Practical introduction to FDR concepts

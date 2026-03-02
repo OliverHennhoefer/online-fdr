@@ -1,4 +1,4 @@
-# ADDIS: Adaptive Discarding Algorithm
+﻿# ADDIS: Adaptive Discarding Algorithm
 
 **ADDIS** (ADaptive algorithm that DIScards conservative nulls) is a state-of-the-art online FDR control method that addresses a critical limitation of existing methods: power loss when null p-values are conservative (stochastically larger than uniform).
 
@@ -25,14 +25,14 @@ This gives ADDIS "the best of both worlds": substantial power gains with conserv
 
 ADDIS operates with three key thresholds:
 
-1. **τ (tau)**: **Discarding threshold** - p-values > τ are discarded (not tested)
-2. **λ (lambda)**: **Candidate threshold** - among non-discarded p-values ≤ λ become candidates  
-3. **α_i**: **Rejection threshold** - candidates with p-value ≤ α_i are rejected
+1. **Tau (`tau`)**: **Discarding threshold** - p-values > tau are discarded (not tested)
+2. **Lambda (`lambda_`)**: **Candidate threshold** - among non-discarded p-values, those with `p <= lambda_` become candidates  
+3. **alpha_i**: **Rejection threshold** - candidates with `p <= alpha_i` are rejected
 
 ### Wealth Dynamics
 
 The algorithm maintains **alpha-wealth** that:
-- Starts at initial wealth W₀
+- Starts at initial wealth `W0`
 - Is spent to purchase rejection thresholds
 - Is earned back from successful discoveries
 - Adapts based on the estimated proportion of nulls
@@ -51,7 +51,7 @@ from online_fdr.investing.addis.addis import Addis
 # Initialize ADDIS with standard parameters
 addis = Addis(
     alpha=0.05,      # Target FDR level
-    wealth=0.025,    # Initial wealth (α/2)
+    wealth=0.025,    # Initial wealth (alpha/2)
     lambda_=0.25,    # Candidate threshold
     tau=0.5          # Discarding threshold
 )
@@ -62,8 +62,14 @@ p_values = [0.001, 0.15, 0.03, 0.8, 0.02, 0.45]
 for i, p_val in enumerate(p_values):
     decision = addis.test_one(p_val)
     current_alpha = addis.alpha
-    print(f"Test {i+1}: p={p_val:.3f} → {'REJECT' if decision else 'ACCEPT'} "
-          f"(α={current_alpha:.4f})" if current_alpha else "(no wealth)")
+    threshold_msg = (
+        f"(alpha_t={current_alpha:.4f})"
+        if current_alpha is not None
+        else "(no wealth)"
+    )
+    print(
+        f"Test {i+1}: p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'} {threshold_msg}"
+    )
 ```
 
 ### Conservative Null Scenario
@@ -128,7 +134,7 @@ results = evaluate_parameters(lambda_grid, tau_grid, p_values)
 
 # Find best parameters
 best_params = max(results.items(), key=lambda x: x[1])
-print(f"Best parameters: λ={best_params[0][0]}, τ={best_params[0][1]}")
+print(f"Best parameters: lambda={best_params[0][0]}, tau={best_params[0][1]}")
 print(f"Discoveries: {best_params[1]}")
 ```
 
@@ -151,30 +157,30 @@ addis_aggressive = Addis(alpha=0.1, wealth=0.075, lambda_=0.75, tau=0.8)
 
 | Parameter | Low Values | High Values | Typical Range |
 |-----------|------------|-------------|---------------|
-| **α** | Fewer discoveries, stricter control | More discoveries, looser control | 0.05 - 0.2 |
-| **W₀** | Conservative early, less early power | Aggressive early, more early power | α/4 to α/2 |
-| **λ** | Fewer candidates, higher bar | More candidates, lower bar | 0.1 - 0.75 |  
-| **τ** | More tests discarded | Fewer tests discarded | 0.3 - 0.9 |
+| **alpha** | Fewer discoveries, stricter control | More discoveries, looser control | 0.05 - 0.2 |
+| **W** | Conservative early, less early power | Aggressive early, more early power | alpha/4 to alpha/2 |
+| **lambda** | Fewer candidates, higher bar | More candidates, lower bar | 0.1 - 0.75 |  
+| **tau** | More tests discarded | Fewer tests discarded | 0.3 - 0.9 |
 
 ### Constraint Requirements
 
 ADDIS parameters must satisfy:
 - `0 < alpha < 1`
-- `0 < wealth ≤ alpha`  
+- `0 < wealth <= alpha`  
 - `0 < lambda_ < 1`
 - `0 < tau < 1`
-- `wealth ≤ tau * lambda_ * alpha` (for theoretical guarantees)
+- `wealth <= tau * lambda_ * alpha` (for theoretical guarantees)
 
 ## When to Use ADDIS
 
-### ✅ **Ideal Scenarios**
+###  **Ideal Scenarios**
 
 - **A/B Testing**: When null effects are often small positive/negative (conservative)
 - **High-throughput screening**: Many tests with sparse alternatives
 - **General online FDR control**: Good default choice for most applications  
 - **Unknown null behavior**: Robust to both uniform and conservative nulls
 
-### ⚠️ **Consider Alternatives**
+###  **Consider Alternatives**
 
 - **Time series data**: Use LORD family methods instead
 - **Strong temporal dependence**: Consider LORD with memory decay
@@ -194,10 +200,10 @@ Conservative    0.89     0.73      0.71     0.81
 Mixed           0.85     0.79      0.75     0.83
 ```
 
-### FDR Control (Should be ≤ target α)
+### FDR Control (Should be <= target)
 
 ```
-Target α=0.1    ADDIS    SAFFRON   LORD3    BatchBH  
+Target=0.1     ADDIS    SAFFRON   LORD3    BatchBH  
 Independent     0.087    0.089     0.094    0.091
 Weak Depend.    0.093    0.095     0.098    0.096
 Conservative    0.084    0.087     0.091    0.089
@@ -237,9 +243,9 @@ def monitor_addis_wealth(addis, p_values):
         
         # Check if discarded
         if p_val > addis.tau:
-            print(f"Test {i+1}: p={p_val:.3f} DISCARDED (> τ={addis.tau})")
+            print(f"Test {i+1}: p={p_val:.3f} discarded (p > tau={addis.tau})")
         elif decision:
-            print(f"Test {i+1}: p={p_val:.3f} DISCOVERY! α={current_alpha:.4f}")
+            print(f"Test {i+1}: p={p_val:.3f} discovery (alpha_t={current_alpha:.4f})")
     
     return results
 ```
@@ -273,13 +279,13 @@ addis.seq = CustomGammaSequence(decay_rate=2.0)
 
 !!! bug "No Discoveries Despite Strong Signals"
     **Possible causes:**
-    - τ too low (discarding too many tests)
-    - λ too low (few candidates selected)
+    - `tau` too low (discarding too many tests)
+    - `lambda` too low (few candidates selected)
     - Wealth too low (insufficient budget)
     
     **Solutions:**
-    - Increase τ (try 0.6-0.8)
-    - Increase λ (try 0.5-0.7)  
+    - Increase `tau` (try 0.6-0.8)
+    - Increase `lambda` (try 0.5-0.7)  
     - Increase initial wealth
 
 !!! bug "Too Many False Discoveries"
@@ -293,12 +299,12 @@ addis.seq = CustomGammaSequence(decay_rate=2.0)
     - Monitor empirical FDR during testing
 
 !!! bug "Method Stops Making Decisions"
-    **Cause:** Wealth depleted (wealth → 0)
+    **Cause:** Wealth depleted (`wealth <= 0`)
     
     **Solutions:**
     - Increase initial wealth
-    - Decrease λ to be more selective
-    - Increase τ to discard more null-like p-values
+    - Decrease `lambda` to be more selective
+    - Increase `tau` to discard more null-like p-values
 
 ### Diagnostics
 
@@ -328,11 +334,11 @@ def diagnose_addis(addis, p_values):
     
     # Recommendations
     if discarded / len(p_values) > 0.5:
-        print("⚠️  Consider increasing τ - many tests discarded")
+        print("  Consider increasing tau - many tests discarded")
     if candidates / tested < 0.1:
-        print("⚠️  Consider increasing λ - very few candidates")
+        print("  Consider increasing lambda - very few candidates")
     if getattr(addis, 'wealth', 0) < 0.001:
-        print("⚠️  Consider increasing initial wealth - depleted")
+        print("  Consider increasing initial wealth - depleted")
 ```
 
 ## Comparison with Other Methods
@@ -341,7 +347,7 @@ def diagnose_addis(addis, p_values):
 
 | Aspect | ADDIS | SAFFRON |
 |--------|--------|---------|
-| **Parameters** | 4 (α, W₀, λ, τ) | 3 (α, W₀, λ) |
+| **Parameters** | 4 (alpha, W, lambda, tau) | 3 (alpha, W, lambda) |
 | **Discarding** | Yes (adaptive) | No |
 | **Conservative nulls** | Excellent | Poor |
 | **Uniform nulls** | Good | Excellent |

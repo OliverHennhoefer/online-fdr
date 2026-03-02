@@ -1,4 +1,5 @@
 from online_fdr.abstract.abstract_batching_test import AbstractBatchingTest
+from online_fdr.utils import validity
 from online_fdr.utils.sequence import DefaultSaffronGammaSequence
 from online_fdr.utils.static import bh
 
@@ -86,7 +87,7 @@ class BatchPRDS(AbstractBatchingTest):
         self.num_test: int = 1
         self.r_total: int = 0
 
-        self.alpha_s = []  # only for test
+        self.alpha_s: list[float] = []  # only for test
 
     def test_batch(self, p_vals: list[float]) -> list[bool]:
         """Test a batch of p-values under PRDS conditions.
@@ -119,7 +120,11 @@ class BatchPRDS(AbstractBatchingTest):
             conditions. If this assumption is violated, FDR control may not
             be maintained.
         """
-        batch_size = len(p_vals)
+        p_vals_local = list(p_vals)
+        batch_size = len(p_vals_local)
+        if batch_size == 0:
+            return []
+        validity.check_p_vals_batch(p_vals_local)
         self.alpha = (
             self.alpha0
             * self.seq.calc_gamma(self.num_test)
@@ -127,9 +132,9 @@ class BatchPRDS(AbstractBatchingTest):
             * (batch_size + self.r_total)
         )
         self.alpha_s.append(self.alpha)
-        num_reject, threshold = bh(p_vals, self.alpha)
+        num_reject, threshold = bh(p_vals_local, self.alpha)
 
         self.r_total += num_reject
 
         self.num_test += 1
-        return [p_val <= threshold for p_val in p_vals]
+        return [p_val <= threshold for p_val in p_vals_local]

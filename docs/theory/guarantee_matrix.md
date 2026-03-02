@@ -1,0 +1,46 @@
+﻿# Guarantee Matrix
+
+This page summarizes the guarantee status of each method in this package.
+
+## Status Labels
+
+- **Proven**: Theoretical guarantee exists under the listed assumptions.
+- **Parity**: Behavior is aligned to `onlineFDR` reference semantics for overlapping scope.
+- **Extension**: Implemented in this package but not a direct `onlineFDR` counterpart.
+- **Experimental**: Utility method without formal FDR/FWER guarantee claim in this package.
+
+## Method Matrix
+
+| Method | Error Target | Assumptions | Status | Notes |
+|---|---|---|---|---|
+| `Lond` | FDR | Independence / PRDS / dep-corrected mode | Proven + Parity | Use `dependent=True` for arbitrary dependence correction. |
+| `LordThree` | FDR | Independence, valid reward budget | Proven + Parity | Requires `reward > 0` and `wealth + reward <= alpha`. |
+| `LordPlusPlus` | FDR | Independence, guaranteed payout regime | Proven + Parity | This implementation enforces `reward == alpha`. |
+| `LordDependent` | FDR | Arbitrary dependence (dependent LORD assumptions) | Proven + Parity | Uses dependent-LORD sequence scaling compatible with `onlineFDR` semantics. |
+| `LordDiscard` | FDR | Conservative/null-adaptive regime with valid `tau` | Parity | Requires `0 < tau < 1`. |
+| `Saffron` | FDR | Independence | Proven + Parity | Candidate-threshold method; parity-tested against `onlineFDR`. |
+| `Addis` | FDR/mFDR regime | Conservative nulls, `0 < tau < 1`, `0 <= lambda < tau` | Proven + Parity | Parameter checks enforce supported region. |
+| `Gai` | FDR/mFDR | Alpha-investing assumptions | Parity | Strict guarantees depend on payout specification. |
+| `AlphaSpending` | FWER | Valid finite-horizon spending rule | Proven + Parity | Finite horizon is enforced for finite-`k` rules. |
+| `OnlineFallback` | FWER | Online fallback assumptions | Proven + Parity | Boundary uses `p <= alpha_t`. |
+| `BatchBH` | FDR | Batching assumptions from reference | Parity | Empty batch is a no-op. |
+| `BatchStoreyBH` | FDR | Batching + Storey pi0 assumptions | Parity | `R+` uses same-size replacement semantics. |
+| `BatchPRDS` | FDR | PRDS within-batch assumptions | Parity | Empty batch is a no-op. |
+| `BatchBY` | FDR | Arbitrary dependence | Extension | Added method beyond the `onlineFDR` overlap set. |
+| `BatchBHOfficial` | FDR | Official-paper implementation profile assumptions | Extension | Alternate implementation profile. |
+| `LORDMemoryDecay` | N/A (utility/monitoring use) | Application-specific | Experimental / Extension | Not claimed as a general FDR/FWER-control method in this package docs. |
+
+## Important Scope Notes
+
+- Guarantees apply only under each method's stated assumptions.
+- Parity means semantic alignment for overlapping functionality, not identity of every API surface.
+- Live R parity tests (`rpy2`) are mandatory in development/CI and require R plus `onlineFDR` (`2.18.0`).
+
+## References
+
+1. https://www.bioconductor.org/packages/release/bioc/html/onlineFDR.html
+2. https://bioc-release.r-universe.dev/onlineFDR/doc/manual.html
+3. https://dsrobertson.github.io/onlineFDR/articles/theory.html
+4. https://dsrobertson.github.io/onlineFDR/reference/LORD.html
+5. https://dsrobertson.github.io/onlineFDR/reference/SAFFRON.html
+6. https://dsrobertson.github.io/onlineFDR/reference/BatchBH.html

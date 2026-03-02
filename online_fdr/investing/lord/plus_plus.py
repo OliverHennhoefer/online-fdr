@@ -1,3 +1,5 @@
+import math
+
 from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
 from online_fdr.utils import validity
 from online_fdr.utils.sequence import DefaultLordGammaSequence
@@ -21,14 +23,18 @@ class LordPlusPlus(AbstractSequentialTest):
     Annals of Statistics, 46(2):526-554.
     """
 
-    def __init__(self, alpha: float, wealth: float, reward: float = None):
+    def __init__(self, alpha: float, wealth: float, reward: float | None = None):
         super().__init__(alpha)
         self.alpha0: float = alpha
         self.wealth0: float = wealth
         self.wealth: float = wealth
-        self.reward: float = reward if reward is not None else alpha
 
         validity.check_initial_wealth(wealth, alpha)
+        if reward is not None and not math.isclose(reward, alpha):
+            raise ValueError(
+                "LordPlusPlus guarantee regime requires reward == alpha."
+            )
+        self.reward: float = alpha
 
         self.seq = DefaultLordGammaSequence(c=0.07720838)
 

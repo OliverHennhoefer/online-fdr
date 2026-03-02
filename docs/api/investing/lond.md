@@ -1,4 +1,4 @@
-# LOND: Levels based On Number of Discoveries
+﻿# LOND: Levels based On Number of Discoveries
 
 **LOND** (significance Levels based On Number of Discoveries) is one of the first procedures for online false discovery rate (FDR) control, where significance levels are multiplied by the number of discoveries made so far.
 
@@ -46,9 +46,9 @@ for i, p_value in enumerate(p_values):
     
     if decision:
         discoveries.append(i + 1)
-        print(f"✓ Test {i+1}: p={p_value:.3f} → DISCOVERY! (total: {lond.num_reject})")
+        print(f" Test {i+1}: p={p_value:.3f}  discovery (total: {lond.num_reject})")
     else:
-        print(f"  Test {i+1}: p={p_value:.3f} → no rejection (threshold: {lond.alpha:.6f})")
+        print(f"  Test {i+1}: p={p_value:.3f}  no rejection (threshold: {lond.alpha:.6f})")
 
 print(f"\nTotal discoveries: {len(discoveries)}")
 print(f"Discovery indices: {discoveries}")
@@ -69,7 +69,7 @@ def demonstrate_discovery_momentum():
     
     for i, p_val in enumerate(early_discoveries, 1):
         decision = lond1.test_one(p_val)
-        print(f"Test {i}: p={p_val:.3f} → {'REJECT' if decision else 'ACCEPT'} "
+        print(f"Test {i}: p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'} "
               f"(threshold: {lond1.alpha:.6f}, discoveries: {lond1.num_reject})")
     
     print(f"Final discoveries: {lond1.num_reject}\n")
@@ -83,7 +83,7 @@ def demonstrate_discovery_momentum():
     
     for i, p_val in enumerate(no_early, 1):
         decision = lond2.test_one(p_val)
-        print(f"Test {i}: p={p_val:.3f} → {'REJECT' if decision else 'ACCEPT'} "
+        print(f"Test {i}: p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'} "
               f"(threshold: {lond2.alpha:.6f}, discoveries: {lond2.num_reject})")
     
     print(f"Final discoveries: {lond2.num_reject}")
@@ -191,13 +191,13 @@ def evaluate_lond_performance():
         if decision:
             if is_alternative:
                 true_positives += 1
-                result = "TRUE discovery ✓"
+                result = "true discovery"
             else:
                 false_positives += 1
-                result = "FALSE discovery ✗"
+                result = "false discovery"
             
             truth = "ALT" if is_alternative else "NULL"
-            print(f"Test {i+1:2d}: p={p_value:.3f} ({truth}) → REJECT ({result})")
+            print(f"Test {i+1:2d}: p={p_value:.3f} ({truth})  REJECT ({result})")
     
     # Calculate metrics
     total_discoveries = true_positives + false_positives
@@ -209,7 +209,7 @@ def evaluate_lond_performance():
     print(f"False positives: {false_positives}")
     print(f"Empirical FDR: {empirical_fdr:.3f}")
     print(f"Target FDR: {lond.alpha0}")
-    print(f"FDR controlled: {'✓' if empirical_fdr <= lond.alpha0 else '✗'}")
+    print(f"FDR controlled: {'yes' if empirical_fdr <= lond.alpha0 else 'no'}")
 
 evaluate_lond_performance()
 ```
@@ -226,7 +226,7 @@ R_t + 1 & \text{(original formulation)} \\
 \end{cases}$$
 
 where:
-- γ_t is from a gamma sequence with Σ γ_t ≤ α  
+- gamma_t is from a gamma sequence with sum_t gamma_t <= 1
 - R_t is the number of rejections up to time t
 
 ### Dependence Correction
@@ -240,9 +240,9 @@ where H_t is the t-th harmonic number.
 ### FDR Guarantee
 
 **Theorem (LOND FDR Control)**: 
-- For independent p-values: LOND controls FDR at level α
-- For positively dependent (PRDS) p-values: LOND controls FDR at level α  
-- For arbitrary dependence: LOND with harmonic correction controls FDR at level α
+- For independent p-values: LOND controls FDR at level alpha
+- For positively dependent (PRDS) p-values: LOND controls FDR at level alpha
+- For arbitrary dependence: LOND with harmonic correction controls FDR at level alpha
 
 ## Comparison with Other Methods
 
@@ -250,9 +250,9 @@ where H_t is the t-th harmonic number.
 
 | Method | Adaptation | Power | Complexity | FDR Control |
 |--------|------------|--------|------------|-------------|
-| **LOND** | None | Low (without early discoveries) | Simple | ✓ |
-| **LORD** | Timing-based | Medium | Moderate | ✓ |
-| **SAFFRON** | Null proportion | High | Moderate | ✓ |
+| **LOND** | None | Low (without early discoveries) | Simple |  |
+| **LORD** | Timing-based | Medium | Moderate |  |
+| **SAFFRON** | Null proportion | High | Moderate |  |
 
 ### When to Use LOND
 
@@ -273,7 +273,7 @@ where H_t is the t-th harmonic number.
 
 !!! tip "Alpha Selection"
     - Use standard values (0.05, 0.1) for comparability
-    - Higher α may be needed to see any discoveries with LOND
+    - Higher  may be needed to see any discoveries with LOND
 
 !!! tip "Dependence Setting"
     - `dependent=False`: For independent or positively dependent tests

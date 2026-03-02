@@ -1,4 +1,4 @@
-# Concepts
+﻿# Concepts
 
 Understanding the fundamental concepts behind online FDR control is crucial for choosing the right methods and interpreting results correctly. This section covers the key theoretical foundations and practical considerations.
 
@@ -47,10 +47,10 @@ rejections = benjamini_hochberg(p_values, alpha=0.05)
 ```
 
 **Characteristics:**
-- ✅ Optimal power for given FDR level
-- ✅ Simple to understand and implement
-- ❌ Requires waiting for all tests
-- ❌ No early stopping possible
+-  Optimal power for given FDR level
+-  Simple to understand and implement
+-  Requires waiting for all tests
+-  No early stopping possible
 
 ### Online Testing Paradigm
 
@@ -66,11 +66,11 @@ for p_value in p_value_stream:  # Process one at a time
 ```
 
 **Characteristics:**
-- ✅ Immediate decisions possible
-- ✅ Can stop early if needed
-- ✅ Suitable for streaming data
-- ❌ May have slightly lower power
-- ❌ More complex parameter tuning
+-  Immediate decisions possible
+-  Can stop early if needed
+-  Suitable for streaming data
+-  May have slightly lower power
+-  More complex parameter tuning
 
 ### When to Choose Each
 
@@ -92,7 +92,7 @@ Online FDR methods fall into two main paradigms:
 
 ### Alpha Spending
 
-**Concept**: Pre-allocate your total α budget across tests
+**Concept**: Pre-allocate your total  budget across tests
 
 ```python
 # Example: Bonferroni spending
@@ -103,10 +103,10 @@ for p_value in p_values:
 ```
 
 **Properties:**
-- ✅ Very conservative, guarantees FWER control
-- ✅ Simple to understand  
-- ❌ Low power, especially early in sequence
-- ❌ Requires knowing expected number of tests
+-  Very conservative, guarantees FWER control
+-  Simple to understand  
+-  Low power, especially early in sequence
+-  Requires knowing expected number of tests
 
 **Methods**: Bonferroni spending, Holm-Bonferroni, Alpha spending functions
 
@@ -129,11 +129,11 @@ for p_value in p_values:
 ```
 
 **Properties:**
-- ✅ Adaptive thresholds based on past success
-- ✅ Higher power than spending methods
-- ✅ FDR control (not FWER)
-- ❌ More complex to understand
-- ❌ More parameters to tune
+-  Adaptive thresholds based on past success
+-  Higher power than spending methods
+-  FDR control (not FWER)
+-  More complex to understand
+-  More parameters to tune
 
 **Methods**: GAI, SAFFRON, ADDIS, LORD family, LOND
 
@@ -191,32 +191,32 @@ $$P(p_1 \leq x_1, p_2 \leq x_2, \ldots) = \prod_{i=1}^m P(p_i \leq x_i)$$
 
 ### Universal Parameters
 
-!!! tip "Alpha (α)"
+!!! tip "Alpha (alpha)"
     **Meaning**: Target FDR level  
     **Typical values**: 0.05, 0.1, 0.2  
     **Tuning**: Set based on application tolerance for false discoveries
 
 ### Alpha Investing Parameters
 
-!!! tip "Initial Wealth (W₀)"
+!!! tip "Initial Wealth (W)"
     **Meaning**: Starting "budget" for rejections  
-    **Typical values**: α/4 to α/2  
-    **Effect**: Higher values → more early power
+    **Typical values**: alpha/4 to alpha/2  
+    **Effect**: Higher values mean more early power
 
-!!! tip "Lambda (λ)"
+!!! tip "Lambda (lambda)"
     **Meaning**: Threshold for "candidate" discoveries (ADDIS/SAFFRON)  
     **Typical values**: 0.25 to 0.5  
-    **Effect**: Lower values → more candidates but higher bar for rejection
+    **Effect**: Lower values mean more candidates but a higher bar for rejection
 
-!!! tip "Tau (τ)"
+!!! tip "Tau (tau)"
     **Meaning**: Discarding threshold for large p-values (ADDIS)  
     **Typical values**: 0.5 to 0.8  
-    **Effect**: Higher values → fewer discarded tests
+    **Effect**: Higher values mean fewer discarded tests
 
 !!! tip "Reward/Payoff (r)"
     **Meaning**: Wealth gained from each discovery (LORD family)  
     **Typical values**: 0.05 to 0.5  
-    **Effect**: Higher values → more aggressive after discoveries
+    **Effect**: Higher values mean more aggressive behavior after discoveries
 
 ## Performance Metrics
 

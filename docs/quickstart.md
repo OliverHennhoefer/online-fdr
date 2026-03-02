@@ -29,16 +29,16 @@ p_values = [0.001, 0.1, 0.03, 0.8, 0.02]
 
 for i, p_val in enumerate(p_values):
     decision = addis.test_one(p_val)
-    print(f"Test {i+1}: p={p_val:5.3f} → {'REJECT' if decision else 'ACCEPT'}")
+    print(f"Test {i+1}: p={p_val:5.3f}  {'REJECT' if decision else 'ACCEPT'}")
 ```
 
 Output:
 ```
-Test 1: p=0.001 → REJECT
-Test 2: p=0.100 → ACCEPT  
-Test 3: p=0.030 → REJECT
-Test 4: p=0.800 → ACCEPT
-Test 5: p=0.020 → ACCEPT
+Test 1: p=0.001  REJECT
+Test 2: p=0.100  ACCEPT  
+Test 3: p=0.030  REJECT
+Test 4: p=0.800  ACCEPT
+Test 5: p=0.020  ACCEPT
 ```
 
 ## Realistic Simulation
@@ -73,12 +73,12 @@ for i in range(50):  # Test first 50 hypotheses
         discoveries.append(i + 1)
         if is_alternative:
             true_discoveries.append(i + 1)
-            result = "✓ TRUE discovery"
+            result = "true discovery"
         else:
             false_discoveries.append(i + 1)
-            result = "✗ FALSE discovery"
+            result = "false discovery"
         
-        print(f"Test {i+1:2d}: p={p_value:.4f} → DISCOVERY {result}")
+        print(f"Test {i+1:2d}: p={p_value:.4f}  discovery ({result})")
 
 # Calculate performance metrics
 n_discoveries = len(discoveries)

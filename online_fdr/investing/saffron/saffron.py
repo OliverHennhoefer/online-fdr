@@ -65,6 +65,7 @@ class Saffron(AbstractSequentialTest):
 
         self.num_test: int = 0
         self.candidates: list[bool] = []
+        self._candidate_prefix: list[int] = [0]
         self.reject_idx: list[int] = []
 
         self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
@@ -99,12 +100,13 @@ class Saffron(AbstractSequentialTest):
 
         is_candidate = p_val <= self.lambda_  # candidate
         self.candidates.append(is_candidate)
+        self._candidate_prefix.append(self._candidate_prefix[-1] + int(is_candidate))
 
         is_rejected = p_val <= self.alpha  # rejection
         self.reject_idx.append(self.num_test) if is_rejected else None
         return is_rejected
 
-    def calc_alpha_t(self):
+    def calc_alpha_t(self) -> float:
         """Calculate the adaptive rejection threshold for the current test.
 
         The SAFFRON threshold is based on estimating the alpha-wealth allocated to
@@ -128,22 +130,31 @@ class Saffron(AbstractSequentialTest):
                 * self.wealth0
             )
         else:
+            total_candidates = self._candidate_prefix[-1]
             alpha_t = self.wealth0 * self.seq.calc_gamma(
-                self.num_test - sum(self.candidates), None
+                self.num_test - total_candidates, None
             )
             if len(self.reject_idx) >= 1:
                 tau_1 = self.reject_idx[0]
-                c_1_plus = sum(self.candidates[tau_1:])
+                c_1_plus = self._candidate_count_after(tau_1)
                 alpha_t += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
                     (self.num_test - tau_1 - c_1_plus), None
                 )
             if len(self.reject_idx) >= 2:
                 alpha_t += self.alpha0 * sum(
                     self.seq.calc_gamma(
-                        (self.num_test - idx - sum(self.candidates[idx:])),
+                        self._gamma_arg_for_rejection(idx),
                         None,
                     )
                     for idx in self.reject_idx[1:]
                 )
             alpha_t *= 1 - self.lambda_
         return min(self.lambda_, alpha_t)
+
+    def _candidate_count_after(self, idx: int) -> int:
+        """Count candidates among already-tested hypotheses with index > idx."""
+        return self._candidate_prefix[-1] - self._candidate_prefix[idx]
+
+    def _gamma_arg_for_rejection(self, reject_idx: int) -> int:
+        """Compute SAFFRON gamma index contribution for a past rejection."""
+        return self.num_test - reject_idx - self._candidate_count_after(reject_idx)

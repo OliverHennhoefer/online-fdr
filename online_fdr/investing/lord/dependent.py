@@ -21,11 +21,17 @@ class LordDependent(AbstractSequentialTest):
     ):  # fmt: skip
         super().__init__(alpha)
         self.alpha0: float = alpha
-        self.wealth: float = alpha / 2 if wealth is None else wealth
-        self.reward: float = alpha / 2 if reward is None else reward
+        self.wealth: float = wealth
+        self.reward: float = reward
         validity.check_initial_wealth(wealth, alpha)
+        validity.check_reward_budget(wealth=wealth, reward=reward, alpha=alpha)
 
-        self.seq = DependentLordGammaSequence(c=0.139307, b0=self.reward)
+        # onlineFDR LORDdep default xi_i:
+        # xi_i = 0.139307 * alpha / (b0 * i * log(max(i,2))^3)
+        self.seq = DependentLordGammaSequence(
+            c=0.139307 * self.alpha0 / self.reward,
+            b0=self.reward,
+        )
 
         self.last_reject: int = 0  # tau
         self.wealth_reject: float = self.wealth  # wealth at tau

@@ -1,4 +1,4 @@
-# Basic Usage Examples
+﻿# Basic Usage Examples
 
 This page provides tested, practical examples of using **online-fdr** for common multiple testing scenarios. All code examples have been verified to work out-of-the-box.
 
@@ -25,9 +25,9 @@ for i, p_value in enumerate(p_values):
     
     if decision:
         discoveries.append(i + 1)
-        print(f"✓ Test {i+1}: p={p_value:.3f} → DISCOVERY!")
+        print(f" Test {i+1}: p={p_value:.3f}  discovery")
     else:
-        print(f"  Test {i+1}: p={p_value:.3f} → no rejection")
+        print(f"  Test {i+1}: p={p_value:.3f}  no rejection")
 
 print(f"\nTotal discoveries: {len(discoveries)}")
 print(f"Discovery indices: {discoveries}")
@@ -53,9 +53,9 @@ discoveries = []
 for i, (p_value, decision) in enumerate(zip(p_values, decisions)):
     if decision:
         discoveries.append(i + 1)
-        print(f"✓ Test {i+1}: p={p_value:.3f} → DISCOVERY!")
+        print(f" Test {i+1}: p={p_value:.3f}  discovery")
     else:
-        print(f"  Test {i+1}: p={p_value:.3f} → no rejection")
+        print(f"  Test {i+1}: p={p_value:.3f}  no rejection")
 
 print(f"\nBatch discoveries: {len(discoveries)}")
 ```
@@ -99,10 +99,10 @@ for i in range(20):  # Test first 20 hypotheses
     result_type = ""
     if decision and is_alternative:
         true_discoveries += 1
-        result_type = "TRUE discovery ✓"
+        result_type = "true discovery"
     elif decision and not is_alternative:
         false_discoveries += 1
-        result_type = "FALSE discovery ✗"
+        result_type = "false discovery"
     elif not decision and is_alternative:
         result_type = "missed alternative"
     else:
@@ -111,7 +111,7 @@ for i in range(20):  # Test first 20 hypotheses
     truth = "ALT" if is_alternative else "NULL"
     decision_str = "REJECT" if decision else "ACCEPT"
     
-    print(f"Test {i+1:2d}: p={p_value:.3f} ({truth:>4}) → {decision_str:>6} ({result_type})")
+    print(f"Test {i+1:2d}: p={p_value:.3f} ({truth:>4})  {decision_str:>6} ({result_type})")
 
 print(f"\nSummary:")
 print(f"True discoveries: {true_discoveries}")
@@ -363,12 +363,12 @@ def ab_testing_example():
         variant_names.append(variant_name)
         true_effects.append(rate > control_rate)
         
-        print(f"  {variant_name}: {rate:.1%} vs {control_rate:.1%} → p={p_value:.4f}")
+        print(f"  {variant_name}: {rate:.1%} vs {control_rate:.1%}  p={p_value:.4f}")
     
     # Apply online FDR control
     addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
     
-    print(f"\nOnline FDR control (α=0.05):")
+    print(f"\nOnline FDR control (=0.05):")
     
     significant_variants = []
     for variant_name, p_value, true_effect in zip(variant_names, p_values, true_effects):
@@ -376,10 +376,10 @@ def ab_testing_example():
         
         if decision:
             significant_variants.append(variant_name)
-            result_type = "✓ correct" if true_effect else "✗ false positive"
-            print(f"  {variant_name}: SIGNIFICANT ({result_type})")
+            result_type = " correct" if true_effect else " false positive"
+            print(f"  {variant_name}: significant ({result_type})")
         else:
-            result_type = "✓ correct" if not true_effect else "✗ false negative"  
+            result_type = " correct" if not true_effect else " false negative"  
             print(f"  {variant_name}: not significant ({result_type})")
     
     print(f"\nRecommendation: Deploy {significant_variants if significant_variants else 'none of the variants'}")
@@ -505,7 +505,7 @@ def demonstrate_parameter_effects():
         discoveries = sum(decisions)
         
         print(f"{params['name']:>12}: {discoveries:2d} discoveries "
-              f"(wealth={params['wealth']:.3f}, λ={params['lambda_']:.2f}, τ={params['tau']:.1f})")
+              f"(wealth={params['wealth']:.3f}, ={params['lambda_']:.2f}, ={params['tau']:.1f})")
     
     print(f"\nGuideline: Start with moderate parameters and adjust based on performance")
 
@@ -555,7 +555,7 @@ def robust_fdr_testing(p_values, alpha=0.05):
             decisions.append(decision)
             
             if decision:
-                print(f"✓ Test {i+1}: p={p_value:.4f} → Discovery")
+                print(f" Test {i+1}: p={p_value:.4f}  Discovery")
                 
         except Exception as e:
             print(f"Error testing p-value {p_value}: {e}")

@@ -13,7 +13,7 @@ class AbstractBatchingTest(abc.ABC):
         self.num_test: int = 0  # TODO Remove num_test from interface
 
     @abc.abstractmethod
-    def test_batch(self, p_vals: list[float]) -> bool:
+    def test_batch(self, p_vals: list[float]) -> list[bool]:
         """
         Make a decision for a batch of hypotheses.
 

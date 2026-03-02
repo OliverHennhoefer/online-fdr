@@ -48,7 +48,7 @@ decisions = bh.test_batch(p_values)
 
 # Show results
 for i, (p_val, decision) in enumerate(zip(p_values, decisions)):
-    print(f"Test {i+1}: p={p_val:.3f} → {'REJECT' if decision else 'ACCEPT'}")
+    print(f"Test {i+1}: p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'}")
 
 print(f"Total discoveries: {sum(decisions)}")
 ```
@@ -79,13 +79,16 @@ def demonstrate_bh_algorithm(p_values, alpha=0.05):
         print(f"  Rank {i+1}: p_{{{idx+1}}} = {p_val:.4f}")
     
     # Step 2: Calculate BH thresholds
-    print(f"\nStep 2: BH thresholds (α={alpha})")
+    print(f"\nStep 2: BH thresholds (={alpha})")
     bh_thresholds = [(i+1) * alpha / m for i in range(m)]
     
     significant_up_to = -1
     for i, (p_val, threshold) in enumerate(zip(sorted_p_values, bh_thresholds)):
         is_significant = p_val <= threshold
-        print(f"  Rank {i+1}: p={p_val:.4f} vs {threshold:.4f} → {'✓' if is_significant else '✗'}")
+        print(
+            f"  Rank {i+1}: p={p_val:.4f} vs {threshold:.4f}  "
+            f"{'significant' if is_significant else 'not significant'}"
+        )
         
         if is_significant:
             significant_up_to = i
@@ -118,7 +121,7 @@ from online_fdr.batching.storey_bh import BatchStoreyBH
 # Create Storey-BH instance
 storey_bh = BatchStoreyBH(
     alpha=0.05,      # Target FDR level
-    lambda_=0.5      # Threshold for π₀ estimation
+    lambda_=0.5      # Threshold for  estimation
 )
 
 # Compare with regular BH
@@ -203,7 +206,7 @@ print(f"BH discoveries: {sum(bh_decisions)}")
 | Method | Best For | Assumptions | Power | Conservatism |
 |--------|----------|-------------|-------|-------------|
 | **BH** | Independent tests | Independence | High | Moderate |
-| **Storey-BH** | Unknown π₀ | Independence | Highest | Low |
+| **Storey-BH** | Unknown  | Independence | Highest | Low |
 | **BY** | Arbitrary dependence | Any dependence | Low | High |
 | **PRDS** | Positive dependence | PRDS condition | High | Moderate |
 
@@ -309,7 +312,7 @@ def custom_bh_analysis(p_values, alpha=0.05):
     # Create visualization
     plt.figure(figsize=(10, 6))
     plt.plot(ranks, sorted_p, 'bo-', label='Sorted p-values', markersize=4)
-    plt.plot(ranks, bh_line, 'r--', label=f'BH line (slope = α/m = {alpha/m:.4f})')
+    plt.plot(ranks, bh_line, 'r--', label=f'BH line (slope = /m = {alpha/m:.4f})')
     
     if n_rejections > 0:
         plt.fill_between(ranks[:n_rejections], 0, sorted_p[:n_rejections], 
@@ -347,7 +350,7 @@ def batch_testing_pipeline(data, test_function, method='BH', alpha=0.05):
     print(f"  ... calculated {len(p_values)} p-values total")
     
     # Step 2: Apply FDR correction
-    print(f"\nStep 2: Applying {method} correction (α={alpha})...")
+    print(f"\nStep 2: Applying {method} correction (={alpha})...")
     
     if method == 'BH':
         correction_method = BatchBH(alpha=alpha)
@@ -420,7 +423,7 @@ def safe_batch_testing(p_values, alpha=0.05):
     decisions = bh.test_batch(p_values)
     
     if not any(decisions):
-        print(f"No discoveries at α={alpha} level")
+        print(f"No discoveries at ={alpha} level")
     
     return decisions
 
@@ -497,11 +500,11 @@ def multiple_t_tests_with_fdr(data_groups, control_group, alpha=0.05):
     decisions = bh.test_batch(p_values)
     
     # Report results
-    print(f"\nFDR-corrected results (α={alpha}):")
+    print(f"\nFDR-corrected results (={alpha}):")
     significant_groups = []
     
     for group_name, p_val, decision in zip(group_names, p_values, decisions):
-        status = "SIGNIFICANT" if decision else "NOT SIGNIFICANT"
+        status = "significant" if decision else "not significant"
         print(f"  {group_name}: {status} (p={p_val:.4f})")
         
         if decision:

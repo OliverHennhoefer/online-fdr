@@ -21,7 +21,7 @@ mkdocs serve
 
 ```bash
 cd docs
-mkdocs build
+mkdocs build --strict
 
 # Output will be in ../site/ directory
 ```
@@ -30,38 +30,38 @@ mkdocs build
 
 ```
 docs/
-├── mkdocs.yml                 # MkDocs configuration
-├── index.md                   # Home page
-├── installation.md            # Installation guide
-├── quickstart.md             # Quick start tutorial
-├── user_guide/               # Detailed user guides
-│   ├── index.md              # User guide overview
-│   ├── concepts.md           # Core concepts
-│   ├── sequential.md         # Sequential methods
-│   ├── batch.md              # Batch methods
-│   ├── data_generation.md    # Data generation
-│   └── evaluation.md         # Performance evaluation
-├── api/                      # API reference
-│   ├── index.md              # API overview
-│   ├── investing/            # Alpha investing methods
-│   ├── spending/             # Alpha spending methods  
-│   ├── batching/             # Batch methods
-│   └── utils/                # Utilities
-├── examples/                 # Practical examples
-│   ├── index.md              # Examples overview
-│   ├── basic_usage.md        # Basic examples
-│   ├── advanced.md           # Advanced scenarios
-│   └── comparison.md         # Method comparisons
-├── theory/                   # Mathematical theory
-│   ├── index.md              # Theory overview
-│   ├── fdr_control.md        # FDR control theory
-│   ├── algorithms.md         # Algorithm details
-│   └── guarantees.md         # Statistical guarantees
-├── contributing.md           # Contribution guide
-├── javascripts/              # Custom JavaScript
-│   └── mathjax.js           # MathJax configuration
-└── includes/                 # Snippets and abbreviations
-    └── mkdocs.md            # Abbreviation definitions
+ mkdocs.yml                 # MkDocs configuration
+ index.md                   # Home page
+ installation.md            # Installation guide
+ quickstart.md             # Quick start tutorial
+ user_guide/               # Detailed user guides
+    index.md              # User guide overview
+    concepts.md           # Core concepts
+    sequential.md         # Sequential methods
+    batch.md              # Batch methods
+    data_generation.md    # Data generation
+    evaluation.md         # Performance evaluation
+ api/                      # API reference
+    index.md              # API overview
+    investing/            # Alpha investing methods
+    spending/             # Alpha spending methods  
+    batching/             # Batch methods
+    utils/                # Utilities
+ examples/                 # Practical examples
+    index.md              # Examples overview
+    basic_usage.md        # Basic examples
+    advanced.md           # Advanced scenarios
+    comparison.md         # Method comparisons
+ theory/                   # Mathematical theory
+    index.md              # Theory overview
+    fdr_control.md        # FDR control theory
+    algorithms.md         # Algorithm details
+    guarantee_matrix.md   # Method guarantee matrix
+ contributing.md           # Contribution guide
+ javascripts/              # Custom JavaScript
+    mathjax.js           # MathJax configuration
+ includes/                 # Snippets and abbreviations
+     mkdocs.md            # Abbreviation definitions
 ```
 
 ## Features

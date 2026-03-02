@@ -2,7 +2,7 @@
 
 ## Requirements
 
-**online-fdr** requires Python 3.8 or higher and has minimal dependencies:
+**online-fdr** requires Python 3.10 or higher and has minimal dependencies:
 
 - `numpy >= 1.20.0`
 - `scipy >= 1.9.0`
@@ -169,13 +169,13 @@ We strongly recommend using virtual environments to avoid dependency conflicts:
 
 Once installed successfully:
 
-1. 📚 **Read the [Quick Start Guide](quickstart.md)** for your first online FDR experiment
-2. 🔍 **Browse [Examples](examples/index.md)** to see real-world applications  
-3. 📖 **Explore [API Documentation](api/index.md)** for detailed method references
-4. 🧮 **Study [Theory](theory/index.md)** to understand the mathematical foundations
+1.  **Read the [Quick Start Guide](quickstart.md)** for your first online FDR experiment
+2.  **Browse [Examples](examples/index.md)** to see real-world applications  
+3.  **Explore [API Documentation](api/index.md)** for detailed method references
+4.  **Study [Theory](theory/index.md)** to understand the mathematical foundations
 
 ## Need Help?
 
-- 📋 **Check existing issues**: [GitHub Issues](https://github.com/OliverHennhoefer/online-fdr/issues)
-- 💬 **Ask questions**: [GitHub Discussions](https://github.com/OliverHennhoefer/online-fdr/discussions)  
-- 🐛 **Report bugs**: [Submit a new issue](https://github.com/OliverHennhoefer/online-fdr/issues/new)
+-  **Check existing issues**: [GitHub Issues](https://github.com/OliverHennhoefer/online-fdr/issues)
+-  **Ask questions**: [GitHub Discussions](https://github.com/OliverHennhoefer/online-fdr/discussions)  
+-  **Report bugs**: [Submit a new issue](https://github.com/OliverHennhoefer/online-fdr/issues/new)
