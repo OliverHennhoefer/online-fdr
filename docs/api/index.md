@@ -55,7 +55,7 @@ class BatchMethod:
     def __init__(self, alpha: float, **kwargs):
         """Initialize with FDR level and method-specific parameters."""
         
-    def test_batch(self, p_values: List[float]) -> List[bool]:
+    def test_batch(self, p_values: list[float]) -> list[bool]:
         """Test a batch of p-values. Returns rejection decisions."""
 ```
 
@@ -98,8 +98,8 @@ Most common parameter combinations for getting started:
     # Moderate
     lord3 = LordThree(alpha=0.1, wealth=0.05, reward=0.05) 
     
-    # Aggressive  
-    lord3 = LordThree(alpha=0.1, wealth=0.075, reward=0.1)
+    # Aggressive (must satisfy wealth + reward <= alpha)
+    lord3 = LordThree(alpha=0.1, wealth=0.06, reward=0.04)
     ```
 
 === "Batch BH (Traditional)"

@@ -22,7 +22,7 @@ class Addis(AbstractSequentialTest):
     Args:
         alpha: Target FDR level (e.g., 0.05 for 5% FDR). Must be in (0, 1).
         wealth: Initial alpha-wealth for purchasing rejection thresholds.
-                Must satisfy 0 ≤ wealth ≤ alpha.
+                Must satisfy 0 < wealth < alpha.
         lambda_: Candidate threshold for identifying promising hypotheses.
                  P-values ≤ lambda_ (after scaling) become candidates. Must be in (0, 1).
         tau: Discarding threshold for conservative nulls. P-values > tau are discarded

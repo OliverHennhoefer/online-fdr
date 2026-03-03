@@ -69,6 +69,9 @@ for p_val in p_values:
 analysis_times = [0.2, 0.35, 0.6, 0.9, 1.0]  # Can be determined adaptively
 p_values = [0.03, 0.12, 0.008, 0.45, 0.002]
 
+# Reinitialize for a new scenario when using finite-horizon spend functions.
+alpha_spending = AlphaSpending(alpha=0.05, spend_func=Bonferroni(k=5))
+
 for time, p_val in zip(analysis_times, p_values):
     decision = alpha_spending.test_one(p_val)
     print(f"Analysis at t={time}: p={p_val}, reject={decision}")

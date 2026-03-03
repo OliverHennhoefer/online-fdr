@@ -1,6 +1,6 @@
 ﻿# Basic Usage Examples
 
-This page provides tested, practical examples of using **online-fdr** for common multiple testing scenarios. All code examples have been verified to work out-of-the-box.
+This page provides practical examples of using **online-fdr** for common multiple testing scenarios.
 
 ## Getting Started
 
@@ -492,7 +492,7 @@ def demonstrate_parameter_effects():
     parameter_sets = [
         {'name': 'Conservative', 'wealth': 0.01, 'lambda_': 0.1, 'tau': 0.3},
         {'name': 'Moderate', 'wealth': 0.025, 'lambda_': 0.25, 'tau': 0.5},
-        {'name': 'Aggressive', 'wealth': 0.05, 'lambda_': 0.5, 'tau': 0.7},
+        {'name': 'Aggressive', 'wealth': 0.04, 'lambda_': 0.5, 'tau': 0.7},
     ]
     
     for params in parameter_sets:

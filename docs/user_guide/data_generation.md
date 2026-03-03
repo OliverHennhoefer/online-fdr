@@ -365,12 +365,12 @@ class CustomExponentialDGP:
         
         if is_alternative:
             # Alternative: faster rate (shorter survival)
-            test_statistic = random.exponential(1/self.alt_rate)
+            test_statistic = random.expovariate(self.alt_rate)
             # Convert to p-value using null distribution
             p_value = math.exp(-self.null_rate * test_statistic)
         else:
             # Null: standard rate
-            test_statistic = random.exponential(1/self.null_rate) 
+            test_statistic = random.expovariate(self.null_rate)
             p_value = random.uniform(0, 1)  # Null p-values are uniform
             
         return min(p_value, 1.0)  # Ensure p-value  1
@@ -462,7 +462,7 @@ def complete_simulation_study(method_configs, n_simulations=10):
     # Initialize methods
     methods = {
         'ADDIS': Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5),
-        'LORD3': LordThree(alpha=0.05, wealth=0.025, reward=0.05),
+        'LORD3': LordThree(alpha=0.05, wealth=0.025, reward=0.025),
         'BatchBH': BatchBH(alpha=0.05)
     }
     
@@ -497,7 +497,7 @@ def complete_simulation_study(method_configs, n_simulations=10):
                 if method_name == 'ADDIS':
                     fresh_method = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
                 elif method_name == 'LORD3':
-                    fresh_method = LordThree(alpha=0.05, wealth=0.025, reward=0.05)
+                    fresh_method = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
                 
                 decisions = [fresh_method.test_one(p) for p in p_values]
             

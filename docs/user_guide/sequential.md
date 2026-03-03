@@ -20,6 +20,7 @@ All alpha investing methods follow the **wealth dynamics** principle:
 
 ```python
 # Conceptual wealth update
+# Pseudocode (conceptual only)
 if p_value <= current_threshold:
     wealth += reward  # Earn wealth from discovery
     discoveries += 1
@@ -94,7 +95,7 @@ from online_fdr.investing.lord.plus_plus import LordPlusPlus
 lord3 = LordThree(
     alpha=0.05,      # Target FDR level  
     wealth=0.025,    # Initial wealth
-    reward=0.05      # Reward per discovery
+    reward=0.025     # Reward per discovery
 )
 
 # LORD++: Enhanced version with better power
@@ -328,7 +329,7 @@ from online_fdr.investing.lord.three import LordThree
 timeseries_lord = LordThree(
     alpha=0.05,
     wealth=0.025,
-    reward=0.05      # Reward for clustering discoveries
+    reward=0.025     # Reward for clustering discoveries
 )
 ```
 
@@ -398,7 +399,7 @@ def p_value_generator():
 
 from online_fdr.investing.lord.three import LordThree
 
-lord3 = LordThree(alpha=0.1, wealth=0.05, reward=0.1)
+lord3 = LordThree(alpha=0.1, wealth=0.05, reward=0.05)
 total_discoveries = test_with_early_stopping(lord3, p_value_generator(), 
                                            max_tests=200, min_discoveries=5)
 print(f"Stopped with {total_discoveries} discoveries")

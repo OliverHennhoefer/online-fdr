@@ -21,27 +21,32 @@ For development and extended functionality:
 
 === "Development Dependencies"
     ```bash
-    pip install online-fdr[dev]
+    git clone https://github.com/OliverHennhoefer/online-fdr.git
+    cd online-fdr
+    uv sync --group dev
     ```
-    Includes testing, linting, and type checking tools:
+    Includes testing, linting, type checking, and parity test tooling:
     - `pytest >= 7.0`
     - `pytest-cov >= 4.0` 
-    - `black >= 23.0`
     - `ruff >= 0.1.0`
     - `mypy >= 1.0`
+    - `rpy2 >= 3.5`
 
 === "Documentation Dependencies"
     ```bash
     pip install online-fdr[docs]
     ```
     For building documentation locally:
-    - `sphinx >= 5.0`
-    - `sphinx-rtd-theme >= 1.0`
-    - `myst-parser >= 0.18`
+    - `mkdocs-material >= 9.0`
+    - `mkdocstrings[python] >= 0.20`
+    - `mkdocs-git-revision-date-localized-plugin >= 1.2`
+    - `mkdocs-minify-plugin >= 0.6`
 
 === "All Dependencies"
     ```bash
-    pip install online-fdr[dev,docs]
+    git clone https://github.com/OliverHennhoefer/online-fdr.git
+    cd online-fdr
+    uv sync --group dev --group docs
     ```
 
 ## Install from Source
@@ -67,7 +72,7 @@ pip install uv
 # Clone and install
 git clone https://github.com/OliverHennhoefer/online-fdr.git
 cd online-fdr
-uv sync --all-extras
+uv sync --group dev --group docs
 ```
 
 ### Development Setup
@@ -79,7 +84,7 @@ git clone https://github.com/OliverHennhoefer/online-fdr.git
 cd online-fdr
 
 # Install with development dependencies
-uv sync --all-extras
+uv sync --group dev --group docs
 
 # Install pre-commit hooks
 uv run pre-commit install

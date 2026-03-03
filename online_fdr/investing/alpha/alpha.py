@@ -23,7 +23,7 @@ class Gai(AbstractSequentialTest):
     Args:
         alpha: Target FDR level (e.g., 0.05 for 5% FDR). Must be in (0, 1).
         wealth: Initial alpha-wealth for purchasing rejection thresholds.
-                Must satisfy 0 ≤ wealth ≤ alpha.
+                Must satisfy 0 < wealth < alpha.
 
     Attributes:
         alpha0: Original target FDR level.

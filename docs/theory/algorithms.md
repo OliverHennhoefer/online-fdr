@@ -226,9 +226,9 @@ $$\text{Power}_{\text{ADDIS}} \geq \text{Power}_{\text{SAFFRON}} \geq \text{Powe
 
 ### Parameter Sensitivity
 
-**Most sensitive**: ADDIS (, , W all matter)
-**Moderately sensitive**: SAFFRON (, W)  
-**Least sensitive**: LOND (only  matters)
+**Most sensitive**: ADDIS (`lambda_`, `tau`, and `W` all matter)
+**Moderately sensitive**: SAFFRON (`lambda_` and `W`)
+**Least sensitive**: LOND (primarily `alpha`)
 
 ## Advanced Theoretical Topics
 

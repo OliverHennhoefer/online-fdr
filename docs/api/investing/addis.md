@@ -113,6 +113,8 @@ def evaluate_parameters(lambda_values, tau_values, p_values):
     
     for lambda_val in lambda_values:
         for tau_val in tau_values:
+            if lambda_val >= tau_val:
+                continue  # ADDIS requires lambda_ < tau
             addis = Addis(alpha=0.1, wealth=0.05, 
                          lambda_=lambda_val, tau=tau_val)
             
@@ -166,7 +168,7 @@ addis_aggressive = Addis(alpha=0.1, wealth=0.075, lambda_=0.75, tau=0.8)
 
 ADDIS parameters must satisfy:
 - `0 < alpha < 1`
-- `0 < wealth <= alpha`  
+- `0 < wealth < alpha`  
 - `0 < lambda_ < 1`
 - `0 < tau < 1`
 - `wealth <= tau * lambda_ * alpha` (for theoretical guarantees)

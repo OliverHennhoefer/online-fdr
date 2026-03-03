@@ -27,11 +27,11 @@ This framework allows methods to be more aggressive when discoveries are being m
 
 | **Method** | **Full Name** | **Key Feature** | **Best For** |
 |------------|---------------|------------------|---------------|
-| **[LORD3](lord.md#lord3)** | Levels based on Recent ObservatiOns | Recent discovery weighting | Time series analysis |
-| **[LORD++](lord.md#lordplus)** | LORD Plus Plus | Enhanced reward structure | Moderate dependence |
-| **[LORD Dependent](lord.md#lorddependent)** | Dependent LORD | Handles arbitrary dependence | Strong dependence |
-| **[LORD Discard](lord.md#lorddiscard)** | LORD with Discarding | Large p-value discarding | Sparse alternatives |
-| **[LORD Memory Decay](lord.md#lordmemorydecay)** | Memory Decay LORD | Temporal decay weighting | Non-stationary time series |
+| **[LORD3](lord.md)** | Levels based on Recent ObservatiOns | Recent discovery weighting | Time series analysis |
+| **[LORD++](lord.md)** | LORD Plus Plus | Enhanced reward structure | Moderate dependence |
+| **[LORD Dependent](lord.md)** | Dependent LORD | Handles arbitrary dependence | Strong dependence |
+| **[LORD Discard](lord.md)** | LORD with Discarding | Large p-value discarding | Sparse alternatives |
+| **[LORD Memory Decay](lord.md)** | Memory Decay LORD | Temporal decay weighting | Non-stationary time series |
 
 ### LOND Family Methods
 
@@ -52,7 +52,7 @@ class InvestingMethod(AbstractSequentialTest):
         alpha : float
             Target FDR level (0 < alpha < 1)
         wealth : float  
-            Initial wealth (0 < wealth <= alpha)
+            Initial wealth (0 < wealth < alpha)
         **kwargs : dict
             Method-specific parameters
         """
@@ -92,7 +92,7 @@ class InvestingMethod(AbstractSequentialTest):
     - Conservative: `/4`
     - Moderate: `/2` 
     - Aggressive: `3/4`
-    - Constraint: Must satisfy `0 < W <= alpha`
+    - Constraint: Must satisfy `0 < W < alpha`
 
 ### Method-Specific Parameters
 
@@ -125,7 +125,7 @@ class InvestingMethod(AbstractSequentialTest):
     LordThree(
         alpha=0.05,        # Target FDR  
         wealth=0.025,      # Initial wealth
-        reward=0.05        # Wealth gained per discovery
+        reward=0.025       # Wealth gained per discovery
     )
     ```
     
@@ -201,7 +201,7 @@ graph TD
     **Use LORD3** for temporal patterns:
     ```python
     from online_fdr.investing.lord.three import LordThree  
-    lord3 = LordThree(alpha=0.05, wealth=0.025, reward=0.05)
+    lord3 = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
     ```
 
 === "Strong Dependence"

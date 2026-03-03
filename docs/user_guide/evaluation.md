@@ -324,7 +324,7 @@ from online_fdr.batching.bh import BatchBH
 
 methods_to_compare = {
     'ADDIS': lambda: Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5),
-    'LORD3': lambda: LordThree(alpha=0.05, wealth=0.025, reward=0.05),
+    'LORD3': lambda: LordThree(alpha=0.05, wealth=0.025, reward=0.025),
     'BatchBH': lambda: BatchBH(alpha=0.05)
 }
 
@@ -348,20 +348,18 @@ comparison_results = compare_methods_simulation(
 import time
 import sys
 
-def benchmark_method_performance(method, p_values, n_runs=10):
+def benchmark_method_performance(method_factory, p_values, n_runs=10):
     """Benchmark computational performance."""
-    
-    print(f"Benchmarking {method.__class__.__name__}:")
+
+    sample_method = method_factory()
+    print(f"Benchmarking {sample_method.__class__.__name__}:")
     
     # Time benchmarking
     times = []
     
     for run in range(n_runs):
-        # Create fresh instance
-        if hasattr(method, '__class__'):
-            fresh_method = method.__class__(**method.__dict__)
-        else:
-            fresh_method = method
+        # Create fresh instance for fair timing
+        fresh_method = method_factory()
         
         start_time = time.time()
         
@@ -379,7 +377,7 @@ def benchmark_method_performance(method, p_values, n_runs=10):
     std_time = (sum((t - mean_time)**2 for t in times) / len(times))**0.5
     
     # Memory usage (rough estimate)
-    memory_usage = sys.getsizeof(method) + sys.getsizeof(p_values)
+    memory_usage = sys.getsizeof(sample_method) + sys.getsizeof(p_values)
     
     # Throughput
     throughput = len(p_values) / mean_time
@@ -405,14 +403,18 @@ print("Performance Benchmarks:")
 print("=" * 30)
 
 # Benchmark ADDIS
-addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
-addis_perf = benchmark_method_performance(addis, test_p_values)
+addis_perf = benchmark_method_performance(
+    lambda: Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5),
+    test_p_values,
+)
 
 print()
 
-# Benchmark BatchBH  
-bh = BatchBH(alpha=0.05)
-bh_perf = benchmark_method_performance(bh, test_p_values)
+# Benchmark BatchBH
+bh_perf = benchmark_method_performance(
+    lambda: BatchBH(alpha=0.05),
+    test_p_values,
+)
 
 print(f"\nSpeedup: {addis_perf['mean_time'] / bh_perf['mean_time']:.1f}x "
       f"({'BatchBH' if bh_perf['mean_time'] < addis_perf['mean_time'] else 'ADDIS'} faster)")
@@ -477,7 +479,7 @@ def parameter_sensitivity_analysis(method_class, param_grid, base_params):
 
 # Example: ADDIS parameter sensitivity
 addis_param_grid = {
-    'wealth': [0.01, 0.025, 0.05, 0.075],
+    'wealth': [0.01, 0.02, 0.025, 0.04],
     'lambda_': [0.1, 0.25, 0.5, 0.75],
     'tau': [0.3, 0.5, 0.7, 0.9]
 }
@@ -497,11 +499,10 @@ sensitivity_results = parameter_sensitivity_analysis(
 ### Dependency Structure Robustness
 
 ```python
-def test_dependency_robustness(method, dependency_scenarios):
+def test_dependency_robustness(method_factory, dependency_scenarios):
     """Test method robustness under different dependency structures."""
     
     import numpy as np
-    from scipy.stats import multivariate_normal
     
     print("Dependency Robustness Testing:")
     print("=" * 35)
@@ -538,12 +539,11 @@ def test_dependency_robustness(method, dependency_scenarios):
         true_labels[alt_indices] = True
         
         # Test method
+        method = method_factory()
         if hasattr(method, 'test_batch'):
             decisions = method.test_batch(p_values.tolist())
         else:
-            # Need fresh instance for sequential methods
-            fresh_method = method.__class__(**method.__dict__)
-            decisions = [fresh_method.test_one(p) for p in p_values]
+            decisions = [method.test_one(p) for p in p_values]
         
         # Evaluate
         performance = evaluate_method_performance(decisions, true_labels.tolist())
@@ -564,8 +564,12 @@ dependency_scenarios = {
     'Strong positive': 0.9
 }
 
-bh = BatchBH(alpha=0.05)
-dependency_results = test_dependency_robustness(bh, dependency_scenarios)
+from online_fdr.batching.bh import BatchBH
+
+dependency_results = test_dependency_robustness(
+    lambda: BatchBH(alpha=0.05),
+    dependency_scenarios
+)
 ```
 
 ## Evaluation Best Practices

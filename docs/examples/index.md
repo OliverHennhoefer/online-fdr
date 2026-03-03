@@ -165,7 +165,7 @@ def interim_analysis(endpoints, alpha=0.05):
     """Analyze multiple endpoints with interim monitoring."""
     
     # Use LORD3 for temporal correlation in sequential analyses
-    method = LordThree(alpha=alpha, wealth=alpha/2, reward=0.05)
+    method = LordThree(alpha=alpha, wealth=alpha/2, reward=alpha/2)
     
     results = {}
     

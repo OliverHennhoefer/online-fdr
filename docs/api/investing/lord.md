@@ -28,7 +28,25 @@ The package implements **LORD 3**, which depends on the past only through the ti
 
 ## Class Reference
 
+### LORD3
+
 ::: online_fdr.investing.lord.three.LordThree
+
+### LORD++
+
+::: online_fdr.investing.lord.plus_plus.LordPlusPlus
+
+### LORD Dependent
+
+::: online_fdr.investing.lord.dependent.LordDependent
+
+### LORD Discard
+
+::: online_fdr.investing.lord.discard.LordDiscard
+
+### LORD Memory Decay
+
+::: online_fdr.investing.lord.mem_decay.LORDMemoryDecay
 
 ## Usage Examples
 

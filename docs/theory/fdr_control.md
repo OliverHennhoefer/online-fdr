@@ -114,7 +114,7 @@ where $V(T)$ and $R(T)$ are the number of false discoveries and total discoverie
 2. **Spend wealth** to purchase rejection thresholds: $W_t \leftarrow W_t - \alpha_t$
 3. **Earn wealth** from discoveries: $W_t \leftarrow W_t + \text{payout}$
 
-**Theorem (Alpha-Wealth FDR Control)**: If wealth remains non-negative and payouts are properly calibrated, then FDR  .
+**Theorem (Alpha-Wealth FDR Control)**: If wealth remains non-negative and payouts are properly calibrated, then $\mathrm{FDR} \leq \alpha$.
 
 ## Key Theoretical Results
 
@@ -159,8 +159,8 @@ $$\alpha_t = \gamma_t \cdot (\text{available wealth})$$
 ### Optimality Considerations
 
 The choice of gamma sequence affects:
-- **Power**: Faster spending  higher early power, lower late power
-- **Robustness**: Slower spending  more conservative, sustained power
+- **Power**: Faster spending means higher early power and lower late power
+- **Robustness**: Slower spending means more conservative, sustained power
 - **Adaptivity**: Some sequences adapt to discovery history
 
 ## Advanced Topics
@@ -181,7 +181,7 @@ The choice of gamma sequence affects:
 **Problem**: Each experiment may test multiple outcomes simultaneously.
 
 **Approaches**:
-- **Hierarchical testing**: Primary  secondary endpoints
+- **Hierarchical testing**: Primary then secondary endpoints
 - **Composite hypotheses**: Joint null vs. any alternative
 - **Closed testing**: Maintains familywise error rate
 
@@ -201,25 +201,25 @@ This **distribution-free** property is crucial for practical applications.
 **Trade-off**: FDR control inherently trades power for error control.
 
 **Factors affecting power**:
-- **Proportion of nulls** ($\pi_0$): Lower $\pi_0$  higher power
-- **Effect sizes**: Larger effects  higher power  
+- **Proportion of nulls** ($\pi_0$): Lower $\pi_0$ means higher power
+- **Effect sizes**: Larger effects mean higher power
 - **Dependence structure**: Positive dependence can help
 - **Procedure choice**: Adaptive procedures often more powerful
 
 ### Choosing FDR Level
 
 **Guidelines**:
-- ** = 0.05**: Standard for most applications
-- ** = 0.10**: More liberal for exploratory studies
-- ** = 0.01**: Conservative for high-stakes decisions
+- **alpha = 0.05**: Standard for most applications
+- **alpha = 0.10**: More liberal for exploratory studies
+- **alpha = 0.01**: Conservative for high-stakes decisions
 
 **Context matters**: Biological discovery vs. financial decisions require different error tolerances.
 
 ### Interpretation
 
 **FDR = 0.05** means:
-- Among all discoveries made, expect  5% to be false on average
-- **Not** that each individual discovery has  5% chance of being false
+- Among all discoveries made, expect about 5% to be false on average
+- **Not** that each individual discovery has a 5% chance of being false
 - The guarantee is **average case**, not worst case
 
 ## Connections to Other Fields

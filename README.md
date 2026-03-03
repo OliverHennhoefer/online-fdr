@@ -336,7 +336,7 @@ alpha = 0.05
 bonf_spending = AlphaSpending(alpha=alpha, spend_func=Bonferroni(k))
 
 # LORD3 investing: adaptive thresholds (this is the proper LORD3)
-lord3_adaptive = LordThree(alpha=alpha, wealth=0.04, reward=0.05)
+lord3_adaptive = LordThree(alpha=alpha, wealth=0.025, reward=0.025)
 
 print("Alpha Spending vs. Adaptive LORD3 Comparison:")
 print(f"Overall alpha level: {alpha}")

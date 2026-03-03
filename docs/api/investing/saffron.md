@@ -210,7 +210,7 @@ The wealth-based component adapts based on:
 !!! tip "Wealth (W) Selection"  
     - Start with W = alpha/2 (e.g., 0.025 for alpha = 0.05)
     - Increase for more initial power, decrease for more conservative start
-    - Must satisfy `0 < W <= alpha`
+    - Must satisfy `0 < W < alpha`
 
 ### When to Use SAFFRON
 
