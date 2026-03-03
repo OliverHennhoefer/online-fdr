@@ -32,6 +32,7 @@ jobs:
             libbz2-dev \
             libdeflate-dev \
             libffi-dev \
+            libicu-dev \
             liblzma-dev \
             libpcre2-dev \
             libtirpc-dev \
