@@ -3,7 +3,6 @@ from __future__ import annotations
 from online_fdr.batching.bh_official import BatchBHOfficial
 from online_fdr.batching.by import BatchBY
 from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
-
 from tests.parity_cases import batch_cases, sequential_cases
 
 

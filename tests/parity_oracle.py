@@ -18,9 +18,7 @@ from online_fdr.investing.saffron.saffron import Saffron
 from online_fdr.spending.alpha_spending import AlphaSpending
 from online_fdr.spending.functions.lord_three import LordThree as SpendingLordThree
 from online_fdr.spending.online_fallback import OnlineFallback
-
 from tests.parity_cases import BatchParityCase, SequentialParityCase
-
 
 PINNED_ONLINEFDR_VERSION = "2.18.0"
 
@@ -109,10 +107,11 @@ def _run_python_batch(method: Any, case: BatchParityCase) -> ParityResult:
         batch_decisions = method.test_batch(batch)
         decisions.extend(bool(value) for value in batch_decisions)
 
-        if hasattr(method, "alpha_s") and getattr(method, "alpha_s"):
-            batch_alpha = float(getattr(method, "alpha_s")[-1])
+        alpha_s = getattr(method, "alpha_s", None)
+        if alpha_s:
+            batch_alpha = float(alpha_s[-1])
         else:
-            raw_alpha = getattr(method, "alpha")
+            raw_alpha = method.alpha
             batch_alpha = None if raw_alpha is None else float(raw_alpha)
         alpha.extend([batch_alpha] * batch_size)
 
