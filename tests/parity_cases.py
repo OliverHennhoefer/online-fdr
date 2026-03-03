@@ -4,7 +4,6 @@ import random
 from dataclasses import dataclass
 from functools import lru_cache
 
-
 _BOUNDARY_VALUES = (
     0.0,
     1e-16,

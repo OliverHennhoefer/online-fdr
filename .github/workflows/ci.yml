@@ -25,6 +25,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install system libraries for rpy2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libbz2-dev \
+            libdeflate-dev \
+            libicu-dev \
+            liblzma-dev \
+            libpcre2-dev \
+            libzstd-dev \
+            zlib1g-dev
+
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
@@ -72,10 +84,10 @@ jobs:
         run: uv python install 3.12
 
       - name: Install docs dependencies
-        run: uv sync --group docs
+        run: uv sync --group docs --no-dev
 
       - name: Build docs
-        run: uv run mkdocs build --strict
+        run: .venv/bin/mkdocs build --strict
 
   package:
     runs-on: ubuntu-latest
@@ -83,6 +95,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install system libraries for rpy2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libbz2-dev \
+            libdeflate-dev \
+            libicu-dev \
+            liblzma-dev \
+            libpcre2-dev \
+            libzstd-dev \
+            zlib1g-dev
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
