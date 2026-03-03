@@ -87,7 +87,7 @@ jobs:
         run: uv sync --group docs --no-dev
 
       - name: Build docs
-        run: uv run mkdocs build --strict
+        run: .venv/bin/mkdocs build --strict
 
   package:
     runs-on: ubuntu-latest
