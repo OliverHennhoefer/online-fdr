@@ -38,7 +38,7 @@ jobs:
           uv sync --group docs --no-dev
 
       - name: Build documentation
-        run: uv run mkdocs build
+        run: .venv/bin/mkdocs build --strict
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
