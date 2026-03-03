@@ -58,6 +58,8 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Quick Start: quickstart.md
+  - Workflows: workflows.md
+  - Troubleshooting: troubleshooting.md
   - User Guide:
       - user_guide/index.md
       - Concepts: user_guide/concepts.md

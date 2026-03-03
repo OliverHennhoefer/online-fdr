@@ -81,6 +81,7 @@ path = "online_fdr/__init__.py"
 [tool.hatch.build]
 include = [
     "online_fdr/**/*.py",
+    "online_fdr/py.typed",
     "README.md",
     "LICENSE",
 ]
