@@ -22,7 +22,7 @@ class MemoryDecayFDR:
         self.ground_truth.append(ground_truth)
 
         fp = [lb and not gt for lb, gt in zip(self.labels, self.ground_truth)]
-        deltas = [self.delta**float(i) for i in range(len(self.labels))]
+        deltas = [self.delta ** float(i) for i in range(len(self.labels))]
 
         v_t = [
             sum(

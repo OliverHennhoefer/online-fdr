@@ -150,4 +150,3 @@ class BatchBH(AbstractBatchingTest):
 
         # Return rejection decisions
         return [p_val <= threshold for p_val in p_vals_local]
-

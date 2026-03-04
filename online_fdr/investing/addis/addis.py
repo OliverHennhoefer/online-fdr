@@ -147,8 +147,8 @@ class Addis(AbstractSequentialTest):
         candidates_so_far = self._candidate_prefix[-1]
 
         base_idx = selected_so_far - candidates_so_far
-        alpha_t = (self.tau - self.lambda_) * self.wealth0 * self._gamma_from_offset(
-            base_idx
+        alpha_t = (
+            (self.tau - self.lambda_) * self.wealth0 * self._gamma_from_offset(base_idx)
         )
 
         if not self.reject_idx:

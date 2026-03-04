@@ -31,9 +31,7 @@ class LordPlusPlus(AbstractSequentialTest):
 
         validity.check_initial_wealth(wealth, alpha)
         if reward is not None and not math.isclose(reward, alpha):
-            raise ValueError(
-                "LordPlusPlus guarantee regime requires reward == alpha."
-            )
+            raise ValueError("LordPlusPlus guarantee regime requires reward == alpha.")
         self.reward: float = alpha
 
         self.seq = DefaultLordGammaSequence(c=0.07720838)

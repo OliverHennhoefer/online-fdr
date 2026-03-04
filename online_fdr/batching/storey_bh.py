@@ -41,9 +41,7 @@ class BatchStoreyBH(AbstractBatchingTest):
                 denom = self.r_s_plus[idx] + (total_rejections - self.r_sums[idx])
                 if denom > 0:
                     penalty += (
-                        self.k_s[idx]
-                        * self.alpha_s[idx]
-                        * (self.r_s_plus[idx] / denom)
+                        self.k_s[idx] * self.alpha_s[idx] * (self.r_s_plus[idx] / denom)
                     )
             self.alpha = (gamma_sum - penalty) * (
                 (n_batch + total_rejections) / n_batch

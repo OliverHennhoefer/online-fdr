@@ -33,9 +33,7 @@ def storey_bh(p_vals: list[float], alpha: float, lambda_: float) -> tuple[int, f
     pi0 = min(1.0, (1 + num_above_lambda) / (n * (1 - lambda_)))
 
     sorted_p_vals = sorted(p_vals)
-    k = _step_up_k(
-        sorted_p_vals, ((i * alpha) / (n * pi0) for i in range(1, n + 1))
-    )
+    k = _step_up_k(sorted_p_vals, ((i * alpha) / (n * pi0) for i in range(1, n + 1)))
     return k, (sorted_p_vals[k - 1] if k else 0.0)
 
 

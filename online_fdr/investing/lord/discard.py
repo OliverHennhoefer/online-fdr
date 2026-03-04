@@ -32,9 +32,8 @@ class LordDiscard(AbstractSequentialTest):
         alpha = self.wealth0 * self.seq.calc_gamma(tested_index)
 
         if self.first_reject is not None:
-            alpha += (
-                (self.tau * self.alpha0 - self.wealth0)
-                * self.seq.calc_gamma(tested_index - self.first_reject)
+            alpha += (self.tau * self.alpha0 - self.wealth0) * self.seq.calc_gamma(
+                tested_index - self.first_reject
             )
 
         if self.last_reject:

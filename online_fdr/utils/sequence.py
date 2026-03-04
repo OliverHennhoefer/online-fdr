@@ -57,7 +57,9 @@ class DefaultLondGammaSequence(AbstractGammaSequence):
         """
         alpha = kwargs.get("alpha")
         if not isinstance(alpha, int | float):
-            raise ValueError("alpha must be provided as a numeric value for LOND gamma sequence.")
+            raise ValueError(
+                "alpha must be provided as a numeric value for LOND gamma sequence."
+            )
         return (
             self.c
             * float(alpha)

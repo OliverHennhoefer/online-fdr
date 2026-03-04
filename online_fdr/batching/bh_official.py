@@ -171,4 +171,3 @@ class BatchBHOfficial(AbstractBatchingTest):
             return self.poly_seq.calc_gamma(j)
         else:
             return self.half_seq.calc_gamma(j)
-
