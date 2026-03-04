@@ -44,9 +44,7 @@ def _storey_bh_k_ground_truth(p_vals: list[float], alpha: float, lambda_: float)
     return k
 
 
-def _storey_bh_r_plus_direct(
-    p_vals: list[float], alpha: float, lambda_: float
-) -> int:
+def _storey_bh_r_plus_direct(p_vals: list[float], alpha: float, lambda_: float) -> int:
     best = 0
     for i, p_val in enumerate(p_vals):
         adjusted = list(p_vals)
@@ -74,9 +72,9 @@ def test_step_up_matches_ground_truth_under_fuzzing() -> None:
 
         assert bh(p_vals, alpha=alpha)[0] == _bh_k_ground_truth(p_vals, alpha)
         assert by(p_vals, alpha=alpha)[0] == _by_k_ground_truth(p_vals, alpha)
-        assert storey_bh(p_vals, alpha=alpha, lambda_=0.5)[0] == _storey_bh_k_ground_truth(
-            p_vals, alpha, 0.5
-        )
+        assert storey_bh(p_vals, alpha=alpha, lambda_=0.5)[
+            0
+        ] == _storey_bh_k_ground_truth(p_vals, alpha, 0.5)
 
 
 def test_alpha_spending_rejects_on_boundary() -> None:

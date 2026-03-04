@@ -34,7 +34,9 @@ def test_parity_profile_is_well_formed_and_importable() -> None:
 def test_intentional_divergences_are_explicit() -> None:
     profile_path = Path("tests/reference/parity_profile.json")
     entries = json.loads(profile_path.read_text(encoding="utf-8"))
-    divergences = [entry for entry in entries if entry["status"] == "IntentionalDivergence"]
+    divergences = [
+        entry for entry in entries if entry["status"] == "IntentionalDivergence"
+    ]
 
     assert divergences
     assert any("true-online" in entry["note"].lower() for entry in divergences)

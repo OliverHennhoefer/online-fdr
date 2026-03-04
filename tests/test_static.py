@@ -1,4 +1,4 @@
-﻿import random
+import random
 
 from online_fdr.utils.static import bh, by, storey_bh
 

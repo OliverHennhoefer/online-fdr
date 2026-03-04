@@ -137,7 +137,9 @@ def _run_addis_python(case: SequentialParityCase | BatchParityCase) -> ParityRes
     )
 
 
-def _run_addis_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_addis_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     result = onlinefdr.ADDIS(
         ro.FloatVector(case.p_values),
@@ -157,7 +159,9 @@ def _run_saffron_python(case: SequentialParityCase | BatchParityCase) -> ParityR
     )
 
 
-def _run_saffron_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_saffron_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     result = onlinefdr.SAFFRON(
         ro.FloatVector(case.p_values),
@@ -176,7 +180,9 @@ def _run_lord3_python(case: SequentialParityCase | BatchParityCase) -> ParityRes
     )
 
 
-def _run_lord3_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_lord3_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     result = onlinefdr.LORD(
         ro.FloatVector(case.p_values),
@@ -193,7 +199,9 @@ def _run_lordpp_python(case: SequentialParityCase | BatchParityCase) -> ParityRe
     return _run_python_sequential(LordPlusPlus(alpha=0.05, wealth=0.025), case)
 
 
-def _run_lordpp_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_lordpp_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     result = onlinefdr.LORD(
         ro.FloatVector(case.p_values),
@@ -206,7 +214,9 @@ def _run_lordpp_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchPar
     return _extract_r_result(result)
 
 
-def _run_lord_discard_python(case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_lord_discard_python(
+    case: SequentialParityCase | BatchParityCase,
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     return _run_python_sequential(
         LordDiscard(alpha=0.05, wealth=0.025, tau=0.5),
@@ -214,7 +224,9 @@ def _run_lord_discard_python(case: SequentialParityCase | BatchParityCase) -> Pa
     )
 
 
-def _run_lord_discard_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_lord_discard_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     result = onlinefdr.LORD(
         ro.FloatVector(case.p_values),
@@ -235,7 +247,9 @@ def _run_lord_dep_python(case: SequentialParityCase | BatchParityCase) -> Parity
     )
 
 
-def _run_lord_dep_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_lord_dep_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     if not hasattr(onlinefdr, "LORDdep"):
         raise RuntimeError(
@@ -252,7 +266,9 @@ def _run_lord_dep_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchP
     return _extract_r_result(result)
 
 
-def _make_lond_python_runner(original: bool, dependent: bool) -> Callable[[SequentialParityCase | BatchParityCase], ParityResult]:
+def _make_lond_python_runner(
+    original: bool, dependent: bool
+) -> Callable[[SequentialParityCase | BatchParityCase], ParityResult]:
     def _runner(case: SequentialParityCase | BatchParityCase) -> ParityResult:
         assert isinstance(case, SequentialParityCase)
         return _run_python_sequential(
@@ -263,8 +279,12 @@ def _make_lond_python_runner(original: bool, dependent: bool) -> Callable[[Seque
     return _runner
 
 
-def _make_lond_r_runner(original: bool, dependent: bool) -> Callable[[Any, Any, SequentialParityCase | BatchParityCase], ParityResult]:
-    def _runner(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _make_lond_r_runner(
+    original: bool, dependent: bool
+) -> Callable[[Any, Any, SequentialParityCase | BatchParityCase], ParityResult]:
+    def _runner(
+        ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+    ) -> ParityResult:
         assert isinstance(case, SequentialParityCase)
         result = onlinefdr.LOND(
             ro.FloatVector(case.p_values),
@@ -282,7 +302,9 @@ def _run_gai_python(case: SequentialParityCase | BatchParityCase) -> ParityResul
     return _run_python_sequential(Gai(alpha=0.05, wealth=0.025), case)
 
 
-def _run_gai_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_gai_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     result = onlinefdr.Alpha_investing(
         ro.FloatVector(case.p_values),
@@ -292,14 +314,18 @@ def _run_gai_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParity
     return _extract_r_result(result)
 
 
-def _run_alpha_spending_python(case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_alpha_spending_python(
+    case: SequentialParityCase | BatchParityCase,
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     spend_func = SpendingLordThree(k=len(case.p_values))
     method = AlphaSpending(alpha=0.05, spend_func=spend_func)
     return _run_python_sequential(method, case)
 
 
-def _run_alpha_spending_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_alpha_spending_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     result = onlinefdr.Alpha_spending(ro.FloatVector(case.p_values), alpha=0.05)
     return _extract_r_result(result)
@@ -310,7 +336,9 @@ def _run_fallback_python(case: SequentialParityCase | BatchParityCase) -> Parity
     return _run_python_sequential(OnlineFallback(alpha=0.05), case)
 
 
-def _run_fallback_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_fallback_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, SequentialParityCase)
     result = onlinefdr.online_fallback(ro.FloatVector(case.p_values), alpha=0.05)
     return _extract_r_result(result)
@@ -321,31 +349,43 @@ def _run_batch_bh_python(case: SequentialParityCase | BatchParityCase) -> Parity
     return _run_python_batch(BatchBH(alpha=0.05), case)
 
 
-def _run_batch_bh_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_batch_bh_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, BatchParityCase)
     result = onlinefdr.BatchBH(_to_r_batch_frame(ro, case), alpha=0.05)
     return _extract_r_result(result)
 
 
-def _run_batch_prds_python(case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_batch_prds_python(
+    case: SequentialParityCase | BatchParityCase,
+) -> ParityResult:
     assert isinstance(case, BatchParityCase)
     return _run_python_batch(BatchPRDS(alpha=0.05), case)
 
 
-def _run_batch_prds_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_batch_prds_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, BatchParityCase)
     result = onlinefdr.BatchPRDS(_to_r_batch_frame(ro, case), alpha=0.05)
     return _extract_r_result(result)
 
 
-def _run_batch_storey_python(case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_batch_storey_python(
+    case: SequentialParityCase | BatchParityCase,
+) -> ParityResult:
     assert isinstance(case, BatchParityCase)
     return _run_python_batch(BatchStoreyBH(alpha=0.05, lambda_=0.5), case)
 
 
-def _run_batch_storey_r(ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase) -> ParityResult:
+def _run_batch_storey_r(
+    ro: Any, onlinefdr: Any, case: SequentialParityCase | BatchParityCase
+) -> ParityResult:
     assert isinstance(case, BatchParityCase)
-    result = onlinefdr.BatchStBH(_to_r_batch_frame(ro, case), alpha=0.05, **{"lambda": 0.5})
+    result = onlinefdr.BatchStBH(
+        _to_r_batch_frame(ro, case), alpha=0.05, **{"lambda": 0.5}
+    )
     return _extract_r_result(result)
 
 

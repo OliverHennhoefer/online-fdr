@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 
 from online_fdr.batching.bh import BatchBH
 from online_fdr.batching.bh_official import BatchBHOfficial

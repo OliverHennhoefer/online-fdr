@@ -1,4 +1,4 @@
-﻿import random
+import random
 
 from online_fdr.investing.addis.addis import Addis
 from online_fdr.investing.lord.three import LordThree

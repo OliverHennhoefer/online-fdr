@@ -1,4 +1,4 @@
-﻿from online_fdr.batching.by import BatchBY
+from online_fdr.batching.by import BatchBY
 from online_fdr.utils.testing import generate_test_data
 
 

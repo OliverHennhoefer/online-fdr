@@ -49,7 +49,9 @@ def _inject_boundaries(values: list[float], seed: int) -> None:
         values[pos] = boundary
 
 
-def _make_stream(n: int, seed: int, signal_fraction: float, signal_max: float) -> list[float]:
+def _make_stream(
+    n: int, seed: int, signal_fraction: float, signal_max: float
+) -> list[float]:
     rng = random.Random(seed)
     p_values = [rng.random() for _ in range(n)]
 

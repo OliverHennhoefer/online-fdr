@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 
 from online_fdr.utils.sequence import (
     BatchGammaSequenceSmall,
