@@ -219,7 +219,7 @@ class BatchGammaSequenceSmall(AbstractGammaSequence):
 
 class BatchGammaSequenceLarge(AbstractGammaSequence):
     """Proposed default gamma sequence for Batch-BH and Batch-StBH [1]_
-    with batche sizes of more than 100.
+    with batch sizes of more than 100.
 
     References
     ----------
@@ -238,15 +238,19 @@ class BatchBHPolynomialGammaSequence(AbstractGammaSequence):
     """Polynomial gamma sequence for BatchBH with small batch sizes (< 100).
 
     This is the 'poly' gamma sequence from the official BatchBH implementation
-    corresponding to the paper by Zrnic et al. (2020).
+    corresponding to the paper by Zrnic et al. (2020). In the authors'
+    supplementary code, the unnormalized sequence is j^-2 and the normalizing
+    coefficient is computed over np.arange(1, 1e7).
 
     References
     ----------
     [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2020).
     The Power of Batching in Multiple Hypothesis Testing.
     International Conference on Artificial Intelligence and Statistics.
-    [2] Official implementation: https://arxiv.org/pdf/1910.04968
+    [2] Official implementation: https://proceedings.mlr.press/v108/zrnic20a.html
     """
+
+    _COEFFICIENT = 0.6079271388115668
 
     def __init__(self):
         super().__init__()
@@ -257,13 +261,11 @@ class BatchBHPolynomialGammaSequence(AbstractGammaSequence):
         This implements the polynomial decay gamma sequence used in the
         official BatchBH implementation for small batch sizes.
         """
-        # Based on the official implementation pattern
-        # This is a conservative polynomial decay
-        return float(1.0 / math.pow(float(j), 1.6))
+        return float(self._COEFFICIENT / math.pow(float(j), 2.0))
 
 
 class BatchBHHalfGammaSequence(AbstractGammaSequence):
-    """Half gamma sequence for BatchBH with large batch sizes (≥ 100).
+    """Half gamma sequence for BatchBH with large batch sizes (>= 100).
 
     This is the 'half' gamma sequence from the official BatchBH implementation
     corresponding to the paper by Zrnic et al. (2020).
@@ -273,7 +275,7 @@ class BatchBHHalfGammaSequence(AbstractGammaSequence):
     [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2020).
     The Power of Batching in Multiple Hypothesis Testing.
     International Conference on Artificial Intelligence and Statistics.
-    [2] Official implementation: https://arxiv.org/pdf/1910.04968
+    [2] Official implementation: https://proceedings.mlr.press/v108/zrnic20a.html
     """
 
     def __init__(self):
@@ -295,14 +297,14 @@ class BatchBHAdaptiveGammaSequence(AbstractGammaSequence):
 
     This mimics the official BatchBH implementation that uses different
     gamma sequences based on batch size: 'poly' for small batches (< 100)
-    and 'half' for large batches (≥ 100).
+    and 'half' for large batches (>= 100).
 
     References
     ----------
     [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2020).
     The Power of Batching in Multiple Hypothesis Testing.
     International Conference on Artificial Intelligence and Statistics.
-    [2] Official implementation: https://arxiv.org/pdf/1910.04968
+    [2] Official implementation: https://proceedings.mlr.press/v108/zrnic20a.html
     """
 
     def __init__(self):

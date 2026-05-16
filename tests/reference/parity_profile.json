@@ -81,7 +81,7 @@
     "name": "BatchBY",
     "import_path": "online_fdr.batching.by.BatchBY",
     "status": "Extension",
-    "note": "Additional batch dependence-robust method."
+    "note": "Conservative BY-style batch extension without an onlineFDR counterpart."
   },
   {
     "name": "LORDMemoryDecay",
@@ -93,7 +93,7 @@
     "name": "BatchBHOfficial",
     "import_path": "online_fdr.batching.bh_official.BatchBHOfficial",
     "status": "Extension",
-    "note": "Alternative implementation profile."
+    "note": "AISTATS supplementary BatchBH implementation profile."
   },
   {
     "name": "StatefulTrueOnlineApi",

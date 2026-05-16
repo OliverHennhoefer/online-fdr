@@ -7,22 +7,22 @@ from online_fdr.utils.static import by
 
 
 class BatchBY(AbstractBatchingTest):
-    """Benjamini-Yekutieli procedure for online batch FDR control under dependence.
+    """Benjamini-Yekutieli extension for online batch testing.
 
     BatchBY extends the online batching framework to use the Benjamini-Yekutieli (BY)
-    procedure, which provides FDR control even under arbitrary dependence among
-    p-values. This makes it particularly suitable for situations where the
-    independence assumption may be violated, such as in spatial statistics,
-    time series analysis, or genomics with linkage disequilibrium.
+    procedure within each batch. This is a conservative extension for settings where
+    the within-batch independence assumption may be violated, such as spatial
+    statistics, time series analysis, or genomics with linkage disequilibrium.
 
     The BY procedure is a modification of the Benjamini-Hochberg (BH) procedure
-    that uses harmonic weights to maintain FDR control under arbitrary dependence.
-    While this comes at the cost of reduced power compared to BH, it provides
-    robust FDR control in challenging dependence scenarios.
+    that uses harmonic weights for arbitrary dependence in a fixed batch. While
+    this comes at the cost of reduced power compared to BH, it provides a more
+    conservative within-batch correction.
 
     The algorithm follows the online batching framework, allocating alpha budget
-    across batches using a gamma sequence and adjusting for inter-batch dependencies
-    through the β_t correction mechanism.
+    across batches using a gamma sequence and adjusting for inter-batch accounting
+    through the beta_t correction mechanism. It is not a direct onlineFDR parity
+    method or a separately published BatchBY author implementation.
 
     Args:
         alpha: Target FDR level (e.g., 0.05 for 5% FDR). Must be in (0, 1).
@@ -54,13 +54,13 @@ class BatchBY(AbstractBatchingTest):
         >>> from online_fdr.batching import BatchBH
         >>> bh_test = BatchBH(alpha=0.05)
         >>> by_test = BatchBY(alpha=0.05)
-        >>> # BY provides guaranteed FDR control, BH may not under dependence
+        >>> # BY is more conservative than BH under within-batch dependence
 
     Notes:
         The BY procedure is particularly recommended when:
         - P-values exhibit positive dependence
         - Spatial or temporal correlation is present
-        - Conservative FDR control is required
+        - A conservative BY-style within-batch correction is required
         - The exact dependence structure is unknown
 
         Trade-off: Enhanced robustness comes at the cost of reduced power
@@ -98,15 +98,15 @@ class BatchBY(AbstractBatchingTest):
     def test_batch(self, p_vals: list[float]) -> list[bool]:
         """Test a batch of p-values using the Benjamini-Yekutieli procedure.
 
-        The BY procedure provides FDR control under arbitrary dependence among
-        p-values by using harmonic weights in the rejection threshold calculation.
-        This method adapts the static BY procedure to the online batching framework.
+        The BY procedure uses harmonic weights in the rejection threshold calculation.
+        This method adapts the static BY procedure to the online batching framework
+        as a conservative extension.
 
         The algorithm:
         1. Calculates adaptive alpha level for the current batch
         2. Applies the BY procedure with harmonic correction
         3. Updates statistics for future batch calculations
-        4. Computes R⁺ for inter-batch dependency handling
+        4. Computes R+ for inter-batch accounting
 
         Args:
             p_vals: List of p-values for the current batch.
@@ -121,8 +121,7 @@ class BatchBY(AbstractBatchingTest):
             >>> print(f"Rejections with BY: {sum(decisions)}")
 
         Note:
-            The BY procedure is more conservative than BH but maintains FDR
-            control even when p-values are positively dependent.
+            The BY procedure is more conservative than BH within a batch.
         """
         p_vals_local = list(p_vals)
         n_batch = len(p_vals_local)

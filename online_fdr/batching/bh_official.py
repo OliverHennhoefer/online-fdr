@@ -1,7 +1,8 @@
 """
 BatchBH Official: Official Implementation of Online Batch FDR Control
 Implementation based on the official code from "The Power of Batching in Multiple Hypothesis Testing"
-by Zrnic, Jiang, Ramdas, and Jordan (2020) - https://arxiv.org/pdf/1910.04968
+by Zrnic, Jiang, Ramdas, and Jordan (2020), distributed as the PMLR
+supplementary ZIP: https://proceedings.mlr.press/v108/zrnic20a.html
 
 This implementation matches the exact algorithm and data structures used by the paper authors
 in their official implementation, including:
@@ -34,7 +35,7 @@ class BatchBHOfficial(AbstractBatchingTest):
     Key differences from the simplified BatchBH implementation:
     1. Dynamic array resizing with doubling strategy
     2. Cumulative rejection tracking (R_sums stores cumulative values)
-    3. Adaptive gamma sequences based on batch size (<100 vs â‰¥100)
+    3. Adaptive gamma sequences based on batch size (<100 vs >=100)
     4. Extended return values including FDH estimates
     5. Exact replication of official beta calculation logic
 
@@ -43,7 +44,7 @@ class BatchBHOfficial(AbstractBatchingTest):
     [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2020).
         The Power of Batching in Multiple Hypothesis Testing.
         International Conference on Artificial Intelligence and Statistics.
-    [2] Official implementation: https://arxiv.org/pdf/1910.04968
+    [2] Official implementation: https://proceedings.mlr.press/v108/zrnic20a.html
     """
 
     def __init__(self, alpha: float):
@@ -102,7 +103,7 @@ class BatchBHOfficial(AbstractBatchingTest):
 
         # Calculate alpha_t
         if t == 0:
-            # First batch: Î±â‚ = Î± Ã— Î³â‚
+            # First batch: alpha_1 = alpha * gamma_1
             gamma_1 = self._get_gamma(j=1, batch_size=batch_size)
             alpha_t = self.alpha0 * gamma_1
         else:
@@ -118,7 +119,7 @@ class BatchBHOfficial(AbstractBatchingTest):
                 if denominator > 0:
                     beta_t += self.alpha_s[s] * self.r_s_plus[s] / denominator
 
-            # Î±_t = (Î± Ã— Î£Î³_s - Î²_t) Ã— (n_t + R_total) / n_t
+            # alpha_t = (alpha * sum(gamma_s) - beta_t) * (n_t + R_total) / n_t
             alpha_t = (
                 (self.alpha0 * gamma_sum - beta_t)
                 * (batch_size + self.r_total_sum)

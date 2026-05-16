@@ -42,9 +42,9 @@ The parity harness uses deterministic long p-value sequences and checks:
 | `BatchBH` | `Parity` | Batch online BH semantics. |
 | `BatchPRDS` | `Parity` | Batch PRDS variant. |
 | `BatchStoreyBH` | `Parity` | `R+` computed on same-size batch via replacement, not append. |
-| `BatchBY` | `Extension` | Added here as an additional dependence-robust batch method. |
+| `BatchBY` | `Extension` | Added here as a conservative BY-style batch extension; no direct `onlineFDR` counterpart. |
 | `LORDMemoryDecay` | `Extension` | Not a direct `onlineFDR` release method. |
-| `BatchBHOfficial` | `Extension` | Additional implementation profile of batch BH logic. |
+| `BatchBHOfficial` | `Extension` | Matches the AISTATS supplementary BatchBH code profile, including the normalized `j^-2` small-batch gamma sequence. |
 | Stateful `test_one` / `test_batch` API | `IntentionalDivergence` | True-online interface by design. |
 | Date-level internal randomization | `IntentionalDivergence` | Not done internally; caller controls ordering. |
 | Asynchronous `*star` wrappers | `IntentionalDivergence` | Not yet implemented in this package. |
@@ -61,3 +61,5 @@ The parity harness uses deterministic long p-value sequences and checks:
 8. https://dsrobertson.github.io/onlineFDR/reference/online_fallback.html
 9. https://rdrr.io/github/dsrobertson/onlineFDR/man/ADDIS.html
 10. https://dsrobertson.github.io/onlineFDR/reference/StoreyBH.html
+11. https://proceedings.mlr.press/v108/zrnic20a.html
+12. https://github.com/fanny-yang/OnlineFDRCode

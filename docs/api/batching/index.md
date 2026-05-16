@@ -63,7 +63,7 @@ The inter-batch dependency correction $_t$ accounts for:
 |--------|------------|------|-------------------|--------|
 | BatchBH | Excellent | Good | May not control | Good |
 | BatchStoreyBH | Excellent | Good | May not control | Excellent |
-| BatchBY | Good | Good | Excellent | Fair |
+| BatchBY | Good | Good | Conservative extension | Fair |
 | BatchPRDS | Excellent | Excellent | May not control | Good |
 
 ### Computational Complexity
@@ -83,7 +83,7 @@ where n = batch size, T = number of batches.
 
 1. **BatchBH**: Default choice for most applications
 2. **BatchStoreyBH**: When  < 1 and batches are reasonably large
-3. **BatchBY**: When arbitrary dependence within batches is suspected  
+3. **BatchBY**: When a conservative BY-style within-batch correction is desired
 4. **BatchPRDS**: When positive dependence structure is known
 
 ### Parameter Tuning

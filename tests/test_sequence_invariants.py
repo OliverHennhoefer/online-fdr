@@ -1,6 +1,7 @@
 import pytest
 
 from online_fdr.utils.sequence import (
+    BatchBHPolynomialGammaSequence,
     BatchGammaSequenceSmall,
     DefaultLordGammaSequence,
     DefaultSaffronGammaSequence,
@@ -47,3 +48,11 @@ def test_batch_small_gamma_is_positive_and_decreasing() -> None:
 
     assert all(v >= 0 for v in vals)
     assert all(a >= b for a, b in zip(vals, vals[1:]))
+
+
+def test_batch_bh_official_poly_gamma_matches_author_supplement() -> None:
+    seq = BatchBHPolynomialGammaSequence()
+
+    assert seq.calc_gamma(1) == pytest.approx(0.6079271388115668)
+    assert seq.calc_gamma(2) == pytest.approx(0.1519817847028917)
+    assert seq.calc_gamma(10) == pytest.approx(0.006079271388115668)

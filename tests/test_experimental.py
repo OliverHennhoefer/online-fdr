@@ -1,5 +1,16 @@
 from online_fdr.batching.by import BatchBY
+from online_fdr.utils.static import by
 from online_fdr.utils.testing import generate_test_data
+
+
+def test_batch_by_first_batch_uses_static_by_at_allocated_alpha() -> None:
+    method = BatchBY(alpha=0.05)
+    p_vals = [0.001, 0.01, 0.04, 0.2, 0.9]
+    alpha_t = method.alpha0 * method.seq.calc_gamma(j=1)
+    _, threshold = by(p_vals, alpha_t)
+
+    assert method.test_batch(p_vals) == [p_val <= threshold for p_val in p_vals]
+    assert method.alpha_s == [alpha_t]
 
 
 def test_batch_by_large() -> None:

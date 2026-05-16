@@ -26,8 +26,8 @@ This page summarizes the guarantee status of each method in this package.
 | `BatchBH` | FDR | Batching assumptions from reference | Parity | Empty batch is a no-op. |
 | `BatchStoreyBH` | FDR | Batching + Storey pi0 assumptions | Parity | `R+` uses same-size replacement semantics. |
 | `BatchPRDS` | FDR | PRDS within-batch assumptions | Parity | Empty batch is a no-op. |
-| `BatchBY` | FDR | Arbitrary dependence | Extension | Added method beyond the `onlineFDR` overlap set. |
-| `BatchBHOfficial` | FDR | Official-paper implementation profile assumptions | Extension | Alternate implementation profile. |
+| `BatchBY` | FDR-style batch control | BY within-batch correction; no direct `onlineFDR` reference | Extension | Added conservative extension beyond the `onlineFDR` overlap set. |
+| `BatchBHOfficial` | FDR | AISTATS supplementary implementation assumptions | Extension | Alternate BatchBH profile using the authors' adaptive gamma policy. |
 | `LORDMemoryDecay` | N/A (utility/monitoring use) | Application-specific | Experimental / Extension | Not claimed as a general FDR/FWER-control method in this package docs. |
 
 ## Important Scope Notes
@@ -44,3 +44,4 @@ This page summarizes the guarantee status of each method in this package.
 4. https://dsrobertson.github.io/onlineFDR/reference/LORD.html
 5. https://dsrobertson.github.io/onlineFDR/reference/SAFFRON.html
 6. https://dsrobertson.github.io/onlineFDR/reference/BatchBH.html
+7. https://proceedings.mlr.press/v108/zrnic20a.html

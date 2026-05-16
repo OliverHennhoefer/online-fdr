@@ -85,7 +85,7 @@ print(f"Made {len(discoveries)} discoveries")
 | **BatchBH** | Classic Benjamini-Hochberg | Independent p-values |
 | **BatchStoreyBH** | Adaptive Storey-BH procedure | Unknown null proportion |
 | **BatchPRDS** | Positive regression dependency | Positively correlated tests |
-| **BatchBY** | Benjamini-Yekutieli | Arbitrary dependence |
+| **BatchBY** | Benjamini-Yekutieli extension | Stronger within-batch dependence correction |
 
 ## Mathematical Guarantees
 

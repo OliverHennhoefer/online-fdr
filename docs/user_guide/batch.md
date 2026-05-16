@@ -147,8 +147,8 @@ $$\hat{\pi}_0(\lambda) = \frac{\#\{i : p_i > \lambda\}}{(1-\lambda) \cdot m}$$
 Then uses adjusted BH threshold:
 $$\text{Reject } H_i \text{ if } p_i \leq \frac{i \alpha}{m \hat{\pi}_0}$$
 
-### Benjamini-Yekutieli (BY) Procedure  
-**FDR control under arbitrary dependence**
+### Benjamini-Yekutieli (BY) Procedure
+**Conservative BY-style extension for dependent batches**
 
 ```python
 from online_fdr.batching.by import BatchBY
@@ -156,7 +156,7 @@ from online_fdr.batching.by import BatchBY
 # Create BY instance
 by = BatchBY(alpha=0.05)
 
-# BY is more conservative than BH for dependent tests
+# BY is more conservative than BH for dependent tests within a batch
 p_values = [0.01, 0.03, 0.05, 0.08, 0.12]
 
 # Compare BH vs BY
@@ -168,12 +168,12 @@ by_decisions = by.test_batch(p_values)
 print("BH vs BY comparison (dependent case):")
 print(f"BH discoveries: {sum(bh_decisions)}")
 print(f"BY discoveries: {sum(by_decisions)}")
-print("BY is more conservative for dependent tests")
+print("BY is more conservative within each batch")
 ```
 
 #### Mathematical Formula
 
-BY uses the harmonic series correction:
+Within each batch, BY uses the harmonic series correction:
 $$c(m) = \sum_{i=1}^m \frac{1}{i} \approx \log(m) + \gamma$$
 
 Reject $H_i$ if $p_i \leq \frac{i \alpha}{m \cdot c(m)}$
