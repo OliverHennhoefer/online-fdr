@@ -12,6 +12,18 @@
     "note": "Candidate-based online FDR semantics align with onlineFDR."
   },
   {
+    "name": "SaffronAsync",
+    "import_path": "online_fdr.async_methods.saffron_async.SaffronAsync",
+    "status": "Extension",
+    "note": "Asynchronous lifecycle API with dedicated live R parity against SAFFRONstar(version='async')."
+  },
+  {
+    "name": "AddisAsync",
+    "import_path": "online_fdr.async_methods.addis_async.AddisAsync",
+    "status": "Extension",
+    "note": "Asynchronous lifecycle API with dedicated live R parity against ADDIS(async=TRUE)."
+  },
+  {
     "name": "LordThree",
     "import_path": "online_fdr.investing.lord.three.LordThree",
     "status": "Parity",
@@ -46,6 +58,12 @@
     "import_path": "online_fdr.investing.alpha.alpha.Gai",
     "status": "Parity",
     "note": "Alpha-investing counterpart."
+  },
+  {
+    "name": "WeightedGaiPlusPlus",
+    "import_path": "online_fdr.investing.alpha.weighted_gai_plus_plus.WeightedGaiPlusPlus",
+    "status": "Extension",
+    "note": "Prior/penalty-weighted GAI++ with memory decay, checked against the authors' OnlineFDRCode formula."
   },
   {
     "name": "AlphaSpending",
@@ -84,6 +102,12 @@
     "note": "Conservative BY-style batch extension without an onlineFDR counterpart."
   },
   {
+    "name": "Toad",
+    "import_path": "online_fdr.batching.toad.Toad",
+    "status": "Extension",
+    "note": "Decision-deadline online FDR procedure checked against Fisher's AISTATS supplementary TOAD loop."
+  },
+  {
     "name": "LORDMemoryDecay",
     "import_path": "online_fdr.investing.lord.mem_decay.LORDMemoryDecay",
     "status": "Extension",
@@ -104,10 +128,5 @@
     "name": "DateBatchRandomization",
     "status": "IntentionalDivergence",
     "note": "No internal same-date randomization; caller controls ordering."
-  },
-  {
-    "name": "AsyncStarWrappers",
-    "status": "IntentionalDivergence",
-    "note": "Asynchronous star wrappers are not implemented."
   }
 ]

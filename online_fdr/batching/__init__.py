@@ -3,6 +3,7 @@ from online_fdr.batching.bh_official import BatchBHOfficial
 from online_fdr.batching.by import BatchBY
 from online_fdr.batching.prds import BatchPRDS
 from online_fdr.batching.storey_bh import BatchStoreyBH
+from online_fdr.batching.toad import Toad
 
 __all__ = [
     "BatchBH",
@@ -10,4 +11,5 @@ __all__ = [
     "BatchBY",
     "BatchPRDS",
     "BatchStoreyBH",
+    "Toad",
 ]

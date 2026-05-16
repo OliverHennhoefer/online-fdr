@@ -10,12 +10,17 @@ __author__ = "Oliver Hennhöfer"
 __email__ = "oliver.hennhoefer@mail.de"
 
 # Core imports for convenience
+from online_fdr.async_methods.addis_async import AddisAsync
+from online_fdr.async_methods.base import AsyncTestLevel
+from online_fdr.async_methods.saffron_async import SaffronAsync
 from online_fdr.batching.bh import BatchBH
 from online_fdr.batching.by import BatchBY
 from online_fdr.batching.prds import BatchPRDS
 from online_fdr.batching.storey_bh import BatchStoreyBH
+from online_fdr.batching.toad import Toad
 from online_fdr.investing.addis.addis import Addis
 from online_fdr.investing.alpha.alpha import Gai
+from online_fdr.investing.alpha.weighted_gai_plus_plus import WeightedGaiPlusPlus
 from online_fdr.investing.lond.lond import Lond
 from online_fdr.investing.lord.dependent import LordDependent
 from online_fdr.investing.lord.discard import LordDiscard
@@ -39,11 +44,16 @@ __all__ = [
     "LordDiscard",
     "LordDependent",
     "Saffron",
+    "SaffronAsync",
+    "AddisAsync",
+    "AsyncTestLevel",
+    "WeightedGaiPlusPlus",
     # Batch methods
     "BatchBH",
     "BatchBY",
     "BatchPRDS",
     "BatchStoreyBH",
+    "Toad",
     # Spending methods
     "AlphaSpending",
     "OnlineFallback",

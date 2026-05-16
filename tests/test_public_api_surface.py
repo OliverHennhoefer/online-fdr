@@ -1,10 +1,13 @@
 import online_fdr
+from online_fdr.async_methods import AddisAsync, AsyncTestLevel, SaffronAsync
 from online_fdr.batching.bh import BatchBH
 from online_fdr.batching.by import BatchBY
 from online_fdr.batching.prds import BatchPRDS
 from online_fdr.batching.storey_bh import BatchStoreyBH
+from online_fdr.batching.toad import Toad
 from online_fdr.investing.addis.addis import Addis
 from online_fdr.investing.alpha.alpha import Gai
+from online_fdr.investing.alpha.weighted_gai_plus_plus import WeightedGaiPlusPlus
 from online_fdr.investing.lond.lond import Lond
 from online_fdr.investing.lord.dependent import LordDependent
 from online_fdr.investing.lord.discard import LordDiscard
@@ -26,10 +29,15 @@ EXPECTED_PUBLIC_API = [
     "LordDiscard",
     "LordDependent",
     "Saffron",
+    "SaffronAsync",
+    "AddisAsync",
+    "AsyncTestLevel",
+    "WeightedGaiPlusPlus",
     "BatchBH",
     "BatchBY",
     "BatchPRDS",
     "BatchStoreyBH",
+    "Toad",
     "AlphaSpending",
     "OnlineFallback",
 ]
@@ -44,10 +52,15 @@ EXPECTED_BINDINGS = {
     "LordDiscard": LordDiscard,
     "LordDependent": LordDependent,
     "Saffron": Saffron,
+    "SaffronAsync": SaffronAsync,
+    "AddisAsync": AddisAsync,
+    "AsyncTestLevel": AsyncTestLevel,
+    "WeightedGaiPlusPlus": WeightedGaiPlusPlus,
     "BatchBH": BatchBH,
     "BatchBY": BatchBY,
     "BatchPRDS": BatchPRDS,
     "BatchStoreyBH": BatchStoreyBH,
+    "Toad": Toad,
     "AlphaSpending": AlphaSpending,
     "OnlineFallback": OnlineFallback,
 }

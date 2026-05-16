@@ -15,6 +15,60 @@ This page collects higher-complexity examples for production-like workflows.
 - Rolling-window analysis for non-stationary streams.
 - Hybrid workflows that compare online and batch procedures.
 
+## Asynchronous Tests
+
+```python
+from online_fdr.async_methods import AddisAsync
+
+method = AddisAsync(alpha=0.05, lambda_=0.25, tau=0.5)
+
+level_a = method.start_test("experiment-a")
+level_b = method.start_test("experiment-b")
+
+print(level_a.alpha, level_b.alpha)
+
+decision_b = method.finish_test("experiment-b", 0.0001)
+decision_a = method.finish_test("experiment-a", 0.2)
+print(decision_a, decision_b)
+```
+
+## Weighted Side Information
+
+```python
+from online_fdr.investing.alpha.weighted_gai_plus_plus import WeightedGaiPlusPlus
+
+method = WeightedGaiPlusPlus(alpha=0.05, decay=0.95)
+
+events = [
+    (0.002, 1.5, 1.0),
+    (0.03, 0.8, 1.2),
+    (0.001, 2.0, 0.9),
+]
+
+for p_value, prior_weight, penalty_weight in events:
+    rejected = method.test_one(
+        p_value,
+        prior_weight=prior_weight,
+        penalty_weight=penalty_weight,
+    )
+    print(rejected, method.alpha)
+```
+
+## Decision Deadlines
+
+```python
+from online_fdr.batching.toad import Toad
+
+method = Toad(alpha=0.05)
+
+method.add_test(0.001, deadline=3, test_id="gene-a")
+method.add_test(0.4, deadline=4, test_id="gene-b")
+method.add_test(0.006, deadline=4, test_id="gene-c")
+
+finalized = method.advance_to(4)
+print(finalized)
+```
+
 ## Where to Start
 
 - [Basic Usage](basic_usage.md)

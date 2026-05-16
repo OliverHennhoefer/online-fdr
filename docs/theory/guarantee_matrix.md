@@ -19,14 +19,18 @@ This page summarizes the guarantee status of each method in this package.
 | `LordDependent` | FDR | Arbitrary dependence (dependent LORD assumptions) | Proven + Parity | Uses dependent-LORD sequence scaling compatible with `onlineFDR` semantics. |
 | `LordDiscard` | FDR | Conservative/null-adaptive regime with valid `tau` | Parity | Requires `0 < tau < 1`. |
 | `Saffron` | FDR | Independence | Proven + Parity | Candidate-threshold method; parity-tested against `onlineFDR`. |
+| `SaffronAsync` | mFDR | Independent p-values, asynchronous conflict-set assumptions | Proven + Extension | Lifecycle API; parity-tested against `onlineFDR` async reference paths. |
 | `Addis` | FDR/mFDR regime | Conservative nulls, `0 < tau < 1`, `0 <= lambda < tau` | Proven + Parity | Parameter checks enforce supported region. |
+| `AddisAsync` | mFDR | Conservative nulls plus asynchronous conflict-set assumptions | Proven + Extension | Lifecycle API with active unfinished tests counted in conflict accounting. |
 | `Gai` | FDR/mFDR | Alpha-investing assumptions | Parity | Strict guarantees depend on payout specification. |
+| `WeightedGaiPlusPlus` | FDR | Prior and penalty weights fixed independently of null p-values; valid memory decay | Proven + Extension | Implements weighted/memory GAI++ with author-code oracle tests. |
 | `AlphaSpending` | FWER | Valid finite-horizon spending rule | Proven + Parity | Finite horizon is enforced for finite-`k` rules. |
 | `OnlineFallback` | FWER | Online fallback assumptions | Proven + Parity | Boundary uses `p <= alpha_t`. |
 | `BatchBH` | FDR | Batching assumptions from reference | Parity | Empty batch is a no-op. |
 | `BatchStoreyBH` | FDR | Batching + Storey pi0 assumptions | Parity | `R+` uses same-size replacement semantics. |
 | `BatchPRDS` | FDR | PRDS within-batch assumptions | Parity | Empty batch is a no-op. |
 | `BatchBY` | FDR-style batch control | BY within-batch correction; no direct `onlineFDR` reference | Extension | Added conservative extension beyond the `onlineFDR` overlap set. |
+| `Toad` | FDR | Decision deadlines and valid summable weights | Proven + Extension | Finite helper reduces to BH for a single uniform-deadline group. |
 | `BatchBHOfficial` | FDR | AISTATS supplementary implementation assumptions | Extension | Alternate BatchBH profile using the authors' adaptive gamma policy. |
 | `LORDMemoryDecay` | N/A (utility/monitoring use) | Application-specific | Experimental / Extension | Not claimed as a general FDR/FWER-control method in this package docs. |
 
@@ -45,3 +49,7 @@ This page summarizes the guarantee status of each method in this package.
 5. https://dsrobertson.github.io/onlineFDR/reference/SAFFRON.html
 6. https://dsrobertson.github.io/onlineFDR/reference/BatchBH.html
 7. https://proceedings.mlr.press/v108/zrnic20a.html
+8. https://arxiv.org/abs/1812.05068
+9. https://arxiv.org/abs/1905.11465
+10. https://proceedings.neurips.cc/paper/7148-more-powerful-and-flexible-rules-for-online-fdr-control-with-memory-and-weights
+11. https://proceedings.mlr.press/v151/fisher22a.html

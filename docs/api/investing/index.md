@@ -20,6 +20,7 @@ This framework allows methods to be more aggressive when discoveries are being m
 | **Method** | **Full Name** | **Key Feature** | **Best For** |
 |------------|---------------|------------------|---------------|
 | **[GAI](gai.md)** | Generalized Alpha Investing | Simple wealth dynamics | Educational/baseline |
+| **Weighted GAI++** | Weighted Generalized Alpha Investing | Prior/penalty weights + memory decay | Streams with fixed side information |
 | **[SAFFRON](saffron.md)** | Serial estimate of False Discovery proportiON | Candidate selection | High-throughput screening |
 | **[ADDIS](addis.md)** | ADaptive DIScard | Discarding + candidate selection | General purpose (recommended) |
 

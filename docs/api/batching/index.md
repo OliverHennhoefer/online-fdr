@@ -24,6 +24,9 @@ The batching framework, developed by Zrnic et al. (2020), addresses scenarios wh
 ### PRDS Batch Testing
 ::: online_fdr.batching.prds.BatchPRDS
 
+### TOAD Decision Deadlines
+::: online_fdr.batching.toad.Toad
+
 ## Key Concepts
 
 ### Alpha Allocation
@@ -85,6 +88,7 @@ where n = batch size, T = number of batches.
 2. **BatchStoreyBH**: When  < 1 and batches are reasonably large
 3. **BatchBY**: When a conservative BY-style within-batch correction is desired
 4. **BatchPRDS**: When positive dependence structure is known
+5. **TOAD**: When each test has a fixed decision deadline
 
 ### Parameter Tuning
 

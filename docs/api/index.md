@@ -6,9 +6,10 @@ This section provides comprehensive documentation for all classes and functions 
 
 ```
 online_fdr/
+ async_methods/      # Asynchronous online FDR lifecycle methods
  investing/          # Alpha investing methods
     addis/         # ADDIS algorithm
-    alpha/         # Generalized Alpha Investing  
+    alpha/         # Generalized and weighted Alpha Investing
     lond/          # LOND family methods
     lord/          # LORD family methods
     saffron/       # SAFFRON algorithm
@@ -21,6 +22,7 @@ online_fdr/
     storey_bh.py   # Storey adaptive BH
     prds.py        # Positive regression dependency
     by.py          # Benjamini-Yekutieli
+    toad.py        # Decision-deadline TOAD
  utils/             # Utilities and helpers
     generation.py  # Data generation
     evaluation.py  # Performance metrics
@@ -59,6 +61,17 @@ class BatchMethod:
         """Test a batch of p-values. Returns rejection decisions."""
 ```
 
+### Asynchronous Lifecycle Methods
+
+```python
+class AsyncMethod:
+    def start_test(self, test_id=None):
+        """Reserve and return a test level before the p-value is known."""
+
+    def finish_test(self, test_id, p_value: float) -> bool:
+        """Record the p-value and return the final rejection decision."""
+```
+
 ## Quick Reference
 
 ### Most Common Methods
@@ -66,9 +79,13 @@ class BatchMethod:
 | **Method** | **Import Path** | **Best For** |
 |------------|-----------------|--------------|
 | ADDIS | `online_fdr.investing.addis.addis.Addis` | General-purpose online FDR |
+| Async ADDIS | `online_fdr.async_methods.AddisAsync` | Overlapping tests with delayed p-values |
+| Async SAFFRON | `online_fdr.async_methods.SaffronAsync` | Asynchronous high-throughput screening |
+| Weighted GAI++ | `online_fdr.investing.alpha.weighted_gai_plus_plus.WeightedGaiPlusPlus` | Side-information weighted streams |
 | LORD3 | `online_fdr.investing.lord.three.LordThree` | Sequential with temporal structure |
 | SAFFRON | `online_fdr.investing.saffron.saffron.Saffron` | High-throughput screening |
 | Batch BH | `online_fdr.batching.bh.BatchBH` | Traditional batch FDR control |
+| TOAD | `online_fdr.batching.toad.Toad` | Tests with decision deadlines |
 
 ### Parameter Quick Start
 
@@ -117,6 +134,7 @@ Most common parameter combinations for getting started:
 Alpha investing algorithms that adapt thresholds based on past discoveries.
 
 - **[Alpha Investing](investing/gai.md)**: Generalized Alpha Investing (GAI)
+- **Weighted GAI++**: Prior/penalty-weighted GAI++ with optional memory decay
 - **[ADDIS](investing/addis.md)**: Adaptive discarding algorithm
 - **[SAFFRON](investing/saffron.md)**: Serial estimate of the false discovery proportion  
 - **[LORD Family](investing/lord.md)**: Levels based on recent observations and discoveries
@@ -131,7 +149,7 @@ Alpha spending approaches that pre-allocate significance budget.
 ### [Batch Methods](batching/index.md)
 Traditional batch multiple testing correction methods.
 
-- **[Batch Methods Overview](batching/index.md)**: Benjamini-Hochberg, Storey-BH, PRDS, and BY procedures
+- **[Batch Methods Overview](batching/index.md)**: Benjamini-Hochberg, Storey-BH, PRDS, BY, and TOAD procedures
 
 ### [Utilities](utils/index.md)
 Helper functions and utilities for simulation and evaluation.

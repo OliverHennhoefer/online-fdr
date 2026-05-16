@@ -73,7 +73,8 @@ print(f"Made {len(discoveries)} discoveries")
 
 | **Method Family** | **Methods** | **Best For** |
 |------------------|-------------|--------------|
-| **Alpha Investing** | GAI, SAFFRON, ADDIS | High-throughput screening |
+| **Alpha Investing** | GAI, Weighted GAI++, SAFFRON, ADDIS | High-throughput screening |
+| **Asynchronous** | SAFFRON Async, ADDIS Async | Overlapping tests with delayed p-values |
 | **LORD** | LORD3, LORD++, D-LORD, Discard, Memory Decay | Time series with trends |
 | **LOND** | LOND | Independent/weakly dependent p-values |
 | **Alpha Spending** | Bonferroni, LORD3 spending | Conservative control |
@@ -86,6 +87,7 @@ print(f"Made {len(discoveries)} discoveries")
 | **BatchStoreyBH** | Adaptive Storey-BH procedure | Unknown null proportion |
 | **BatchPRDS** | Positive regression dependency | Positively correlated tests |
 | **BatchBY** | Benjamini-Yekutieli extension | Stronger within-batch dependence correction |
+| **TOAD** | Decision-deadline online FDR | Tests that can be revised until deadlines |
 
 ## Mathematical Guarantees
 
