@@ -20,6 +20,7 @@ from online_fdr.e_values.toolbox import (
     check_calibrator,
     e_to_p,
     log_product_e_values,
+    make_power_calibrator,
     max_e_value,
     p_to_e_power,
     product_e_values,
@@ -59,6 +60,14 @@ def test_e_bh_can_reject_all_and_support_infinite_values() -> None:
 def test_e_bh_rejects_invalid_e_values(bad_values: list[float]) -> None:
     with pytest.raises(ValueError):
         e_bh(bad_values, alpha=0.05)
+
+
+def test_ebh_rejects_invalid_e_values_before_state_updates() -> None:
+    method = EBH(alpha=0.05)
+    with pytest.raises(ValueError, match="index 0"):
+        method.test_batch(["x"])  # type: ignore[list-item]
+    assert method.num_tests == 0
+    assert method.num_batches == 0
 
 
 def test_ebh_empty_batch_is_noop() -> None:
@@ -112,6 +121,8 @@ def test_e_to_p_and_power_calibrator() -> None:
     assert e_to_p(0.25) == 1.0
     assert p_to_e_power(0.25, exponent=0.5) == pytest.approx(1.0)
     assert math.isinf(p_to_e_power(0.0, exponent=0.5))
+    calibrator = make_power_calibrator(0.5)
+    assert calibrator(0.25) == pytest.approx(1.0)
 
 
 def test_power_calibrator_integrates_to_one_numerically() -> None:
@@ -147,6 +158,12 @@ def test_likelihood_ratio_processes_and_betting_process() -> None:
         weights=[0.25, 0.75],
     )
     assert mixture.update(0.0) == pytest.approx(1.0)
+    assert mixture.update(1.0) == pytest.approx(0.25 * math.e + 0.75 * math.e**2)
+    assert mixture.update(1.0) == pytest.approx(
+        0.25 * math.e**2 + 0.75 * math.e**4
+    )
+    mixture.reset()
+    assert mixture.current == pytest.approx(1.0)
 
     betting = BettingEProcess(stake=0.5)
     assert betting.update(1.0) == pytest.approx(1.5)

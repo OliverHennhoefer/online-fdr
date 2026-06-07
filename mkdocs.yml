@@ -73,6 +73,7 @@ nav:
   - Examples:
       - examples/index.md
       - Basic Usage: examples/basic_usage.md
+      - E-Value Examples: examples/e_values.md
       - Advanced Scenarios: examples/advanced.md
       - Method Comparisons: examples/comparison.md
   - API Reference:

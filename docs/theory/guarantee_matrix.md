@@ -8,6 +8,7 @@ This page summarizes the guarantee status of each method in this package.
 - **Parity**: Behavior is aligned to `onlineFDR` reference semantics for overlapping scope.
 - **Extension**: Implemented in this package but not a direct `onlineFDR` counterpart.
 - **Experimental**: Utility method without formal FDR/FWER guarantee claim in this package.
+- **Tooling**: Construction helper; validity depends on caller-supplied inputs and assumptions.
 
 ## Method Matrix
 
@@ -60,4 +61,8 @@ This page summarizes the guarantee status of each method in this package.
 10. https://proceedings.neurips.cc/paper/7148-more-powerful-and-flexible-rules-for-online-fdr-control-with-memory-and-weights
 11. https://proceedings.mlr.press/v151/fisher22a.html
 12. https://academic.oup.com/jrsssb/article/84/3/822/7056146
-13. https://proceedings.mlr.press/v238/xu24a.html
+13. https://github.com/ruoduwang/e-BH
+14. https://proceedings.mlr.press/v238/xu24a.html
+15. https://github.com/neilzxu/evalue-omt
+16. https://doi.org/10.1214/20-AOS2020
+17. https://arxiv.org/abs/2502.08539

@@ -135,6 +135,17 @@ Most common parameter combinations for getting started:
     addis = Addis(alpha=0.1, wealth=0.075, lambda_=0.75, tau=0.8)
     ```
 
+=== "E-Value Procedures"
+    ```python
+    from online_fdr.e_values import EBH, ELond
+
+    # Batch e-values
+    ebh = EBH(alpha=0.05)
+
+    # Online e-values
+    elond = ELond(alpha=0.05)
+    ```
+
 === "LORD3 (Time Series)"
     ```python
     from online_fdr.p_values.investing.lord.three import LordThree

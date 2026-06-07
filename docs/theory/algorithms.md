@@ -18,6 +18,61 @@ Online FDR control algorithms can be classified along several dimensions:
 ### By Null Handling
 - **Standard**: Assume uniform nulls (LOND, LORD, SAFFRON)
 - **Conservative**: Handle non-uniform nulls (ADDIS)
+- **E-value based**: Assume null e-values with expectation at most one (e-BH, e-LOND)
+
+## E-BH: Benjamini-Hochberg with E-Values
+
+### Algorithm Description
+
+E-BH is the batch e-value analogue of Benjamini-Hochberg. It uses large
+e-values as evidence and does not require a dependence correction when its
+inputs are valid e-values.
+
+**Input**: Target FDR level $\alpha$, e-values $E_1,\ldots,E_m$
+
+1. Sort e-values descending: $E_{(1)} \geq \cdots \geq E_{(m)}$
+2. Find the largest $k$ such that:
+   $$E_{(k)} \geq \frac{m}{\alpha k}$$
+3. Reject the hypotheses corresponding to the top $k$ e-values
+4. If no such $k$ exists, reject nothing
+
+### Theoretical Guarantee
+
+**Theorem (e-BH FDR Control)**: If the null inputs are valid e-values, e-BH
+controls FDR at level $\alpha$ under arbitrary dependence.
+
+This arbitrary-dependence guarantee is the main distinction from applying BH to
+ordinary p-values, which needs independence, PRDS, or a dependence correction.
+
+## E-LOND: Online Testing with E-Values
+
+### Algorithm Description
+
+E-LOND is the online e-value procedure of Xu and Ramdas (2024). It uses the
+same LOND-style discovery-adaptive levels as p-value LOND, but rejects against
+the reciprocal e-value boundary.
+
+**Input**: Target FDR level $\alpha$, summable gamma sequence
+$\{\gamma_t\}_{t \geq 1}$
+
+**For test $t = 1, 2, \ldots$**:
+
+1. Observe e-value $E_t$
+2. Set level:
+   $$\alpha_t = \alpha \gamma_t (R_{t-1} + 1)$$
+3. Reject if:
+   $$E_t \geq \frac{1}{\alpha_t}$$
+4. Update $R_t = R_{t-1} + \mathbf{1}\{E_t \geq 1/\alpha_t\}$
+
+### Theoretical Guarantee
+
+**Theorem (e-LOND Online FDR Control)**: For valid e-values and a summable gamma
+sequence, e-LOND controls online FDR at level $\alpha$ under arbitrary,
+possibly unknown, dependence.
+
+The guarantee is an e-value guarantee. It does not rely on the p-value LOND
+independence assumptions, and it does not turn arbitrary numerical scores into
+valid e-values.
 
 ## LOND: Levels based On Number of Discoveries
 

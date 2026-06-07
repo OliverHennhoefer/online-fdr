@@ -4,7 +4,10 @@ Welcome to the comprehensive **online-fdr** user guide. This section provides in
 
 ## Overview
 
-Online FDR control is essential when hypotheses arrive sequentially and decisions must be made immediately. Unlike traditional batch methods that see all p-values beforehand, online methods adapt their decision thresholds based on previous results.
+Online FDR control is essential when hypotheses arrive sequentially and
+decisions must be made immediately. The package has two evidence lanes:
+p-value procedures for small-is-strong evidence and e-value procedures for
+large-is-strong evidence.
 
 ## Guide Structure
 
@@ -19,15 +22,23 @@ This user guide is organized into the following sections:
 - Dependency structures and their implications
 
 ### [Sequential Testing](sequential.md)
-**Methods that test one hypothesis at a time**
+**P-value methods that test one hypothesis at a time**
 
 - Alpha Investing Family (GAI, SAFFRON, ADDIS)
 - LORD Family (LORD3, LORD++, D-LORD, etc.)
 - LOND methods for different dependency structures
 - Alpha spending approaches
 
+### [E-Value Methods](e_values.md)
+**Batch and online methods for large-is-strong evidence**
+
+- e-BH for fixed batches of valid e-values
+- e-LOND for online streams of valid e-values
+- Calibration, merging, e-process, and generation tooling
+- Construction-level assumptions and roadmap items
+
 ### [Batch Testing](batch.md)
-**Methods that test multiple hypotheses simultaneously**
+**P-value methods that test multiple hypotheses simultaneously**
 
 - Benjamini-Hochberg and adaptive variants
 - Methods for dependent test statistics
@@ -60,7 +71,7 @@ This user guide is organized into the following sections:
     Start with [Concepts](concepts.md) to understand the fundamentals, then move to [Sequential Testing](sequential.md) for practical applications.
 
 === "Experienced User?"
-    Jump directly to [Sequential Testing](sequential.md) or [Batch Testing](batch.md) based on your needs.
+    Jump directly to [Sequential Testing](sequential.md), [Batch Testing](batch.md), or [E-Value Methods](e_values.md) based on your evidence type.
 
 === "Researcher/Developer?"
     Focus on [Performance Evaluation](evaluation.md) and [Data Generation](data_generation.md) for simulation studies.
@@ -189,6 +200,5 @@ If you're stuck or need clarification:
 4. **Consult the referenced papers** for theoretical details
 
 Ready to dive deeper? Choose a section above or continue with [Concepts](concepts.md) for the theoretical foundations.
-
 
 

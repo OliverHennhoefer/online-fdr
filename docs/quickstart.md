@@ -41,6 +41,36 @@ Test 4: p=0.800  ACCEPT
 Test 5: p=0.020  ACCEPT
 ```
 
+## Your First E-Value Test
+
+For e-values, larger values are stronger evidence. `ELond` tests an online
+stream and rejects when an e-value crosses the reciprocal of its current test
+level.
+
+```python
+from online_fdr.e_values import ELond
+
+method = ELond(alpha=0.05)
+e_values = [1.0, 20.0, 3.0, 500.0]
+
+for i, e_value in enumerate(e_values):
+    decision = method.test_one(e_value)
+    print(
+        f"Test {i + 1}: e={e_value:6.1f}  "
+        f"threshold={method.current_threshold:.2f}  "
+        f"{'REJECT' if decision else 'ACCEPT'}"
+    )
+```
+
+For a fixed batch of e-values, use `EBH`:
+
+```python
+from online_fdr.e_values import EBH
+
+method = EBH(alpha=0.05)
+decisions = method.test_batch([1.0, 2.0, 100.0, 5.0])
+```
+
 ## Realistic Simulation
 
 Let's create a more realistic scenario with simulated data:

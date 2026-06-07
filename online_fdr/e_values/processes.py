@@ -83,7 +83,13 @@ class LikelihoodRatioEProcess:
 
 
 class MixtureLikelihoodRatioEProcess:
-    """Likelihood-ratio e-process for a fixed mixture of alternatives."""
+    """Fixed-prior mixture of likelihood-ratio e-processes.
+
+    Each component accumulates its own likelihood-ratio process over time. The
+    reported value is the weighted arithmetic mixture of those cumulative
+    component processes, not a product of per-observation mixture likelihoods.
+    The caller is responsible for the null and alternative model assumptions.
+    """
 
     def __init__(
         self,
@@ -103,27 +109,40 @@ class MixtureLikelihoodRatioEProcess:
             check_nonnegative_weights(weights)
             total = float(sum(weights))
             self.weights = [float(weight) / total for weight in weights]
-        self.log_current = 0.0
+        self.component_log_currents = [0.0] * len(self.log_likelihood_ratios)
 
     @property
     def current(self) -> float:
         return _exp_or_inf(self.log_current)
 
-    def update(self, observation: Any) -> float:
+    @property
+    def log_current(self) -> float:
         terms = []
-        for weight, log_lr in zip(self.weights, self.log_likelihood_ratios):
+        for weight, component_log_current in zip(
+            self.weights, self.component_log_currents
+        ):
             if weight == 0:
                 terms.append(-math.inf)
             else:
-                value = float(log_lr(observation))
-                if math.isnan(value):
-                    raise ValueError("log likelihood ratio must not be NaN.")
-                terms.append(math.log(weight) + value)
-        self.log_current += _logsumexp(terms)
-        return self.current
+                terms.append(math.log(weight) + component_log_current)
+        return _logsumexp(terms)
+
+    def update(self, observation: Any) -> float:
+        for idx, (weight, log_lr) in enumerate(
+            zip(self.weights, self.log_likelihood_ratios)
+        ):
+            if weight == 0:
+                continue
+            value = float(log_lr(observation))
+            if math.isnan(value):
+                raise ValueError("log likelihood ratio must not be NaN.")
+            self.component_log_currents[idx] += value
+            if math.isnan(self.component_log_currents[idx]):
+                raise ValueError("cumulative log likelihood ratio must not be NaN.")
+        return _exp_or_inf(self.log_current)
 
     def reset(self) -> None:
-        self.log_current = 0.0
+        self.component_log_currents = [0.0] * len(self.log_likelihood_ratios)
 
 
 class BettingEProcess:

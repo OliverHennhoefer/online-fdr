@@ -29,6 +29,14 @@ This section provides practical, real-world examples of using **online-fdr** for
 - Dependency structure effects
 - Parameter sensitivity studies
 
+### [E-Value Examples](e_values.md)
+**Batch, online, and construction workflows for e-values**
+
+- e-BH for fixed batches of valid e-values
+- e-LOND for streaming e-values
+- P-to-e calibration, e-value merging, and e-process stopping
+- Gaussian likelihood-ratio e-value simulations
+
 ## Quick Start Examples
 
 ### 1. **Basic Online Testing**

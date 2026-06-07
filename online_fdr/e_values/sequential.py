@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import math
-from typing import Any
 
 from online_fdr.core.abstract.abstract_gamma_seq import AbstractGammaSequence
 from online_fdr.core.utils.sequence import DefaultLondGammaSequence
@@ -17,6 +16,11 @@ class ELond:
     e-LOND uses the same test levels as p-value LOND but rejects when the
     incoming e-value exceeds the reciprocal test level. Valid e-values give FDR
     control under arbitrary dependence.
+
+    References:
+        Xu, Z. and Ramdas, A. (2024). Online multiple testing with e-values.
+        Proceedings of AISTATS 2024.
+        Author code: https://github.com/neilzxu/evalue-omt
     """
 
     def __init__(
@@ -53,20 +57,3 @@ class ELond:
             return float(self.seq.calc_gamma(index, alpha=1.0))
         except TypeError:
             return float(self.seq.calc_gamma(index))
-
-    @property
-    def alpha(self) -> float | None:
-        """Current e-LOND test level, retained as a compatibility alias."""
-        return self.current_level
-
-    @property
-    def num_test(self) -> int:
-        """Compatibility alias for the old singular state name."""
-        return self.num_tests
-
-    @num_test.setter
-    def num_test(self, value: int) -> None:
-        self.num_tests = value
-
-    def __getstate__(self) -> dict[str, Any]:
-        return self.__dict__.copy()

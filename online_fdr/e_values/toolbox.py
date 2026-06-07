@@ -18,6 +18,7 @@ __all__ = [
     "check_nonnegative_weights",
     "e_to_p",
     "log_product_e_values",
+    "make_power_calibrator",
     "max_e_value",
     "mixture_e_value",
     "p_to_e_power",
@@ -42,7 +43,7 @@ def p_to_e_power(p_value: float, exponent: float) -> float:
 
     The exponent must be in ``(0, 1)``. The calibrator integrates to one on
     ``[0, 1]`` and is decreasing, so applying it to a valid p-value yields an
-    e-value.
+    e-value. This is the power calibrator from Vovk and Wang (2021).
     """
     check_p_val(p_value)
     if not 0 < exponent < 1:
@@ -71,7 +72,8 @@ def weighted_arithmetic_mean(
     """Merge e-values by weighted arithmetic mean.
 
     This is valid for arbitrary dependence when all inputs are valid e-values
-    and weights are fixed independently of the null evidence.
+    and weights are fixed independently of the null evidence, as in the
+    averaging rule of Vovk and Wang (2021).
     """
     check_e_values(e_values)
     normalized = _normalized_weights(len(e_values), weights)
