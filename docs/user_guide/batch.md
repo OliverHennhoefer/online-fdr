@@ -37,7 +37,7 @@ Batch methods aim to control $\text{FDR} \leq \alpha$ while maximizing power.
 **The gold standard for FDR control under independence**
 
 ```python
-from online_fdr.batching.bh import BatchBH
+from online_fdr.p_values.batching.bh import BatchBH
 
 # Create Benjamini-Hochberg instance
 bh = BatchBH(alpha=0.05)
@@ -116,7 +116,7 @@ demonstrate_bh_algorithm(p_vals, alpha=0.1)
 The Storey procedure estimates the proportion of true null hypotheses ($\hat{\pi}_0$) and uses this for more powerful FDR control.
 
 ```python
-from online_fdr.batching.storey_bh import BatchStoreyBH
+from online_fdr.p_values.batching.storey_bh import BatchStoreyBH
 
 # Create Storey-BH instance
 storey_bh = BatchStoreyBH(
@@ -151,7 +151,7 @@ $$\text{Reject } H_i \text{ if } p_i \leq \frac{i \alpha}{m \hat{\pi}_0}$$
 **Conservative BY-style extension for dependent batches**
 
 ```python
-from online_fdr.batching.by import BatchBY
+from online_fdr.p_values.batching.by import BatchBY
 
 # Create BY instance
 by = BatchBY(alpha=0.05)
@@ -182,7 +182,7 @@ Reject $H_i$ if $p_i \leq \frac{i \alpha}{m \cdot c(m)}$
 **Optimized for positively dependent test statistics**
 
 ```python
-from online_fdr.batching.prds import BatchPRDS
+from online_fdr.p_values.batching.prds import BatchPRDS
 
 # Create PRDS instance
 prds = BatchPRDS(alpha=0.05)
@@ -214,9 +214,9 @@ print(f"BH discoveries: {sum(bh_decisions)}")
 
 ```python
 import numpy as np
-from online_fdr.batching.bh import BatchBH
-from online_fdr.batching.storey_bh import BatchStoreyBH
-from online_fdr.batching.by import BatchBY
+from online_fdr.p_values.batching.bh import BatchBH
+from online_fdr.p_values.batching.storey_bh import BatchStoreyBH
+from online_fdr.p_values.batching.by import BatchBY
 
 def compare_batch_methods(n_tests=1000, n_alternatives=100, alpha=0.05):
     """Compare batch methods on simulated data."""
@@ -478,7 +478,7 @@ print(f"\nOverall discoveries: {sum(stratified_results)}")
 ```python
 import numpy as np
 from scipy import stats
-from online_fdr.batching.bh import BatchBH
+from online_fdr.p_values.batching.bh import BatchBH
 
 def multiple_t_tests_with_fdr(data_groups, control_group, alpha=0.05):
     """Perform multiple t-tests with FDR correction."""

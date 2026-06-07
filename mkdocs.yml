@@ -58,12 +58,14 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Quick Start: quickstart.md
+  - Migration: migration.md
   - Workflows: workflows.md
   - Troubleshooting: troubleshooting.md
   - User Guide:
       - user_guide/index.md
       - Concepts: user_guide/concepts.md
       - Sequential Testing: user_guide/sequential.md
+      - E-Value Methods: user_guide/e_values.md
       - Batch Testing: user_guide/batch.md
       - Data Generation: user_guide/data_generation.md
       - Performance Evaluation: user_guide/evaluation.md
@@ -75,6 +77,8 @@ nav:
       - Method Comparisons: examples/comparison.md
   - API Reference:
       - api/index.md
+      - E-Value Methods:
+          - api/e_values/index.md
       - Investing Methods:
           - api/investing/index.md
           - ADDIS: api/investing/addis.md

@@ -6,7 +6,12 @@
 
 ## Overview
 
-**online-fdr** is a Python library for controlling False Discovery Rate (FDR) and Family-Wise Error Rate (FWER) in online multiple hypothesis testing scenarios. Unlike traditional methods that require all p-values upfront, this library provides truly online algorithms that make decisions sequentially as data arrives.
+**online-fdr** is a Python library for controlling False Discovery Rate (FDR) and Family-Wise Error Rate (FWER) in multiple hypothesis testing. The package now has two first-class lanes:
+
+- `online_fdr.p_values` for p-value based online, asynchronous, and batch procedures.
+- `online_fdr.e_values` for e-value based procedures and construction tooling.
+
+Unlike traditional methods that require all evidence upfront, the online procedures make decisions sequentially as data arrives.
 
 ### Why Online FDR Control?
 
@@ -20,7 +25,7 @@ In many applications, hypotheses arrive sequentially:
 This library implements state-of-the-art online algorithms that:
 - Make immediate decisions without waiting for future data
 - Maintain rigorous statistical guarantees
-- Support both independent and dependent p-values
+- Support p-value and e-value workflows with documented assumptions
 - Provide a unified API for sequential and batch testing
 
 ## Installation
@@ -31,9 +36,11 @@ pip install online-fdr
 
 ## Quick Start
 
+### P-Value Lane
+
 ```python
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values import Addis
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # Initialize a data generator for demonstration
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
@@ -55,47 +62,65 @@ for i in range(100):
 print(f"Made {len(discoveries)} discoveries")
 ```
 
+### E-Value Lane
+
+```python
+from online_fdr.e_values import EBH, ELond
+
+batch = EBH(alpha=0.05)
+batch_decisions = batch.test_batch([1.0, 2.0, 100.0, 5.0])
+
+online = ELond(alpha=0.05)
+stream_decisions = [online.test_one(e) for e in [1.0, 20.0, 3.0, 500.0]]
+```
+
 ## Implemented Methods
+
+### E-Value Methods
+
+- **e-BH**: `from online_fdr.e_values import EBH`
+- **e-LOND**: `from online_fdr.e_values import ELond`
+- **Toolbox**: p-to-e calibration, e-to-p conversion, e-value merging, e-process helpers, and generators
 
 ### Sequential Testing Methods
 
 Methods that test one hypothesis at a time:
 
 #### **Alpha Investing Family**
-- **Generalized Alpha Investing (GAI)**: `from online_fdr.investing.alpha.alpha import Gai`
-- **SAFFRON**: `from online_fdr.investing.saffron.saffron import Saffron`  
-- **ADDIS**: `from online_fdr.investing.addis.addis import Addis`
+- **Generalized Alpha Investing (GAI)**: `from online_fdr.p_values.investing.alpha.alpha import Gai`
+- **SAFFRON**: `from online_fdr.p_values.investing.saffron.saffron import Saffron`  
+- **ADDIS**: `from online_fdr.p_values.investing.addis.addis import Addis`
 
 #### **LORD Family**
-- **LORD3**: `from online_fdr.investing.lord.three import LordThree`
-- **LORD++**: `from online_fdr.investing.lord.plus_plus import LordPlusPlus`
-- **D-LORD**: `from online_fdr.investing.lord.dependent import LordDependent`
-- **LORD with Discard**: `from online_fdr.investing.lord.discard import LordDiscard`
-- **LORD with Memory Decay**: `from online_fdr.investing.lord.mem_decay import LORDMemoryDecay`
+- **LORD3**: `from online_fdr.p_values.investing.lord.three import LordThree`
+- **LORD++**: `from online_fdr.p_values.investing.lord.plus_plus import LordPlusPlus`
+- **D-LORD**: `from online_fdr.p_values.investing.lord.dependent import LordDependent`
+- **LORD with Discard**: `from online_fdr.p_values.investing.lord.discard import LordDiscard`
+- **LORD with Memory Decay**: `from online_fdr.p_values.investing.lord.mem_decay import LORDMemoryDecay`
 
 #### **LOND Family**
-- **LOND**: `from online_fdr.investing.lond.lond import Lond`
+- **LOND**: `from online_fdr.p_values.investing.lond.lond import Lond`
 
 #### **Alpha Spending**
-- **Alpha Spending**: `from online_fdr.spending.alpha_spending import AlphaSpending`
-- **Online Fallback**: `from online_fdr.spending.online_fallback import OnlineFallback`
+- **Alpha Spending**: `from online_fdr.p_values.spending.alpha_spending import AlphaSpending`
+- **Online Fallback**: `from online_fdr.p_values.spending.online_fallback import OnlineFallback`
 
 ### Batch Testing Methods
 
 Methods that test hypotheses in batches:
 
-- **BatchBH**: `from online_fdr.batching.bh import BatchBH`
-- **BatchStoreyBH**: `from online_fdr.batching.storey_bh import BatchStoreyBH`
-- **BatchPRDS**: `from online_fdr.batching.prds import BatchPRDS`
-- **BatchBY**: `from online_fdr.batching.by import BatchBY`
+- **BatchBH**: `from online_fdr.p_values.batching.bh import BatchBH`
+- **BatchStoreyBH**: `from online_fdr.p_values.batching.storey_bh import BatchStoreyBH`
+- **BatchPRDS**: `from online_fdr.p_values.batching.prds import BatchPRDS`
+- **BatchBY**: `from online_fdr.p_values.batching.by import BatchBY`
 
 ## Usage Examples
 
 ### 1. **Alpha Investing (GAI)**
 
 ```python
-from online_fdr.investing.alpha.alpha import Gai
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values.investing.alpha.alpha import Gai
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # Note: GAI requires a wealth parameter
 gai = Gai(alpha=0.05, wealth=0.025)
@@ -114,8 +139,8 @@ for i in range(100):
 ### 2. **LOND for Independent and Dependent P-values**
 
 ```python
-from online_fdr.investing.lond.lond import Lond
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values.investing.lond.lond import Lond
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # For independent p-values
 lond_indep = Lond(alpha=0.05)
@@ -155,9 +180,9 @@ print(f"\nDependent LOND made {len(discoveries_dep)} discoveries")
 ### 3. **LORD with Memory Decay for Time Series**
 
 ```python
-from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
-from online_fdr.utils.evaluation import MemoryDecayFDR
-from online_fdr.utils.generation import GaussianLocationModel, DataGenerator
+from online_fdr.p_values.investing.lord.mem_decay import LORDMemoryDecay
+from online_fdr.core.utils.evaluation import MemoryDecayFDR
+from online_fdr.core.utils.generation import GaussianLocationModel, DataGenerator
 
 # For non-stationary time series with decay
 lord_decay = LORDMemoryDecay(alpha=0.1, delta=0.99, eta=0.5)
@@ -192,8 +217,8 @@ print(f"Average FDR over sequence: {sum(fdr_values)/len(fdr_values):.4f}")
 ### 4. **Batch Testing**
 
 ```python
-from online_fdr.batching.storey_bh import BatchStoreyBH
-from online_fdr.utils.generation import GaussianLocationModel, DataGenerator
+from online_fdr.p_values.batching.storey_bh import BatchStoreyBH
+from online_fdr.core.utils.generation import GaussianLocationModel, DataGenerator
 
 batch_proc = BatchStoreyBH(alpha=0.1, lambda_=0.5)
 
@@ -239,12 +264,12 @@ print(f"\nOverall: {total_discoveries} discoveries, FDR = {overall_fdr:.4f}")
 The library provides evaluation utilities to assess performance:
 
 ```python
-from online_fdr.utils.evaluation import calculate_sfdr, calculate_power
-from online_fdr.utils.format import format_result
+from online_fdr.core.utils.evaluation import calculate_sfdr, calculate_power
+from online_fdr.core.utils.format import format_result
 
 # Example: Evaluate ADDIS performance
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
 generator = DataGenerator(n=100, pi0=0.9, dgp=dgp)
@@ -279,7 +304,7 @@ print(f"Empirical Power: {power:.4f}")
 The library includes several data generation models for testing:
 
 ```python
-from online_fdr.utils.generation import (
+from online_fdr.core.utils.generation import (
     DataGenerator, 
     GaussianLocationModel,
     BetaMixtureModel, 
@@ -319,10 +344,10 @@ for i, (name, dgp) in enumerate([
 ### Alpha Spending with Custom Functions
 
 ```python
-from online_fdr.spending.alpha_spending import AlphaSpending
-from online_fdr.spending.functions.bonferroni import Bonferroni
-from online_fdr.investing.lord.three import LordThree
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values.spending.alpha_spending import AlphaSpending
+from online_fdr.p_values.spending.functions.bonferroni import Bonferroni
+from online_fdr.p_values.investing.lord.three import LordThree
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # Generate test data
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
@@ -432,5 +457,4 @@ This library is inspired by and validated against the R package [onlineFDR](http
 ## License
 
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
-
 

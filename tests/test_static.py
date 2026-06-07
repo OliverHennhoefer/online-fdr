@@ -1,6 +1,6 @@
 import random
 
-from online_fdr.utils.static import bh, by, storey_bh
+from online_fdr.core.utils.static import bh, by, storey_bh
 
 _rng = random.Random(1)
 _P_VALUES = [_rng.uniform(0, 1) for _ in range(20)] + [

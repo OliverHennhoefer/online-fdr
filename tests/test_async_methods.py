@@ -4,7 +4,7 @@ from collections.abc import Callable
 
 import pytest
 
-from online_fdr.async_methods import AddisAsync, SaffronAsync
+from online_fdr.p_values.async_methods import AddisAsync, SaffronAsync
 from tests.parity_oracle import _extract_r_result, require_r_onlinefdr
 
 _P_VALUES = [0.2, 1e-8, 0.04, 0.3, 0.01, 0.3]

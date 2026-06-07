@@ -23,14 +23,14 @@ This implementation combines the original alpha-investing philosophy with SAFFRO
 
 ## Class Reference
 
-::: online_fdr.investing.alpha.alpha.Gai
+::: online_fdr.p_values.investing.alpha.alpha.Gai
 
 ## Usage Examples
 
 ### Basic Alpha-Investing
 
 ```python
-from online_fdr.investing.alpha.alpha import Gai
+from online_fdr.p_values.investing.alpha.alpha import Gai
 
 # Create GAI instance
 gai = Gai(alpha=0.05, wealth=0.025)
@@ -159,8 +159,8 @@ gai_with_prior_knowledge()
 ### Comparison with Other Alpha-Investing Methods
 
 ```python
-from online_fdr.investing.saffron.saffron import Saffron
-from online_fdr.investing.lord.three import LordThree
+from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.p_values.investing.lord.three import LordThree
 
 def compare_alpha_investing_family():
     """Compare different alpha-investing approaches."""
@@ -200,7 +200,7 @@ compare_alpha_investing_family()
 ### Simulating Industrial A/B Testing
 
 ```python
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 def simulate_ab_testing_with_gai():
     """Simulate GAI in an industrial A/B testing environment."""

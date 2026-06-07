@@ -18,7 +18,7 @@ Data generation involves creating realistic p-value sequences that mirror real-w
 The main interface for generating p-value sequences:
 
 ```python
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # Create a data generating process
 dgp = GaussianLocationModel(alt_mean=2.0, alt_std=1.0, one_sided=True)
@@ -43,7 +43,7 @@ for i in range(10):
 **Best for**: General hypothesis testing, t-tests, regression
 
 ```python
-from online_fdr.utils.generation import GaussianLocationModel
+from online_fdr.core.utils.generation import GaussianLocationModel
 
 # Two-sided test (default)
 dgp_two_sided = GaussianLocationModel(
@@ -92,7 +92,7 @@ print("One-sided tests typically have smaller p-values (more power)")
 **Best for**: Genomics, when effect sizes vary widely
 
 ```python
-from online_fdr.utils.generation import BetaMixtureModel
+from online_fdr.core.utils.generation import BetaMixtureModel
 
 # Beta mixture model mimics genomics p-value distributions
 dgp_beta = BetaMixtureModel(
@@ -122,7 +122,7 @@ print(f"Null p-values: min={min(null_p_values):.4f}, mean={sum(null_p_values)/le
 **Best for**: Goodness-of-fit tests, variance testing
 
 ```python
-from online_fdr.utils.generation import ChiSquaredModel
+from online_fdr.core.utils.generation import ChiSquaredModel
 
 # Chi-squared model for variance-based tests
 dgp_chi2 = ChiSquaredModel(
@@ -142,7 +142,7 @@ print(f"First 10 p-values: {[f'{p:.3f}' for p in chi2_p_values[:10]]}")
 **Best for**: High-dimensional testing, screening studies
 
 ```python
-from online_fdr.utils.generation import SparseGaussianModel
+from online_fdr.core.utils.generation import SparseGaussianModel
 
 # Sparse model with varying effect sizes
 dgp_sparse = SparseGaussianModel(
@@ -173,7 +173,7 @@ print(f"Alternative p-values: {[f'{p:.4f}' for p, _ in alternatives[:5]]}")
 def simulate_ab_testing_scenario(n_variants=5, n_tests_per_variant=100):
     """Simulate A/B testing with multiple variants."""
     
-    from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+    from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
     import random
     
     print(f"Simulating A/B test with {n_variants} variants:")
@@ -226,7 +226,7 @@ print(f"\nGenerated {len(p_vals)} total tests across variants")
 def simulate_time_series_scenario(n_time_points=200, trend_change_points=None):
     """Simulate time series with changing signal strength."""
     
-    from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+    from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
     import math
     
     if trend_change_points is None:
@@ -288,7 +288,7 @@ for i in range(len(phases) - 1):
 def simulate_genomics_scenario(n_genes=10000, n_significant=100):
     """Simulate genomics study with conservative nulls."""
     
-    from online_fdr.utils.generation import DataGenerator, BetaMixtureModel
+    from online_fdr.core.utils.generation import DataGenerator, BetaMixtureModel
     import random
     
     print(f"Simulating genomics study: {n_genes} genes, {n_significant} truly significant")
@@ -394,7 +394,7 @@ for i in range(10):
 def analyze_dgp_sensitivity():
     """Analyze how DGP parameters affect p-value distributions."""
     
-    from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+    from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
     
     # Test different effect sizes
     effect_sizes = [0.5, 1.0, 1.5, 2.0, 3.0]
@@ -444,10 +444,10 @@ sensitivity_results = analyze_dgp_sensitivity()
 def complete_simulation_study(method_configs, n_simulations=10):
     """Complete simulation study comparing FDR methods."""
     
-    from online_fdr.investing.addis.addis import Addis
-    from online_fdr.investing.lord.three import LordThree
-    from online_fdr.batching.bh import BatchBH
-    from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+    from online_fdr.p_values.investing.addis.addis import Addis
+    from online_fdr.p_values.investing.lord.three import LordThree
+    from online_fdr.p_values.batching.bh import BatchBH
+    from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
     
     print(f"Running complete simulation study ({n_simulations} replications)")
     

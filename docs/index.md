@@ -5,7 +5,12 @@
 [![Code style: black](https://img.shields.io/badge/code_style-black-black)](https://github.com/psf/black)
 [![PyPI version](https://badge.fury.io/py/online-fdr.svg)](https://badge.fury.io/py/online-fdr)
 
-**online-fdr** is a comprehensive Python library for controlling False Discovery Rate (FDR) and Family-Wise Error Rate (FWER) in online multiple hypothesis testing scenarios. Unlike traditional methods that require all p-values upfront, this library provides truly online algorithms that make decisions sequentially as data arrives.
+**online-fdr** is a comprehensive Python library for controlling False Discovery Rate (FDR) and Family-Wise Error Rate (FWER) in online multiple hypothesis testing scenarios. It has two first-class lanes:
+
+- `online_fdr.p_values` for p-value based online, asynchronous, and batch methods.
+- `online_fdr.e_values` for e-value based procedures, construction utilities, e-processes, and generators.
+
+Unlike traditional methods that require all evidence upfront, online procedures make decisions sequentially as data arrives.
 
 ## Why Online FDR Control?
 
@@ -30,7 +35,8 @@ In many modern applications, hypotheses arrive sequentially and decisions must b
 
 -  **True Online Processing**: Make immediate decisions without waiting for future data
 -  **Explicit Guarantee Scope**: Method-by-method assumptions and guarantee status are documented  
--  **Unified API**: Consistent interface across all methods with `test_one()` for sequential testing
+-  **Two Evidence Lanes**: P-values and e-values are explicit package lanes
+-  **Unified API**: Consistent interface across methods with `test_one()` and `test_batch()`
 -  **Comprehensive Method Coverage**: State-of-the-art algorithms from recent literature
 -  **Performance Optimized**: Efficient implementations suitable for high-throughput applications
 -  **Rich Documentation**: Detailed mathematical explanations and practical examples
@@ -44,8 +50,8 @@ pip install online-fdr
 ## Quick Start Example
 
 ```python
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values import Addis
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # Initialize a data generator for demonstration
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
@@ -65,6 +71,18 @@ for i in range(100):
         print(f"Discovery at test {i}: p-value = {p_value:.4f}")
 
 print(f"Made {len(discoveries)} discoveries")
+```
+
+## E-Value Quick Start
+
+```python
+from online_fdr.e_values import EBH, ELond
+
+batch = EBH(alpha=0.05)
+batch_decisions = batch.test_batch([1.0, 2.0, 100.0, 5.0])
+
+online = ELond(alpha=0.05)
+stream_decisions = [online.test_one(e) for e in [1.0, 20.0, 3.0, 500.0]]
 ```
 
 ## Available Methods

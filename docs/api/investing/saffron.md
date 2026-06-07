@@ -34,14 +34,14 @@ The algorithm maintains wealth that:
 
 ## Class Reference
 
-::: online_fdr.investing.saffron.saffron.Saffron
+::: online_fdr.p_values.investing.saffron.saffron.Saffron
 
 ## Usage Examples
 
 ### Basic Usage
 
 ```python
-from online_fdr.investing.saffron.saffron import Saffron
+from online_fdr.p_values.investing.saffron.saffron import Saffron
 
 # Create SAFFRON instance with recommended parameters
 saffron = Saffron(alpha=0.05, wealth=0.025, lambda_=0.5)
@@ -90,7 +90,7 @@ for name, method in [("Conservative", conservative),
 ### Working with Real Data Patterns
 
 ```python
-from online_fdr.utils.generation import DataGenerator, BetaMixtureModel
+from online_fdr.core.utils.generation import DataGenerator, BetaMixtureModel
 
 # Simulate realistic genomics-style data with conservative nulls
 dgp = BetaMixtureModel(alt_alpha=0.3, alt_beta=5.0)  # Alternatives skewed toward 0
@@ -134,7 +134,7 @@ print(f"Target FDR: {saffron.alpha0}")
 ### Comparison with Non-Adaptive Methods
 
 ```python
-from online_fdr.investing.lord.three import LordThree
+from online_fdr.p_values.investing.lord.three import LordThree
 
 def compare_adaptive_vs_nonadaptive(p_values):
     """Compare SAFFRON (adaptive) with LORD 3 (non-adaptive)."""

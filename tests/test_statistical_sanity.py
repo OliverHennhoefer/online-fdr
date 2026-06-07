@@ -1,9 +1,9 @@
 import random
 
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.investing.lord.three import LordThree
-from online_fdr.investing.saffron.saffron import Saffron
-from online_fdr.spending.online_fallback import OnlineFallback
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values.investing.lord.three import LordThree
+from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.p_values.spending.online_fallback import OnlineFallback
 
 
 def _fdp(decisions: list[bool]) -> float:

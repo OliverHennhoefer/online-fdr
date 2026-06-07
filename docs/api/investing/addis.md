@@ -39,14 +39,14 @@ The algorithm maintains **alpha-wealth** that:
 
 ## Class Reference
 
-::: online_fdr.investing.addis.addis.Addis
+::: online_fdr.p_values.investing.addis.addis.Addis
 
 ## Usage Examples
 
 ### Basic Usage
 
 ```python
-from online_fdr.investing.addis.addis import Addis
+from online_fdr.p_values.investing.addis.addis import Addis
 
 # Initialize ADDIS with standard parameters
 addis = Addis(
@@ -77,8 +77,8 @@ for i, p_val in enumerate(p_values):
 ADDIS excels when null p-values are conservative (shifted toward 1):
 
 ```python
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.investing.saffron.saffron import Saffron
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values.investing.saffron.saffron import Saffron
 import numpy as np
 
 # Simulate conservative nulls (Beta(1, 3) distribution)
@@ -103,8 +103,8 @@ print(f"ADDIS advantage: {addis_discoveries - saffron_discoveries}")
 ### Parameter Sensitivity Analysis
 
 ```python
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 def evaluate_parameters(lambda_values, tau_values, p_values):
     """Evaluate ADDIS performance across parameter grid."""
@@ -255,8 +255,8 @@ def monitor_addis_wealth(addis, p_values):
 ### Custom Gamma Sequence
 
 ```python
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.utils.sequence import DefaultSaffronGammaSequence
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
 
 class CustomGammaSequence(DefaultSaffronGammaSequence):
     """Custom gamma sequence for ADDIS candidate selection."""

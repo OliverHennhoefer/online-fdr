@@ -30,30 +30,30 @@ The package implements **LORD 3**, which depends on the past only through the ti
 
 ### LORD3
 
-::: online_fdr.investing.lord.three.LordThree
+::: online_fdr.p_values.investing.lord.three.LordThree
 
 ### LORD++
 
-::: online_fdr.investing.lord.plus_plus.LordPlusPlus
+::: online_fdr.p_values.investing.lord.plus_plus.LordPlusPlus
 
 ### LORD Dependent
 
-::: online_fdr.investing.lord.dependent.LordDependent
+::: online_fdr.p_values.investing.lord.dependent.LordDependent
 
 ### LORD Discard
 
-::: online_fdr.investing.lord.discard.LordDiscard
+::: online_fdr.p_values.investing.lord.discard.LordDiscard
 
 ### LORD Memory Decay
 
-::: online_fdr.investing.lord.mem_decay.LORDMemoryDecay
+::: online_fdr.p_values.investing.lord.mem_decay.LORDMemoryDecay
 
 ## Usage Examples
 
 ### Basic Usage
 
 ```python
-from online_fdr.investing.lord.three import LordThree
+from online_fdr.p_values.investing.lord.three import LordThree
 
 # Create LORD 3 instance with recommended parameters
 lord3 = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
@@ -148,8 +148,8 @@ compare_lord_parameters()
 ### Comparison with Other Methods
 
 ```python
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.investing.saffron.saffron import Saffron
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values.investing.saffron.saffron import Saffron
 
 def compare_online_methods(p_values):
     """Compare LORD 3 with adaptive methods."""
@@ -189,7 +189,7 @@ results = compare_online_methods(realistic_p_values)
 ### Working with Dependent Data
 
 ```python
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 import numpy as np
 
 def lord_with_correlation():

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from online_fdr.batching.toad import Toad, run_finite
-from online_fdr.utils.static import bh
+from online_fdr.core.utils.static import bh
+from online_fdr.p_values.batching.toad import Toad, run_finite
 
 
 def _reference_toad_loop(

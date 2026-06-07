@@ -99,7 +99,7 @@ Most methods require careful parameter tuning:
 Track key metrics during online testing:
 
 ```python
-from online_fdr.utils.evaluation import MemoryDecayFDR
+from online_fdr.core.utils.evaluation import MemoryDecayFDR
 
 # Initialize tracking
 fdr_tracker = MemoryDecayFDR(delta=0.99, offset=0)
@@ -136,7 +136,7 @@ for p_value, true_label in data_stream:
 ```python
 from sklearn.pipeline import Pipeline
 from sklearn.feature_selection import SelectKBest
-from online_fdr.investing.addis.addis import Addis
+from online_fdr.p_values.investing.addis.addis import Addis
 
 class OnlineFDRSelector:
     def __init__(self, alpha=0.05):

@@ -4,20 +4,22 @@ import math
 from dataclasses import dataclass
 from typing import Any, Callable, Literal
 
-from online_fdr.batching.bh import BatchBH
-from online_fdr.batching.prds import BatchPRDS
-from online_fdr.batching.storey_bh import BatchStoreyBH
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.investing.alpha.alpha import Gai
-from online_fdr.investing.lond.lond import Lond
-from online_fdr.investing.lord.dependent import LordDependent
-from online_fdr.investing.lord.discard import LordDiscard
-from online_fdr.investing.lord.plus_plus import LordPlusPlus
-from online_fdr.investing.lord.three import LordThree as InvestingLordThree
-from online_fdr.investing.saffron.saffron import Saffron
-from online_fdr.spending.alpha_spending import AlphaSpending
-from online_fdr.spending.functions.lord_three import LordThree as SpendingLordThree
-from online_fdr.spending.online_fallback import OnlineFallback
+from online_fdr.p_values.batching.bh import BatchBH
+from online_fdr.p_values.batching.prds import BatchPRDS
+from online_fdr.p_values.batching.storey_bh import BatchStoreyBH
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values.investing.alpha.alpha import Gai
+from online_fdr.p_values.investing.lond.lond import Lond
+from online_fdr.p_values.investing.lord.dependent import LordDependent
+from online_fdr.p_values.investing.lord.discard import LordDiscard
+from online_fdr.p_values.investing.lord.plus_plus import LordPlusPlus
+from online_fdr.p_values.investing.lord.three import LordThree as InvestingLordThree
+from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.p_values.spending.alpha_spending import AlphaSpending
+from online_fdr.p_values.spending.functions.lord_three import (
+    LordThree as SpendingLordThree,
+)
+from online_fdr.p_values.spending.online_fallback import OnlineFallback
 from tests.parity_cases import BatchParityCase, SequentialParityCase
 
 PINNED_ONLINEFDR_VERSION = "2.18.0"

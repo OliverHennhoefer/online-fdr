@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import math
 
-from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
-from online_fdr.utils.evaluation import MemoryDecayFDR
-from online_fdr.utils.sequence import DefaultLordGammaSequence
+from online_fdr.core.utils.evaluation import MemoryDecayFDR
+from online_fdr.core.utils.sequence import DefaultLordGammaSequence
+from online_fdr.p_values.investing.lord.mem_decay import LORDMemoryDecay
 from tests.parity_cases import sequential_cases
 
 

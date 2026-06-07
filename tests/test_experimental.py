@@ -1,6 +1,6 @@
-from online_fdr.batching.by import BatchBY
-from online_fdr.utils.static import by
-from online_fdr.utils.testing import generate_test_data
+from online_fdr.core.utils.static import by
+from online_fdr.core.utils.testing import generate_test_data
+from online_fdr.p_values.batching.by import BatchBY
 
 
 def test_batch_by_first_batch_uses_static_by_at_allocated_alpha() -> None:

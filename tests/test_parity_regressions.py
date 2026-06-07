@@ -2,13 +2,13 @@ import random
 
 import pytest
 
-from online_fdr.batching.storey_bh import BatchStoreyBH
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.investing.lord.discard import LordDiscard
-from online_fdr.spending.alpha_spending import AlphaSpending
-from online_fdr.spending.functions.bonferroni import Bonferroni
-from online_fdr.spending.online_fallback import OnlineFallback
-from online_fdr.utils.static import bh, by, storey_bh
+from online_fdr.core.utils.static import bh, by, storey_bh
+from online_fdr.p_values.batching.storey_bh import BatchStoreyBH
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values.investing.lord.discard import LordDiscard
+from online_fdr.p_values.spending.alpha_spending import AlphaSpending
+from online_fdr.p_values.spending.functions.bonferroni import Bonferroni
+from online_fdr.p_values.spending.online_fallback import OnlineFallback
 
 
 def _bh_k_ground_truth(p_vals: list[float], alpha: float) -> int:

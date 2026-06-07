@@ -23,14 +23,14 @@ While LOND provably controls FDR, it has a significant drawback: unless many dis
 
 ## Class Reference
 
-::: online_fdr.investing.lond.lond.Lond
+::: online_fdr.p_values.investing.lond.lond.Lond
 
 ## Usage Examples
 
 ### Basic Usage
 
 ```python
-from online_fdr.investing.lond.lond import Lond
+from online_fdr.p_values.investing.lond.lond import Lond
 
 # Create LOND instance
 lond = Lond(alpha=0.05)
@@ -161,7 +161,7 @@ compare_lond_variants()
 ### Performance Evaluation
 
 ```python
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 def evaluate_lond_performance():
     """Evaluate LOND on simulated data."""

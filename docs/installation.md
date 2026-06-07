@@ -99,7 +99,7 @@ Test your installation by running:
 
 ```python
 import online_fdr
-from online_fdr.investing.addis.addis import Addis
+from online_fdr.p_values.investing.addis.addis import Addis
 
 # Create a simple test
 addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)

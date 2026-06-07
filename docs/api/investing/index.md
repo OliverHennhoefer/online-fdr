@@ -187,28 +187,28 @@ graph TD
 === "First Time User"
     **Start with ADDIS** using default parameters:
     ```python
-    from online_fdr.investing.addis.addis import Addis
+    from online_fdr.p_values.investing.addis.addis import Addis
     addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
     ```
 
 === "High-Throughput Screening"  
     **Use SAFFRON** for simplicity:
     ```python
-    from online_fdr.investing.saffron.saffron import Saffron
+    from online_fdr.p_values.investing.saffron.saffron import Saffron
     saffron = Saffron(alpha=0.1, wealth=0.05, lambda_=0.5)
     ```
 
 === "Time Series Data"
     **Use LORD3** for temporal patterns:
     ```python
-    from online_fdr.investing.lord.three import LordThree  
+    from online_fdr.p_values.investing.lord.three import LordThree  
     lord3 = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
     ```
 
 === "Strong Dependence"
     **Use dependent methods**:
     ```python
-    from online_fdr.investing.lond.lond import Lond
+    from online_fdr.p_values.investing.lond.lond import Lond
     lond = Lond(alpha=0.05, dependent=True)
     ```
 
@@ -217,7 +217,7 @@ graph TD
 ### Adaptive Parameter Tuning
 
 ```python
-from online_fdr.investing.addis.addis import Addis
+from online_fdr.p_values.investing.addis.addis import Addis
 
 def adaptive_addis(p_values, target_discoveries=10):
     """Adaptively tune ADDIS parameters based on early performance."""
@@ -246,7 +246,7 @@ def adaptive_addis(p_values, target_discoveries=10):
 ### Wealth Monitoring
 
 ```python
-from online_fdr.investing.lord.three import LordThree
+from online_fdr.p_values.investing.lord.three import LordThree
 
 def monitor_wealth(method, p_values):
     """Monitor wealth dynamics during testing."""

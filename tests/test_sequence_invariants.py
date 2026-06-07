@@ -1,6 +1,6 @@
 import pytest
 
-from online_fdr.utils.sequence import (
+from online_fdr.core.utils.sequence import (
     BatchBHPolynomialGammaSequence,
     BatchGammaSequenceSmall,
     DefaultLordGammaSequence,

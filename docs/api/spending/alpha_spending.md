@@ -1,6 +1,6 @@
 # Alpha Spending Function
 
-::: online_fdr.spending.alpha_spending.AlphaSpending
+::: online_fdr.p_values.spending.alpha_spending.AlphaSpending
 
 ## Overview
 
@@ -41,8 +41,8 @@ Common spending functions include:
 ### Basic Usage
 
 ```python
-from online_fdr.spending import AlphaSpending
-from online_fdr.spending.functions import Bonferroni
+from online_fdr.p_values.spending import AlphaSpending
+from online_fdr.p_values.spending.functions import Bonferroni
 
 # Create Bonferroni spending function
 spend_func = Bonferroni(k=5)

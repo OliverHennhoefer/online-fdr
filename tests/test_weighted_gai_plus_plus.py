@@ -4,7 +4,9 @@ import math
 
 import pytest
 
-from online_fdr.investing.alpha.weighted_gai_plus_plus import WeightedGaiPlusPlus
+from online_fdr.p_values.investing.alpha.weighted_gai_plus_plus import (
+    WeightedGaiPlusPlus,
+)
 
 
 def _author_gamma_values(horizon: int) -> list[float]:

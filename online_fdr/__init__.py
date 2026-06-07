@@ -2,59 +2,17 @@
 online-fdr: Online False Discovery Rate Control Algorithms
 
 A comprehensive Python library for controlling False Discovery Rate (FDR)
-and Family-Wise Error Rate (FWER) in online multiple hypothesis testing scenarios.
+and Family-Wise Error Rate (FWER) with p-value and e-value procedures.
 """
 
 __version__ = "0.1.0"
 __author__ = "Oliver Hennhöfer"
 __email__ = "oliver.hennhoefer@mail.de"
 
-# Core imports for convenience
-from online_fdr.async_methods.addis_async import AddisAsync
-from online_fdr.async_methods.base import AsyncTestLevel
-from online_fdr.async_methods.saffron_async import SaffronAsync
-from online_fdr.batching.bh import BatchBH
-from online_fdr.batching.by import BatchBY
-from online_fdr.batching.prds import BatchPRDS
-from online_fdr.batching.storey_bh import BatchStoreyBH
-from online_fdr.batching.toad import Toad
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.investing.alpha.alpha import Gai
-from online_fdr.investing.alpha.weighted_gai_plus_plus import WeightedGaiPlusPlus
-from online_fdr.investing.lond.lond import Lond
-from online_fdr.investing.lord.dependent import LordDependent
-from online_fdr.investing.lord.discard import LordDiscard
-from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
-from online_fdr.investing.lord.plus_plus import LordPlusPlus
-from online_fdr.investing.lord.three import LordThree
-from online_fdr.investing.saffron.saffron import Saffron
-from online_fdr.spending.alpha_spending import AlphaSpending
-from online_fdr.spending.online_fallback import OnlineFallback
+from online_fdr import e_values, p_values
 
 __all__ = [
-    # Version
     "__version__",
-    # Sequential methods
-    "Addis",
-    "Gai",
-    "Lond",
-    "LordThree",
-    "LordPlusPlus",
-    "LORDMemoryDecay",
-    "LordDiscard",
-    "LordDependent",
-    "Saffron",
-    "SaffronAsync",
-    "AddisAsync",
-    "AsyncTestLevel",
-    "WeightedGaiPlusPlus",
-    # Batch methods
-    "BatchBH",
-    "BatchBY",
-    "BatchPRDS",
-    "BatchStoreyBH",
-    "Toad",
-    # Spending methods
-    "AlphaSpending",
-    "OnlineFallback",
+    "e_values",
+    "p_values",
 ]

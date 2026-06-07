@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from online_fdr.batching.bh_official import BatchBHOfficial
-from online_fdr.batching.by import BatchBY
-from online_fdr.investing.lord.mem_decay import LORDMemoryDecay
-from online_fdr.utils.static import bh
+from online_fdr.core.utils.static import bh
+from online_fdr.p_values.batching.bh_official import BatchBHOfficial
+from online_fdr.p_values.batching.by import BatchBY
+from online_fdr.p_values.investing.lord.mem_decay import LORDMemoryDecay
 from tests.parity_cases import batch_cases, sequential_cases
 
 _AUTHOR_BATCH_BH_POLY_COEFFICIENT = 0.6079271388115668

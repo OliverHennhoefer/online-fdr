@@ -1,6 +1,6 @@
 # Online Fallback Procedure
 
-::: online_fdr.spending.online_fallback.OnlineFallback
+::: online_fdr.p_values.spending.online_fallback.OnlineFallback
 
 ## Overview
 
@@ -58,7 +58,7 @@ The `OnlineFallback` class uses:
 ### Basic FWER Control
 
 ```python
-from online_fdr.spending import OnlineFallback
+from online_fdr.p_values.spending import OnlineFallback
 
 # Initialize online fallback procedure
 fallback = OnlineFallback(alpha=0.05)

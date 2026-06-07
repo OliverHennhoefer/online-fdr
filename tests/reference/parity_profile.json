@@ -1,121 +1,121 @@
 [
   {
     "name": "Addis",
-    "import_path": "online_fdr.investing.addis.addis.Addis",
+    "import_path": "online_fdr.p_values.investing.addis.addis.Addis",
     "status": "Parity",
     "note": "Constrained to 0 < tau < 1 and 0 <= lambda_ < tau."
   },
   {
     "name": "Saffron",
-    "import_path": "online_fdr.investing.saffron.saffron.Saffron",
+    "import_path": "online_fdr.p_values.investing.saffron.saffron.Saffron",
     "status": "Parity",
     "note": "Candidate-based online FDR semantics align with onlineFDR."
   },
   {
     "name": "SaffronAsync",
-    "import_path": "online_fdr.async_methods.saffron_async.SaffronAsync",
+    "import_path": "online_fdr.p_values.async_methods.saffron_async.SaffronAsync",
     "status": "Extension",
     "note": "Asynchronous lifecycle API with dedicated live R parity against SAFFRONstar(version='async')."
   },
   {
     "name": "AddisAsync",
-    "import_path": "online_fdr.async_methods.addis_async.AddisAsync",
+    "import_path": "online_fdr.p_values.async_methods.addis_async.AddisAsync",
     "status": "Extension",
     "note": "Asynchronous lifecycle API with dedicated live R parity against ADDIS(async=TRUE)."
   },
   {
     "name": "LordThree",
-    "import_path": "online_fdr.investing.lord.three.LordThree",
+    "import_path": "online_fdr.p_values.investing.lord.three.LordThree",
     "status": "Parity",
     "note": "Sequential LORD3 behavior."
   },
   {
     "name": "LordPlusPlus",
-    "import_path": "online_fdr.investing.lord.plus_plus.LordPlusPlus",
+    "import_path": "online_fdr.p_values.investing.lord.plus_plus.LordPlusPlus",
     "status": "Parity",
     "note": "LORD++ behavior."
   },
   {
     "name": "LordDiscard",
-    "import_path": "online_fdr.investing.lord.discard.LordDiscard",
+    "import_path": "online_fdr.p_values.investing.lord.discard.LordDiscard",
     "status": "Parity",
     "note": "First rejection is keyed to first discovery time."
   },
   {
     "name": "LordDependent",
-    "import_path": "online_fdr.investing.lord.dependent.LordDependent",
+    "import_path": "online_fdr.p_values.investing.lord.dependent.LordDependent",
     "status": "Parity",
     "note": "Dependence-robust LORD variant."
   },
   {
     "name": "Lond",
-    "import_path": "online_fdr.investing.lond.lond.Lond",
+    "import_path": "online_fdr.p_values.investing.lond.lond.Lond",
     "status": "Parity",
     "note": "Original/modified and dependent options available."
   },
   {
     "name": "Gai",
-    "import_path": "online_fdr.investing.alpha.alpha.Gai",
+    "import_path": "online_fdr.p_values.investing.alpha.alpha.Gai",
     "status": "Parity",
     "note": "Alpha-investing counterpart."
   },
   {
     "name": "WeightedGaiPlusPlus",
-    "import_path": "online_fdr.investing.alpha.weighted_gai_plus_plus.WeightedGaiPlusPlus",
+    "import_path": "online_fdr.p_values.investing.alpha.weighted_gai_plus_plus.WeightedGaiPlusPlus",
     "status": "Extension",
     "note": "Prior/penalty-weighted GAI++ with memory decay, checked against the authors' OnlineFDRCode formula."
   },
   {
     "name": "AlphaSpending",
-    "import_path": "online_fdr.spending.alpha_spending.AlphaSpending",
+    "import_path": "online_fdr.p_values.spending.alpha_spending.AlphaSpending",
     "status": "Parity",
     "note": "Rejects on p <= alpha_t."
   },
   {
     "name": "OnlineFallback",
-    "import_path": "online_fdr.spending.online_fallback.OnlineFallback",
+    "import_path": "online_fdr.p_values.spending.online_fallback.OnlineFallback",
     "status": "Parity",
     "note": "Rejects on p <= alpha_t."
   },
   {
     "name": "BatchBH",
-    "import_path": "online_fdr.batching.bh.BatchBH",
+    "import_path": "online_fdr.p_values.batching.bh.BatchBH",
     "status": "Parity",
     "note": "Batch BH online control."
   },
   {
     "name": "BatchPRDS",
-    "import_path": "online_fdr.batching.prds.BatchPRDS",
+    "import_path": "online_fdr.p_values.batching.prds.BatchPRDS",
     "status": "Parity",
     "note": "PRDS batch variant."
   },
   {
     "name": "BatchStoreyBH",
-    "import_path": "online_fdr.batching.storey_bh.BatchStoreyBH",
+    "import_path": "online_fdr.p_values.batching.storey_bh.BatchStoreyBH",
     "status": "Parity",
     "note": "R+ is evaluated by replacement on a same-size batch."
   },
   {
     "name": "BatchBY",
-    "import_path": "online_fdr.batching.by.BatchBY",
+    "import_path": "online_fdr.p_values.batching.by.BatchBY",
     "status": "Extension",
     "note": "Conservative BY-style batch extension without an onlineFDR counterpart."
   },
   {
     "name": "Toad",
-    "import_path": "online_fdr.batching.toad.Toad",
+    "import_path": "online_fdr.p_values.batching.toad.Toad",
     "status": "Extension",
     "note": "Decision-deadline online FDR procedure checked against Fisher's AISTATS supplementary TOAD loop."
   },
   {
     "name": "LORDMemoryDecay",
-    "import_path": "online_fdr.investing.lord.mem_decay.LORDMemoryDecay",
+    "import_path": "online_fdr.p_values.investing.lord.mem_decay.LORDMemoryDecay",
     "status": "Extension",
     "note": "Extended method not in onlineFDR release set."
   },
   {
     "name": "BatchBHOfficial",
-    "import_path": "online_fdr.batching.bh_official.BatchBHOfficial",
+    "import_path": "online_fdr.p_values.batching.bh_official.BatchBHOfficial",
     "status": "Extension",
     "note": "AISTATS supplementary BatchBH implementation profile."
   },

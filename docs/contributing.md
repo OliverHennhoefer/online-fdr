@@ -233,8 +233,8 @@ def method_name(param1: float, param2: str = "default") -> bool:
 All sequential testing methods should inherit from `AbstractSequentialTest`:
 
 ```python
-from online_fdr.abstract.abstract_sequential_test import AbstractSequentialTest
-from online_fdr.utils import validity
+from online_fdr.core.abstract.abstract_sequential_test import AbstractSequentialTest
+from online_fdr.core.utils import validity
 
 class NewMethod(AbstractSequentialTest):
     """
@@ -320,7 +320,7 @@ Every new method requires comprehensive tests:
 import pytest
 import numpy as np
 from your_module_path import NewMethod  # replace with your implementation path
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 class TestNewMethod:
     """Test suite for NewMethod."""

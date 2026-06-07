@@ -2,15 +2,15 @@ import math
 
 import pytest
 
-from online_fdr.batching.bh import BatchBH
-from online_fdr.batching.bh_official import BatchBHOfficial
-from online_fdr.batching.by import BatchBY
-from online_fdr.batching.prds import BatchPRDS
-from online_fdr.batching.storey_bh import BatchStoreyBH
-from online_fdr.investing.lord.dependent import LordDependent
-from online_fdr.investing.lord.discard import LordDiscard
-from online_fdr.investing.lord.plus_plus import LordPlusPlus
-from online_fdr.investing.lord.three import LordThree
+from online_fdr.p_values.batching.bh import BatchBH
+from online_fdr.p_values.batching.bh_official import BatchBHOfficial
+from online_fdr.p_values.batching.by import BatchBY
+from online_fdr.p_values.batching.prds import BatchPRDS
+from online_fdr.p_values.batching.storey_bh import BatchStoreyBH
+from online_fdr.p_values.investing.lord.dependent import LordDependent
+from online_fdr.p_values.investing.lord.discard import LordDiscard
+from online_fdr.p_values.investing.lord.plus_plus import LordPlusPlus
+from online_fdr.p_values.investing.lord.three import LordThree
 
 
 @pytest.mark.parametrize(

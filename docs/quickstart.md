@@ -19,7 +19,7 @@ Before diving into code, let's understand the key concepts:
 Let's start with the simplest possible example using ADDIS:
 
 ```python
-from online_fdr.investing.addis.addis import Addis
+from online_fdr.p_values.investing.addis.addis import Addis
 
 # Create an ADDIS procedure with 5% FDR control
 addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
@@ -46,8 +46,8 @@ Test 5: p=0.020  ACCEPT
 Let's create a more realistic scenario with simulated data:
 
 ```python
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # Set up data generation
 # 90% null hypotheses, 10% alternatives with effect size 3
@@ -97,10 +97,10 @@ print(f"Target FDR: {addis.alpha0}")
 Let's compare several online FDR methods on the same data:
 
 ```python
-from online_fdr.investing.addis.addis import Addis
-from online_fdr.investing.lord.three import LordThree
-from online_fdr.investing.saffron.saffron import Saffron
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values.investing.lord.three import LordThree
+from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # Setup
 dgp = GaussianLocationModel(alt_mean=2.5, alt_std=1.0, one_sided=True)
@@ -134,9 +134,9 @@ for name, method in methods.items():
 See the difference between batch and online approaches:
 
 ```python
-from online_fdr.batching.bh import BatchBH
-from online_fdr.investing.lord.three import LordThree
-from online_fdr.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values.batching.bh import BatchBH
+from online_fdr.p_values.investing.lord.three import LordThree
+from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
 # Generate a fixed set of p-values
 dgp = GaussianLocationModel(alt_mean=2.0, alt_std=1.0, one_sided=True)  
@@ -174,7 +174,7 @@ print("Rejected p-values:", [f"{p:.3f}" for p in online_rejected])
 Here's how to use your own p-values:
 
 ```python
-from online_fdr.investing.addis.addis import Addis
+from online_fdr.p_values.investing.addis.addis import Addis
 
 # Your p-values from real experiments
 my_p_values = [0.032, 0.001, 0.145, 0.003, 0.234, 0.089, 0.012]
@@ -223,7 +223,7 @@ Here are some common usage patterns to get you started:
 
 ### Pattern 1: Simple Online Testing
 ```python
-from online_fdr.investing.addis.addis import Addis
+from online_fdr.p_values.investing.addis.addis import Addis
 
 method = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
 for p_value in your_p_values:
@@ -233,7 +233,7 @@ for p_value in your_p_values:
 
 ### Pattern 2: Performance Evaluation
 ```python
-from online_fdr.utils.evaluation import calculate_sfdr, calculate_power
+from online_fdr.core.utils.evaluation import calculate_sfdr, calculate_power
 
 true_positives = false_positives = false_negatives = 0
 for p_value, is_true_alternative in your_labeled_data:
