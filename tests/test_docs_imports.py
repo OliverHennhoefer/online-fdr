@@ -55,3 +55,32 @@ def test_online_fdr_imports_in_docs_are_valid() -> None:
     assert statements
     for statement in statements:
         _assert_import_statement_works(statement)
+
+
+def test_live_r_parity_setup_docs_include_pinned_install_commands() -> None:
+    required_snippets = [
+        "BiocManager::install(version = '3.22'",
+        "BiocManager::install('onlineFDR', version = '3.22'",
+        "packageVersion('onlineFDR')) == '2.18.0'",
+        "tests/test_onlinefdr_parity.py tests/test_async_methods.py",
+    ]
+    paths = [
+        Path("docs/installation.md"),
+        Path("docs/contributing.md"),
+        Path("tests/reference/README.md"),
+    ]
+
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        for snippet in required_snippets:
+            assert snippet in text, f"{path} is missing {snippet!r}"
+
+
+def test_non_parity_workflow_docs_skip_all_live_r_parity_files() -> None:
+    paths = [Path("docs/troubleshooting.md"), Path("docs/workflows.md")]
+
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        assert "--ignore=tests/test_onlinefdr_parity.py" in text
+        assert "--ignore=tests/test_async_methods.py" in text
+        assert '-k "not onlinefdr_parity"' not in text

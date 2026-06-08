@@ -445,6 +445,10 @@ If any requirement is missing, parity tests fail with setup instructions.
 On Ubuntu/WSL, if `rpy2` build fails with `cannot find -ltirpc`, install
 `libtirpc-dev`.
 
+For the exact macOS, Windows, and Ubuntu/WSL setup commands, including
+`BiocManager` and pinned `onlineFDR==2.18.0` installation, see
+`docs/installation.md` and `tests/reference/README.md`.
+
 In CI, the full suite can run in a containerized R+Python environment through
 `.github/workflows/tests-container.yml`, which installs pinned `onlineFDR`
 automatically before running `pytest`.
@@ -457,4 +461,3 @@ This library is inspired by and validated against the R package [onlineFDR](http
 ## License
 
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
-

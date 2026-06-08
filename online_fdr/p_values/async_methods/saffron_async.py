@@ -69,8 +69,10 @@ class SaffronAsync(AbstractAsyncTest):
         num_rejections = len(rejection_positions)
 
         if num_rejections == 0:
-            alpha_tilde = (1 - self.lambda_) * self.wealth0 * self._gamma_at_zero_based(
-                i - candsum
+            alpha_tilde = (
+                (1 - self.lambda_)
+                * self.wealth0
+                * self._gamma_at_zero_based(i - candsum)
             )
             return min(self.lambda_, alpha_tilde)
 
@@ -93,10 +95,13 @@ class SaffronAsync(AbstractAsyncTest):
         )
 
         if num_rejections > 1:
-            tail_sum = sum(
-                self._gamma_at_zero_based(i - position - c_val - 1)
-                for position, c_val in zip(rejection_positions, c_plus)
-            ) - first_gamma
+            tail_sum = (
+                sum(
+                    self._gamma_at_zero_based(i - position - c_val - 1)
+                    for position, c_val in zip(rejection_positions, c_plus)
+                )
+                - first_gamma
+            )
             alpha_tilde += (1 - self.lambda_) * self.alpha0 * tail_sum
 
         return min(self.lambda_, alpha_tilde)

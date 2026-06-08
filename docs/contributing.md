@@ -39,40 +39,45 @@ We welcome contributions to **online-fdr**! This guide will help you get started
    cd online-fdr
    ```
 
-2. **Install Development Dependencies**
-   ```bash
-   pip install uv
-   uv sync --group dev
-   ```
-
-3. **Install Local R Parity Prerequisites**
+2. **Install Local R Parity Prerequisites**
    `uv run pytest` includes mandatory live parity tests against R `onlineFDR`.
+   Install R `4.5.x` before syncing development dependencies so `rpy2` can bind
+   to the correct R runtime.
 
    **Shell note:** `apt-get`, `sudo`, `dpkg`, `ldconfig`, and `grep` are Linux
    commands. Run them in a Linux shell (WSL/Ubuntu), not Windows PowerShell.
 
-   For Ubuntu/WSL, install R and build prerequisites:
+   Platform notes:
+   - macOS: install R from CRAN or Homebrew, then open a new shell.
+   - Windows: install R for Windows, ensure `Rscript.exe` is on `PATH`, and run
+     the `Rscript` commands below in PowerShell.
+   - Ubuntu/WSL: install R `4.5.x`; if native libraries are missing, install:
+
    ```bash
    sudo apt-get update
    sudo apt-get install -y build-essential libffi-dev libtirpc-dev r-base r-base-dev
    ```
 
-   For Windows-only setup, install R for Windows and ensure `R.exe`/`Rscript.exe`
-   are on `PATH`, then continue with the `Rscript` commands below in PowerShell.
-
    Verify R is available:
    ```bash
-   which R
    R --version
-   R RHOME
+   Rscript --version
    ```
 
    Ensure the R major/minor version is `4.5.x` (required by Bioconductor `3.22`).
 
+3. **Install Development Dependencies**
+   ```bash
+   pip install uv
+   uv sync --group dev
+   ```
+
+4. **Install Pinned Bioconductor `onlineFDR`**
    Install pinned `onlineFDR`:
    ```bash
-   Rscript -e "if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org')"
-   Rscript -e "BiocManager::install('onlineFDR', version='3.22', ask=FALSE, update=FALSE)"
+   Rscript -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager')"
+   Rscript -e "BiocManager::install(version = '3.22', ask = FALSE, update = FALSE)"
+   Rscript -e "BiocManager::install('onlineFDR', version = '3.22', ask = FALSE, update = FALSE)"
    Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
    ```
 
@@ -81,14 +86,15 @@ We welcome contributions to **online-fdr**! This guide will help you get started
    your local R is too old. Upgrade to R `4.5.x`, then rerun the install
    commands above.
 
-4. **Install Pre-commit Hooks**
+5. **Install Pre-commit Hooks**
    ```bash
    uv run pre-commit install
    # or: pre-commit install
    ```
 
-5. **Verify Installation**
+6. **Verify Installation**
    ```bash
+   uv run pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
    uv run pytest -q
    ```
 
@@ -560,8 +566,9 @@ uv run pre-commit install
 # Run these in a Linux shell, not Windows PowerShell
 sudo apt-get update
 sudo apt-get install -y build-essential libffi-dev libtirpc-dev r-base r-base-dev
-Rscript -e "if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org')"
-Rscript -e "BiocManager::install('onlineFDR', version='3.22', ask=FALSE, update=FALSE)"
+Rscript -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager')"
+Rscript -e "BiocManager::install(version = '3.22', ask = FALSE, update = FALSE)"
+Rscript -e "BiocManager::install('onlineFDR', version = '3.22', ask = FALSE, update = FALSE)"
 Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
 
 # Run tests
@@ -589,4 +596,3 @@ uv run pytest tests/ -k "test_fdr_control"
 - **Examples**: `descriptive_example_name.py`
 
 Thank you for contributing to **online-fdr**! Your efforts help advance the field of online multiple testing and benefit researchers worldwide. 
-

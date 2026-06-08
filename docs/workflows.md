@@ -42,13 +42,13 @@ Parity tests depend on a working R + `rpy2` setup and pinned Bioconductor
 Run parity tests directly:
 
 ```bash
-uv run python -m pytest tests/test_onlinefdr_parity.py -q
+uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
 ```
 
 If parity setup is not available yet, run a local non-parity subset:
 
 ```bash
-uv run python -m pytest -q -k "not onlinefdr_parity"
+uv run python -m pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
 ```
 
 ## Packaging Smoke

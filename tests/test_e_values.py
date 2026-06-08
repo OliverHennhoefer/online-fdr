@@ -129,8 +129,7 @@ def test_power_calibrator_integrates_to_one_numerically() -> None:
     exponent = 0.5
     grid_size = 20_000
     midpoint_values = [
-        p_to_e_power((idx + 0.5) / grid_size, exponent)
-        for idx in range(grid_size)
+        p_to_e_power((idx + 0.5) / grid_size, exponent) for idx in range(grid_size)
     ]
     assert sum(midpoint_values) / grid_size == pytest.approx(1.0, rel=5e-3)
     check_calibrator(lambda p_value: p_to_e_power(p_value, exponent))
@@ -159,9 +158,7 @@ def test_likelihood_ratio_processes_and_betting_process() -> None:
     )
     assert mixture.update(0.0) == pytest.approx(1.0)
     assert mixture.update(1.0) == pytest.approx(0.25 * math.e + 0.75 * math.e**2)
-    assert mixture.update(1.0) == pytest.approx(
-        0.25 * math.e**2 + 0.75 * math.e**4
-    )
+    assert mixture.update(1.0) == pytest.approx(0.25 * math.e**2 + 0.75 * math.e**4)
     mixture.reset()
     assert mixture.current == pytest.approx(1.0)
 
@@ -174,9 +171,9 @@ def test_e_value_generation_helpers_are_stream_compatible() -> None:
     assert gaussian_likelihood_ratio_e_value(0.0, alt_mean=1.0) == pytest.approx(
         math.exp(-0.5)
     )
-    assert calibrated_p_value_stream([0.25, 1.0], exponent=0.5).tolist() == pytest.approx(
-        [1.0, 0.5]
-    )
+    assert calibrated_p_value_stream(
+        [0.25, 1.0], exponent=0.5
+    ).tolist() == pytest.approx([1.0, 0.5])
 
     generator = GaussianEValueGenerator(n=10, pi0=0.5, seed=1)
     e_value, label = generator.sample_one()
@@ -197,7 +194,9 @@ def test_ebh_null_stream_statistical_sanity() -> None:
 
     for _ in range(n_runs):
         spike = n_tests / alpha
-        e_values = [spike if rng.random() <= alpha / n_tests else 0.0 for _ in range(n_tests)]
+        e_values = [
+            spike if rng.random() <= alpha / n_tests else 0.0 for _ in range(n_tests)
+        ]
         any_reject += int(any(e_bh(e_values, alpha=alpha)))
 
     assert any_reject / n_runs <= alpha * 1.5

@@ -2,6 +2,7 @@ import math
 
 import pytest
 
+from online_fdr.core.utils.validity import check_p_val
 from online_fdr.p_values.batching.bh import BatchBH
 from online_fdr.p_values.batching.bh_official import BatchBHOfficial
 from online_fdr.p_values.batching.by import BatchBY
@@ -27,6 +28,12 @@ def test_batch_methods_reject_invalid_p_values(factory, invalid_batch) -> None:
     method = factory()
     with pytest.raises(ValueError):
         method.test_batch(invalid_batch)
+
+
+@pytest.mark.parametrize("invalid_p_val", ["x", math.inf, math.nan])
+def test_single_p_value_validation_rejects_invalid_values(invalid_p_val) -> None:
+    with pytest.raises(ValueError):
+        check_p_val(invalid_p_val)
 
 
 @pytest.mark.parametrize("tau", [0.0, -0.1, 1.0, 1.1])

@@ -87,9 +87,7 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
             self.decay * self.wealth + (1 - self.decay) * first_flag * self.wealth0,
         )
         max_weight = (
-            phi * penalty_weight / ((1 - b_t) * base_alpha)
-            if base_alpha > 0
-            else 0.0
+            phi * penalty_weight / ((1 - b_t) * base_alpha) if base_alpha > 0 else 0.0
         )
         if max_weight <= 0:
             used_prior_weight = 0.0
@@ -102,9 +100,7 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
             psi = max(
                 min(
                     phi + penalty_weight * b_t,
-                    (phi / base_alpha) * ratio
-                    - penalty_weight
-                    + penalty_weight * b_t,
+                    (phi / base_alpha) * ratio - penalty_weight + penalty_weight * b_t,
                 ),
                 0.0,
             )

@@ -3,9 +3,12 @@ import random
 import pytest
 
 from online_fdr.core.utils.static import bh, by, storey_bh
+from online_fdr.p_values.batching.by import BatchBY
+from online_fdr.p_values.batching.prds import BatchPRDS
 from online_fdr.p_values.batching.storey_bh import BatchStoreyBH
 from online_fdr.p_values.investing.addis.addis import Addis
 from online_fdr.p_values.investing.lord.discard import LordDiscard
+from online_fdr.p_values.naive.naive import NaiveTest
 from online_fdr.p_values.spending.alpha_spending import AlphaSpending
 from online_fdr.p_values.spending.functions.bonferroni import Bonferroni
 from online_fdr.p_values.spending.online_fallback import OnlineFallback
@@ -82,6 +85,13 @@ def test_alpha_spending_rejects_on_boundary() -> None:
     assert method.test_one(0.05) is True
 
 
+def test_naive_rejects_on_boundary() -> None:
+    method = NaiveTest(alpha=0.05)
+
+    assert method.test_one(0.05) is True
+    assert method.num_tests == 1
+
+
 def test_alpha_spending_finite_horizon_raises_cleanly() -> None:
     method = AlphaSpending(alpha=0.05, spend_func=Bonferroni(k=1))
     method.test_one(0.01)
@@ -115,6 +125,41 @@ def test_d_lord_first_reject_only_set_on_discovery() -> None:
 
     assert method.test_one(1e-12) is True
     assert method.first_reject == 2
+
+
+def test_lord_discard_public_num_tests_counts_discarded_inputs() -> None:
+    method = LordDiscard(alpha=0.05, wealth=0.025, tau=0.5)
+
+    assert method.test_one(0.8) is False
+    assert method.num_tests == 1
+    assert method.num_test == 0
+
+    method.test_one(0.4)
+    assert method.num_tests == 2
+    assert method.num_test == 1
+
+
+@pytest.mark.parametrize(
+    "method",
+    [
+        BatchBY(alpha=0.05),
+        BatchPRDS(alpha=0.05),
+        BatchStoreyBH(alpha=0.05, lambda_=0.5),
+    ],
+)
+def test_one_based_batch_methods_public_num_tests_counts_processed_batches(
+    method,
+) -> None:
+    assert method.num_tests == 0
+    assert method.num_test == 1
+
+    method.test_batch([0.5, 0.8])
+    assert method.num_tests == 1
+    assert method.num_test == 2
+
+    assert method.test_batch([]) == []
+    assert method.num_tests == 1
+    assert method.num_test == 2
 
 
 def test_batch_storey_bh_r_plus_matches_direct_definition() -> None:

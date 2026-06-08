@@ -77,7 +77,9 @@ def weighted_arithmetic_mean(
     """
     check_e_values(e_values)
     normalized = _normalized_weights(len(e_values), weights)
-    if any(math.isinf(float(e)) and weight > 0 for e, weight in zip(e_values, normalized)):
+    if any(
+        math.isinf(float(e)) and weight > 0 for e, weight in zip(e_values, normalized)
+    ):
         return math.inf
     return float(sum(float(e) * weight for e, weight in zip(e_values, normalized)))
 

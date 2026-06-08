@@ -25,8 +25,18 @@ class LordDiscard(AbstractSequentialTest):
 
         self.seq = DefaultLordGammaSequence(c=0.07720838)
 
+        self._num_processed: int = 0
         self.first_reject: int | None = None  # first rejection index
         self.last_reject: list = []  # without first rejection
+
+    @property
+    def num_tests(self) -> int:
+        """Number of hypotheses processed so far, including discarded p-values."""
+        return self._num_processed
+
+    @num_tests.setter
+    def num_tests(self, value: int) -> None:
+        self._num_processed = value
 
     def _compute_alpha(self, tested_index: int) -> float:
         alpha = self.wealth0 * self.seq.calc_gamma(tested_index)
@@ -50,6 +60,7 @@ class LordDiscard(AbstractSequentialTest):
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
+        self._num_processed += 1
         next_tested_index = self.num_test + 1
         # Expose the same per-step threshold semantics as onlineFDR,
         # including discarded p-values.

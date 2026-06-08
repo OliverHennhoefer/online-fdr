@@ -105,8 +105,10 @@ class AddisAsync(AbstractAsyncTest):
         ]
 
         if not rejection_positions:
-            alpha_hat = (self.tau - self.lambda_) * self.wealth0 * self._gamma_at_zero_based(
-                selected_or_active - candidate_count
+            alpha_hat = (
+                (self.tau - self.lambda_)
+                * self.wealth0
+                * self._gamma_at_zero_based(selected_or_active - candidate_count)
             )
             return min(self.rejection_cap, alpha_hat)
 
@@ -126,19 +128,19 @@ class AddisAsync(AbstractAsyncTest):
             selected_or_active - kappa_star[0] - c_plus[0]
         )
         alpha_hat = (
-            (self.tau - self.lambda_)
-            * self.wealth0
-            * self._gamma_at_zero_based(selected_or_active - candidate_count)
-            + (self.tau - self.lambda_)
-            * (self.alpha0 - self.wealth0)
-            * first_gamma
-        )
+            self.tau - self.lambda_
+        ) * self.wealth0 * self._gamma_at_zero_based(
+            selected_or_active - candidate_count
+        ) + (self.tau - self.lambda_) * (self.alpha0 - self.wealth0) * first_gamma
 
         if len(rejection_positions) > 1:
-            tail_sum = sum(
-                self._gamma_at_zero_based(selected_or_active - k_star - c_val)
-                for k_star, c_val in zip(kappa_star, c_plus)
-            ) - first_gamma
+            tail_sum = (
+                sum(
+                    self._gamma_at_zero_based(selected_or_active - k_star - c_val)
+                    for k_star, c_val in zip(kappa_star, c_plus)
+                )
+                - first_gamma
+            )
             alpha_hat += (self.tau - self.lambda_) * self.alpha0 * tail_sum
 
         return min(self.rejection_cap, alpha_hat)

@@ -9,4 +9,4 @@ class NaiveTest(AbstractSequentialTest):
         check_p_val(p_val)
         self.num_test += 1
         alpha_t = self.alpha if self.alpha is not None else 0.0
-        return p_val < alpha_t
+        return p_val <= alpha_t

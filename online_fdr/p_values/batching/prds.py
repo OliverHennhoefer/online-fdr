@@ -89,6 +89,15 @@ class BatchPRDS(AbstractBatchingTest):
 
         self.alpha_s: list[float] = []  # only for test
 
+    @property
+    def num_tests(self) -> int:
+        """Number of batches processed so far."""
+        return self.num_test - 1
+
+    @num_tests.setter
+    def num_tests(self, value: int) -> None:
+        self.num_test = value + 1
+
     def test_batch(self, p_vals: list[float]) -> list[bool]:
         """Test a batch of p-values under PRDS conditions.
 

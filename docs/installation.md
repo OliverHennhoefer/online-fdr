@@ -49,6 +49,43 @@ For development and extended functionality:
     uv sync --group dev --group docs
     ```
 
+### Live R Parity Setup (Developers)
+
+The full development test suite compares Python results against Bioconductor
+`onlineFDR` through `rpy2`. New contributors need this local R setup before
+`uv run pytest` can run end to end.
+
+1. Install R `4.5.x` and make sure `R` and `Rscript` are on `PATH`.
+   - macOS: install R from CRAN or with Homebrew, then open a new shell.
+   - Windows: install R for Windows and run the commands below in PowerShell.
+   - Ubuntu/WSL: install R `4.5.x`; if `rpy2` needs native libraries, install
+     `build-essential libffi-dev libtirpc-dev r-base-dev`.
+2. Install Python development dependencies:
+
+   ```bash
+   uv sync --group dev
+   ```
+
+3. Install the pinned Bioconductor package:
+
+   ```bash
+   Rscript -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager')"
+   Rscript -e "BiocManager::install(version = '3.22', ask = FALSE, update = FALSE)"
+   Rscript -e "BiocManager::install('onlineFDR', version = '3.22', ask = FALSE, update = FALSE)"
+   Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
+   ```
+
+4. Verify the bridge from Python to R:
+
+   ```bash
+   Rscript --version
+   uv run python -c "import rpy2.robjects as ro; print(ro.r('R.version.string')[0])"
+   uv run pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+   ```
+
+If Bioconductor reports that version `3.22` requires R `4.5`, upgrade R and
+rerun the `Rscript` commands.
+
 ## Install from Source
 
 For the latest development version or to contribute:

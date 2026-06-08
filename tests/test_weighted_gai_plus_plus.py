@@ -44,7 +44,9 @@ def _author_weighted_reference(
         base_alpha = next_alpha
         first_flag = 0 if first else 1
         b_t = alpha - first_flag * wealth / penalty_weight
-        phi = min(base_alpha, decay * current_wealth + (1 - decay) * first_flag * wealth)
+        phi = min(
+            base_alpha, decay * current_wealth + (1 - decay) * first_flag * wealth
+        )
         max_weight = phi * penalty_weight / ((1 - b_t) * base_alpha)
         prior_used = min(prior_weight, max_weight)
         ratio = penalty_weight / prior_used
@@ -52,9 +54,7 @@ def _author_weighted_reference(
         psi = max(
             min(
                 phi + penalty_weight * b_t,
-                (phi / base_alpha) * ratio
-                - penalty_weight
-                + penalty_weight * b_t,
+                (phi / base_alpha) * ratio - penalty_weight + penalty_weight * b_t,
             ),
             0.0,
         )

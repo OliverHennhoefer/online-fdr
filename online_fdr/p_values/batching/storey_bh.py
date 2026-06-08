@@ -22,6 +22,15 @@ class BatchStoreyBH(AbstractBatchingTest):
         self.r_sums: list[int] = []
         self.alpha_s: list[float] = []
 
+    @property
+    def num_tests(self) -> int:
+        """Number of batches processed so far."""
+        return self.num_test - 1
+
+    @num_tests.setter
+    def num_tests(self, value: int) -> None:
+        self.num_test = value + 1
+
     def test_batch(self, p_vals: list[float]) -> list[bool]:
         p_vals_local = list(p_vals)
         n_batch = len(p_vals_local)

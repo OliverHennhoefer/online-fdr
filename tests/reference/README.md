@@ -5,15 +5,39 @@ Bioconductor `onlineFDR` package through `rpy2`.
 
 ## Mandatory Setup
 
-1. Install development dependencies:
+1. Install R `4.5.x` and verify it is available from your shell:
 
-```bash
-uv sync --group dev
-```
+   ```bash
+   R --version
+   Rscript --version
+   ```
 
-2. Ensure a system R installation is available.
-3. Install `onlineFDR` in R and pin it to version `2.18.0`.
-4. Use R `4.5.x` (Bioconductor `3.22` requirement for `onlineFDR==2.18.0`).
+   macOS users can install R from CRAN or Homebrew. Windows users should install
+   R for Windows, ensure `Rscript.exe` is on `PATH`, and run the commands below
+   in PowerShell. Ubuntu/WSL users should install R `4.5.x`; if `rpy2` needs
+   native build libraries, install `build-essential libffi-dev libtirpc-dev
+   r-base-dev`.
+
+2. Install development dependencies:
+
+   ```bash
+   uv sync --group dev
+   ```
+
+3. Install pinned Bioconductor `onlineFDR`:
+
+   ```bash
+   Rscript -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager')"
+   Rscript -e "BiocManager::install(version = '3.22', ask = FALSE, update = FALSE)"
+   Rscript -e "BiocManager::install('onlineFDR', version = '3.22', ask = FALSE, update = FALSE)"
+   Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
+   ```
+
+4. Verify live parity:
+
+   ```bash
+   uv run pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+   ```
 
 If `rpy2`, R, or `onlineFDR` are missing, parity tests fail with setup
 instructions. These checks are not optional.
@@ -29,7 +53,7 @@ install the missing system development library:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y libtirpc-dev
+sudo apt-get install -y libtirpc-dev r-base-dev
 ```
 
 If BiocManager reports:

@@ -52,7 +52,9 @@ def _logsumexp(log_terms: Sequence[float]) -> float:
         return -math.inf
     if max_log == math.inf:
         return math.inf
-    return float(max_log + math.log(sum(math.exp(term - max_log) for term in log_terms)))
+    return float(
+        max_log + math.log(sum(math.exp(term - max_log) for term in log_terms))
+    )
 
 
 class LikelihoodRatioEProcess:

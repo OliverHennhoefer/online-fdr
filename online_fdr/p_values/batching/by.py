@@ -95,6 +95,15 @@ class BatchBY(AbstractBatchingTest):
         self.r_sums: list[int] = [0]
         self.alpha_s: list[float] = []
 
+    @property
+    def num_tests(self) -> int:
+        """Number of batches processed so far."""
+        return self.num_test - 1
+
+    @num_tests.setter
+    def num_tests(self, value: int) -> None:
+        self.num_test = value + 1
+
     def test_batch(self, p_vals: list[float]) -> list[bool]:
         """Test a batch of p-values using the Benjamini-Yekutieli procedure.
 

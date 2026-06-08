@@ -31,8 +31,9 @@ Example error:
 Fix by upgrading to R `4.5.x`, then reinstalling:
 
 ```bash
-Rscript -e "if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org')"
-Rscript -e "BiocManager::install('onlineFDR', version='3.22', ask=FALSE, update=FALSE)"
+Rscript -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager')"
+Rscript -e "BiocManager::install(version = '3.22', ask = FALSE, update = FALSE)"
+Rscript -e "BiocManager::install('onlineFDR', version = '3.22', ask = FALSE, update = FALSE)"
 Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
 ```
 
@@ -65,13 +66,13 @@ uv run python -c "import online_fdr; print(online_fdr.__version__)"
 Run core suite first while completing R setup:
 
 ```bash
-uv run python -m pytest -q -k "not onlinefdr_parity"
+uv run python -m pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
 ```
 
 After R setup is complete, run:
 
 ```bash
-uv run python -m pytest tests/test_onlinefdr_parity.py -q
+uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
 ```
 
 ## Documentation Build Issues

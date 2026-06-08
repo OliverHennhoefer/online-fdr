@@ -53,7 +53,10 @@ DOCUMENTED_CLASS_LOCATIONS = [
     ("online_fdr.p_values.async_methods", "SaffronAsync"),
     ("online_fdr.p_values.investing.addis.addis", "Addis"),
     ("online_fdr.p_values.investing.alpha.alpha", "Gai"),
-    ("online_fdr.p_values.investing.alpha.weighted_gai_plus_plus", "WeightedGaiPlusPlus"),
+    (
+        "online_fdr.p_values.investing.alpha.weighted_gai_plus_plus",
+        "WeightedGaiPlusPlus",
+    ),
     ("online_fdr.p_values.investing.lond.lond", "Lond"),
     ("online_fdr.p_values.investing.lord.three", "LordThree"),
     ("online_fdr.p_values.investing.lord.plus_plus", "LordPlusPlus"),

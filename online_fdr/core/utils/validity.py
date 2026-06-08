@@ -9,7 +9,7 @@ def check_p_val(p_val: float) -> None:
         p_val: The p-value to validate.
 
     Raises:
-        ValueError: If p_val is not in [0, 1].
+        ValueError: If p_val is not finite numeric value in [0, 1].
 
     Examples:
         >>> check_p_val(0.05)  # Valid - no exception
@@ -17,7 +17,13 @@ def check_p_val(p_val: float) -> None:
         Traceback (most recent call last):
         ValueError: Given p-value must be between [0,1].
     """
-    if not 0 <= p_val <= 1:
+    if not isinstance(p_val, int | float) or not math.isfinite(float(p_val)):
+        raise ValueError(
+            """
+            Given p-value must be a finite number between [0,1].
+            """
+        )
+    if not 0 <= float(p_val) <= 1:
         raise ValueError(
             """
             Given p-value must be between [0,1].
