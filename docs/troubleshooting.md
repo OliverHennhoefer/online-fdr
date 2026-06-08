@@ -22,6 +22,12 @@ Rscript --version
 
 If unavailable, install R and ensure executables are on `PATH`.
 
+Install the Python parity dependency group:
+
+```bash
+uv sync --group dev --group parity
+```
+
 ### Symptom: Bioconductor/R version mismatch
 
 Example error:

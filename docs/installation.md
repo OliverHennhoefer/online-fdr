@@ -25,12 +25,20 @@ For development and extended functionality:
     cd online-fdr
     uv sync --group dev
     ```
-    Includes testing, linting, type checking, and parity test tooling:
+    Includes testing, linting, type checking, and package build tooling:
     - `pytest >= 7.0`
     - `pytest-cov >= 4.0` 
     - `ruff >= 0.1.0`
     - `mypy >= 1.0`
-    - `rpy2 >= 3.5`
+    - `build >= 1.2`
+
+=== "Parity Dependencies"
+    ```bash
+    git clone https://github.com/OliverHennhoefer/online-fdr.git
+    cd online-fdr
+    uv sync --group dev --group parity
+    ```
+    Adds `rpy2 >= 3.5` for the live Bioconductor parity tests.
 
 === "Documentation Dependencies"
     ```bash
@@ -51,19 +59,19 @@ For development and extended functionality:
 
 ### Live R Parity Setup (Developers)
 
-The full development test suite compares Python results against Bioconductor
-`onlineFDR` through `rpy2`. New contributors need this local R setup before
-`uv run pytest` can run end to end.
+The parity suite compares Python results against Bioconductor `onlineFDR`
+through `rpy2`. New contributors only need this setup when they run the live R
+parity tests.
 
 1. Install R `4.5.x` and make sure `R` and `Rscript` are on `PATH`.
    - macOS: install R from CRAN or with Homebrew, then open a new shell.
    - Windows: install R for Windows and run the commands below in PowerShell.
    - Ubuntu/WSL: install R `4.5.x`; if `rpy2` needs native libraries, install
      `build-essential libffi-dev libtirpc-dev r-base-dev`.
-2. Install Python development dependencies:
+2. Install Python development and parity dependencies:
 
    ```bash
-   uv sync --group dev
+   uv sync --group dev --group parity
    ```
 
 3. Install the pinned Bioconductor package:
@@ -120,14 +128,11 @@ For contributors, set up a complete development environment:
 git clone https://github.com/OliverHennhoefer/online-fdr.git
 cd online-fdr
 
-# Install with development dependencies
+# Install development and documentation dependencies
 uv sync --group dev --group docs
 
-# Install pre-commit hooks
-uv run pre-commit install
-
 # Run tests to verify installation
-uv run pytest
+uv run pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
 ```
 
 ## Verify Installation

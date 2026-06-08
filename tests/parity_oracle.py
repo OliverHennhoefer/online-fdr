@@ -46,8 +46,9 @@ def require_r_onlinefdr() -> tuple[Any, Any]:
         from rpy2.robjects.packages import importr
     except Exception as exc:
         raise RuntimeError(
-            "rpy2 is mandatory for this test suite. Install dev dependencies with "
-            "`uv sync --group dev` and ensure R is available on PATH. "
+            "rpy2 is required for this test suite. Install parity dependencies "
+            "with `uv sync --group dev --group parity` and ensure R is available "
+            "on PATH. "
             f"Original error: {exc}"
         ) from exc
 

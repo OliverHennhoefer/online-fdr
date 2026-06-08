@@ -6,7 +6,8 @@ Local and CI parity execution requires R `4.5.x` to use this Bioconductor track.
 
 ## Live Parity Policy
 
-Parity tests are mandatory and run against the live R package through `rpy2`.
+Parity tests are required for parity-covered behavior and run against the live R
+package through `rpy2`.
 The suite fails fast when:
 
 - `rpy2` is unavailable

@@ -1,12 +1,12 @@
 site_name: Online FDR
-site_description: Online False Discovery Rate (FDR) control algorithms for multiple hypothesis testing
+site_description: Online false discovery rate control algorithms for p-values and e-values
 site_author: Oliver Hennhöfer
 site_url: https://oliverhennhoefer.github.io/online-fdr
 repo_url: https://github.com/OliverHennhoefer/online-fdr
 repo_name: OliverHennhoefer/online-fdr
 edit_uri: edit/main/docs/
 
-copyright: Copyright © 2024 Oliver Hennhöfer
+copyright: Copyright © 2024-2026 Oliver Hennhöfer
 
 docs_dir: docs
 site_dir: site
@@ -60,6 +60,7 @@ nav:
   - Quick Start: quickstart.md
   - Migration: migration.md
   - Workflows: workflows.md
+  - Release Process: release.md
   - Troubleshooting: troubleshooting.md
   - User Guide:
       - user_guide/index.md
@@ -191,5 +192,4 @@ extra:
 
 extra_javascript:
   - javascripts/mathjax.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

@@ -1,26 +1,22 @@
-name: Tests (Container)
+name: R Container Parity
 
 on:
-  pull_request:
-  push:
-    branches: [main]
-    paths:
-      - "online_fdr/**"
-      - "tests/**"
-      - "pyproject.toml"
-      - "uv.lock"
-      - ".github/workflows/tests-container.yml"
   workflow_dispatch:
+  schedule:
+    - cron: "23 4 * * 1"
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  parity:
     runs-on: ubuntu-latest
     container:
       image: rocker/r-ver:4.5.1
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install system dependencies
         run: |
@@ -60,8 +56,8 @@ jobs:
           Rscript -e "BiocManager::install('onlineFDR', version='3.22', ask=FALSE, update=FALSE)"
           Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
 
-      - name: Install Python dependencies
-        run: uv sync --group dev
+      - name: Install dependencies
+        run: uv sync --locked --group dev --group parity --python python3
 
-      - name: Run full test suite
-        run: uv run python -m pytest -q
+      - name: Run live parity tests
+        run: uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q

@@ -5,7 +5,7 @@ Welcome to the comprehensive **online-fdr** user guide. This section provides in
 ## Overview
 
 Online FDR control is essential when hypotheses arrive sequentially and
-decisions must be made immediately. The package has two evidence lanes:
+decisions must be made immediately. The package has two evidence surfaces:
 p-value procedures for small-is-strong evidence and e-value procedures for
 large-is-strong evidence.
 
@@ -200,5 +200,4 @@ If you're stuck or need clarification:
 4. **Consult the referenced papers** for theoretical details
 
 Ready to dive deeper? Choose a section above or continue with [Concepts](concepts.md) for the theoretical foundations.
-
 

@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## [1.0.0] - 2026-06-08
+
+- Promoted package metadata to the stable `1.0.0` release line.
+- Added a focused release workflow for building distributions and publishing
+  tagged releases to PyPI through trusted publishing.
+- Split R-backed parity tooling into an explicit dependency group so routine
+  Python checks can run without a local R installation.
+- Added release-process documentation, citation metadata, and dependency update
+  automation for GitHub Actions and `uv`.
+- Updated contributor, installation, and documentation pages to match the Ruff
+  based toolchain and the dedicated Bioconductor parity workflow.
+
 ## [0.1.0] - 2026-03-02
 
 - Introduced strict shared validation for batch p-values and LORD-family preconditions.

@@ -59,6 +59,7 @@ def test_online_fdr_imports_in_docs_are_valid() -> None:
 
 def test_live_r_parity_setup_docs_include_pinned_install_commands() -> None:
     required_snippets = [
+        "uv sync --group dev --group parity",
         "BiocManager::install(version = '3.22'",
         "BiocManager::install('onlineFDR', version = '3.22'",
         "packageVersion('onlineFDR')) == '2.18.0'",

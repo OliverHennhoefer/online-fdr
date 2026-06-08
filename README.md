@@ -2,6 +2,8 @@
 
 [![python](https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![CI](https://github.com/OliverHennhoefer/online-fdr/actions/workflows/ci.yml/badge.svg)](https://github.com/OliverHennhoefer/online-fdr/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/online-fdr.svg)](https://pypi.org/project/online-fdr/)
 
 `online-fdr` is a Python package for multiple testing when hypotheses arrive
 over time or in batches. It provides p-value and e-value procedures for false
@@ -28,8 +30,9 @@ cd online-fdr
 uv sync --group dev
 ```
 
-The full developer test suite also needs R `4.5.x` and Bioconductor
-`onlineFDR==2.18.0`; see `docs/installation.md` and `tests/reference/README.md`.
+Live parity tests also need R `4.5.x`, Bioconductor `onlineFDR==2.18.0`, and
+the `parity` dependency group; see `docs/installation.md` and
+`tests/reference/README.md`.
 
 ## P-values
 
@@ -134,6 +137,7 @@ pinned R package; local setup instructions are in `tests/reference/README.md`.
 - User guide: `docs/user_guide/index.md`
 - API reference: `docs/api/index.md`
 - Theory and guarantees: `docs/theory/index.md`
+- Release process: `docs/release.md`
 
 ## License
 

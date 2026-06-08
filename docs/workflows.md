@@ -16,8 +16,9 @@ Run the same core checks used during development:
 
 ```bash
 uv run python -m ruff check .
+uv run python -m ruff format --check online_fdr tests
 uv run python -m mypy online_fdr
-uv run python -m pytest -q
+uv run python -m pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
 ```
 
 ## Focused Test Runs
@@ -39,6 +40,12 @@ uv run python -m pytest tests/test_static.py -q
 Parity tests depend on a working R + `rpy2` setup and pinned Bioconductor
 `onlineFDR` package.
 
+Install parity dependencies:
+
+```bash
+uv sync --group dev --group parity
+```
+
 Run parity tests directly:
 
 ```bash
@@ -57,6 +64,17 @@ Build artifacts and verify package metadata locally:
 
 ```bash
 uv run python -m build
+```
+
+## Release Smoke
+
+Run the package build, wheel install, and import smoke check used by release CI:
+
+```bash
+uv run python -m build
+uv venv .smoke --python 3.12
+uv pip install --python .smoke/bin/python dist/*.whl
+.smoke/bin/python -c "import online_fdr; print(online_fdr.__version__)"
 ```
 
 ## Documentation Workflow

@@ -865,7 +865,7 @@ wheels = [
 
 [[package]]
 name = "online-fdr"
-version = "0.1.0"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -888,7 +888,6 @@ dev = [
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-cov" },
-    { name = "rpy2" },
     { name = "ruff" },
 ]
 docs = [
@@ -896,6 +895,9 @@ docs = [
     { name = "mkdocs-material" },
     { name = "mkdocs-minify-plugin" },
     { name = "mkdocstrings", extra = ["python"] },
+]
+parity = [
+    { name = "rpy2" },
 ]
 
 [package.metadata]
@@ -915,7 +917,6 @@ dev = [
     { name = "mypy", specifier = ">=1.0" },
     { name = "pytest", specifier = ">=7.0" },
     { name = "pytest-cov", specifier = ">=4.0" },
-    { name = "rpy2", specifier = ">=3.5" },
     { name = "ruff", specifier = ">=0.1.0" },
 ]
 docs = [
@@ -923,6 +924,9 @@ docs = [
     { name = "mkdocs-material", specifier = ">=9.0" },
     { name = "mkdocs-minify-plugin", specifier = ">=0.6" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.20" },
+]
+parity = [
+    { name = "rpy2", specifier = ">=3.5" },
 ]
 
 [[package]]

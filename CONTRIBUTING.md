@@ -12,7 +12,6 @@ Use the full contributor guide:
 That guide includes:
 
 - local environment setup with `uv`
-- mandatory R parity prerequisites (`rpy2` + pinned Bioconductor `onlineFDR`)
 - testing, linting, and typing commands
 - method implementation and documentation standards
 
@@ -20,8 +19,9 @@ That guide includes:
 
 ```bash
 uv sync --group dev
-uv run python -m pytest -q
+uv run python -m pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
 uv run python -m ruff check .
+uv run python -m ruff format --check online_fdr tests
 uv run python -m mypy online_fdr
 ```
 

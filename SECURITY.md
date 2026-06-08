@@ -6,9 +6,9 @@ Security fixes are provided for:
 
 | Version | Supported |
 | --- | --- |
-| Latest release | Yes |
-| `main` branch | Yes |
-| Older releases | No |
+| `1.x` | Yes |
+| `main` branch | Active development |
+| `< 1.0` | No |
 
 ## Reporting a Vulnerability
 

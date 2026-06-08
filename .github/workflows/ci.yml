@@ -9,22 +9,71 @@ on:
       - "online_fdr/**"
       - "tests/**"
       - "docs/**"
+      - "examples/**"
       - "mkdocs.yml"
       - "pyproject.toml"
+      - "uv.lock"
       - "README.md"
       - "CHANGELOG.md"
       - ".github/workflows/ci.yml"
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  quality:
+  python:
+    name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked --group dev --python ${{ matrix.python-version }}
+
+      - name: Lint
+        run: uv run python -m ruff check .
+
+      - name: Format check
+        if: matrix.python-version == '3.12'
+        run: uv run python -m ruff format --check online_fdr tests
+
+      - name: Type check
+        if: matrix.python-version == '3.12'
+        run: uv run python -m mypy online_fdr
+
+      - name: Test without live R parity
+        run: >
+          uv run python -m pytest -q
+          --ignore=tests/test_onlinefdr_parity.py
+          --ignore=tests/test_async_methods.py
+
+  parity:
+    name: Live R parity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
 
       - name: Install system libraries for rpy2
         run: |
@@ -43,13 +92,15 @@ jobs:
         with:
           r-version: "4.5.1"
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          version: latest
-
       - name: Set up Python
-        run: uv python install ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
 
       - name: Install onlineFDR (pinned)
         run: |
@@ -58,78 +109,61 @@ jobs:
           Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
 
       - name: Install dependencies
-        run: uv sync --group dev
+        run: uv sync --locked --group dev --group parity --python 3.12
 
-      - name: Lint
-        run: uv run python -m ruff check .
-
-      - name: Type check
-        run: uv run python -m mypy online_fdr
-
-      - name: Test
-        run: uv run python -m pytest -q
+      - name: Run live parity tests
+        run: uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
 
   docs:
+    name: Documentation
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          version: latest
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        run: uv python install 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
 
       - name: Install docs dependencies
-        run: uv sync --group docs --no-dev
+        run: uv sync --locked --group docs --no-dev --python 3.12
 
       - name: Build docs
-        run: .venv/bin/mkdocs build --strict
+        run: uv run mkdocs build --strict
 
   package:
+    name: Package
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install system libraries for rpy2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            libbz2-dev \
-            libdeflate-dev \
-            libicu-dev \
-            liblzma-dev \
-            libpcre2-dev \
-            libzstd-dev \
-            zlib1g-dev
-
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v2
-        with:
-          r-version: "4.5.1"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          version: latest
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        run: uv python install 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
 
       - name: Install build dependencies
-        run: uv sync --group dev
+        run: uv sync --locked --group dev --python 3.12
 
       - name: Build sdist and wheel
         run: uv run python -m build
 
       - name: Wheel smoke import
         run: |
-          uv venv .smoke
+          uv venv .smoke --python 3.12
           uv pip install --python .smoke/bin/python dist/*.whl
           .smoke/bin/python -c "import online_fdr; print(online_fdr.__version__)"

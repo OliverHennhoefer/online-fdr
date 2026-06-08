@@ -6,13 +6,13 @@ expectation at most one. This expectation bound, rather than a small-tail
 probability bound, is what gives e-value procedures their dependence-robust
 multiple-testing guarantees.
 
-The e-value lane is a first-class package surface:
+The e-value API is a first-class package surface:
 
 ```python
 from online_fdr.e_values import EBH, ELond
 ```
 
-Use this lane when your evidence is naturally expressed as likelihood ratios,
+Use this API when your evidence is naturally expressed as likelihood ratios,
 betting scores, stopped e-processes, or calibrated p-values with explicitly
 documented construction assumptions.
 

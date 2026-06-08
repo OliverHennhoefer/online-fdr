@@ -44,7 +44,7 @@ This page summarizes the guarantee status of each method in this package.
 
 - Guarantees apply only under each method's stated assumptions.
 - Parity means semantic alignment for overlapping functionality, not identity of every API surface.
-- Live R parity tests (`rpy2`) are mandatory in development/CI and require R plus `onlineFDR` (`2.18.0`).
+- Live R parity tests (`rpy2`) are required for parity-covered behavior and require R plus `onlineFDR` (`2.18.0`).
 - E-value toolbox helpers are construction utilities. They do not make an invalid input stream valid by themselves.
 
 ## References

@@ -1,12 +1,12 @@
-# Migration To Lanes
+# Migration To Package Surfaces
 
-`online-fdr` now has two first-class lanes:
+`online-fdr` exposes p-value and e-value methods through separate package
+surfaces:
 
 - `online_fdr.p_values` for p-value procedures
 - `online_fdr.e_values` for e-value procedures
 
-This is a hard package-layout break. The root package no longer re-exports every
-method.
+The root package no longer re-exports every method.
 
 ## Import Changes
 
@@ -22,7 +22,7 @@ from online_fdr.p_values.batching.bh import BatchBH
 from online_fdr.core.utils.generation import DataGenerator
 ```
 
-For common p-value methods, prefer lane-level imports:
+For common p-value methods, prefer package-level imports:
 
 ```python
 from online_fdr.p_values import Addis, BatchBH, Saffron

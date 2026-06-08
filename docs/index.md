@@ -2,150 +2,82 @@
 
 [![python](https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Code style: black](https://img.shields.io/badge/code_style-black-black)](https://github.com/psf/black)
-[![PyPI version](https://badge.fury.io/py/online-fdr.svg)](https://badge.fury.io/py/online-fdr)
+[![CI](https://github.com/OliverHennhoefer/online-fdr/actions/workflows/ci.yml/badge.svg)](https://github.com/OliverHennhoefer/online-fdr/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/online-fdr.svg)](https://pypi.org/project/online-fdr/)
 
-**online-fdr** is a comprehensive Python library for controlling False Discovery Rate (FDR) and Family-Wise Error Rate (FWER) in online multiple hypothesis testing scenarios. It has two first-class lanes:
+`online-fdr` is a Python package for multiple testing when hypotheses arrive
+over time or in batches. It provides p-value and e-value procedures for false
+discovery rate (FDR) and family-wise error rate (FWER) control.
 
-- `online_fdr.p_values` for p-value based online, asynchronous, and batch methods.
-- `online_fdr.e_values` for e-value based procedures, construction utilities, e-processes, and generators.
+The package focuses on small stateful objects:
 
-Unlike traditional methods that require all evidence upfront, online procedures make decisions sequentially as data arrives.
+- sequential methods use `test_one(...)`
+- batch methods use `test_batch(...)`
+- method state exposes the target level, current threshold, and number of
+  processed tests where applicable
 
-## Why Online FDR Control?
-
-In many modern applications, hypotheses arrive sequentially and decisions must be made in real-time:
-
-=== "Clinical Trials"
-    Interim analyses as patient data accumulates, allowing for early stopping or protocol modifications while maintaining statistical validity.
-
-=== "A/B Testing" 
-    Continuous experimentation in tech companies where new variants are tested as they're developed, requiring immediate go/no-go decisions.
-
-=== "Genomics"
-    Sequential gene discovery studies where new candidates are evaluated as they're identified through various screening methods.
-
-=== "Finance"
-    Real-time anomaly detection in trading systems where suspicious patterns must be flagged immediately as they occur.
-
-=== "Web Analytics"
-    Ongoing feature testing and optimization where user behavior changes need rapid assessment for business decisions.
-
-## Key Features
-
--  **True Online Processing**: Make immediate decisions without waiting for future data
--  **Explicit Guarantee Scope**: Method-by-method assumptions and guarantee status are documented  
--  **Two Evidence Lanes**: P-values and e-values are explicit package lanes
--  **Unified API**: Consistent interface across methods with `test_one()` and `test_batch()`
--  **Comprehensive Method Coverage**: State-of-the-art algorithms from recent literature
--  **Performance Optimized**: Efficient implementations suitable for high-throughput applications
--  **Rich Documentation**: Detailed mathematical explanations and practical examples
-
-## Quick Installation
+## Install
 
 ```bash
 pip install online-fdr
 ```
 
-## Quick Start Example
+For development:
+
+```bash
+git clone https://github.com/OliverHennhoefer/online-fdr.git
+cd online-fdr
+uv sync --group dev
+```
+
+Live parity tests additionally require R `4.5.x`, Bioconductor
+`onlineFDR==2.18.0`, and `uv sync --group dev --group parity`.
+
+## Minimal Example
 
 ```python
 from online_fdr.p_values import Addis
-from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
 
-# Initialize a data generator for demonstration
-dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
-generator = DataGenerator(n=1000, pi0=0.9, dgp=dgp)  # 10% alternatives
+p_values = [0.20, 0.004, 0.32, 0.018, 0.60, 0.0007]
+method = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
 
-# Create an online FDR procedure  
-addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
+decisions = [method.test_one(p_value) for p_value in p_values]
 
-# Test hypotheses sequentially
-discoveries = []
-for i in range(100):
-    p_value, label = generator.sample_one()
-    is_discovery = addis.test_one(p_value)
-    
-    if is_discovery:
-        discoveries.append(i)
-        print(f"Discovery at test {i}: p-value = {p_value:.4f}")
-
-print(f"Made {len(discoveries)} discoveries")
+print(f"Tests processed: {method.num_tests}")
+print(f"Discoveries: {sum(decisions)}")
+print(f"Decisions: {decisions}")
 ```
 
-## E-Value Quick Start
+## Methods
 
-```python
-from online_fdr.e_values import EBH, ELond
+P-value procedures:
 
-batch = EBH(alpha=0.05)
-batch_decisions = batch.test_batch([1.0, 2.0, 100.0, 5.0])
+- sequential: ADDIS, SAFFRON, GAI, weighted GAI++, LOND, LORD variants,
+  alpha-spending, online fallback, and a naive baseline
+- asynchronous: ADDIS and SAFFRON lifecycle APIs
+- batch: BatchBH, BatchStoreyBH, BatchPRDS, BatchBY, BatchBHOfficial, and TOAD
 
-online = ELond(alpha=0.05)
-stream_decisions = [online.test_one(e) for e in [1.0, 20.0, 3.0, 500.0]]
-```
+E-value procedures and tools:
 
-## Available Methods
+- e-BH and e-LOND
+- p-to-e calibration, e-to-p conversion, e-value merging
+- likelihood-ratio and betting e-process helpers
 
-### Sequential Testing (One-by-One)
+## Project Guarantees
 
-| **Method Family** | **Methods** | **Best For** |
-|------------------|-------------|--------------|
-| **Alpha Investing** | GAI, Weighted GAI++, SAFFRON, ADDIS | High-throughput screening |
-| **Asynchronous** | SAFFRON Async, ADDIS Async | Overlapping tests with delayed p-values |
-| **LORD** | LORD3, LORD++, D-LORD, Discard, Memory Decay | Time series with trends |
-| **LOND** | LOND | Independent/weakly dependent p-values |
-| **Alpha Spending** | Bonferroni, LORD3 spending | Conservative control |
+Statistical guarantees are method-specific and depend on the assumptions of the
+underlying procedure. The [guarantee matrix](theory/guarantee_matrix.md)
+summarizes which methods are proven, parity-tested against Bioconductor
+`onlineFDR`, or implemented as package extensions.
 
-### Batch Testing
+The live parity suite compares overlapping p-value methods against
+Bioconductor `onlineFDR==2.18.0` through `rpy2`.
 
-| **Method** | **Description** | **Best For** |
-|------------|-----------------|--------------|
-| **BatchBH** | Classic Benjamini-Hochberg | Independent p-values |
-| **BatchStoreyBH** | Adaptive Storey-BH procedure | Unknown null proportion |
-| **BatchPRDS** | Positive regression dependency | Positively correlated tests |
-| **BatchBY** | Benjamini-Yekutieli extension | Stronger within-batch dependence correction |
-| **TOAD** | Decision-deadline online FDR | Tests that can be revised until deadlines |
+## Next Steps
 
-## Mathematical Guarantees
-
-Guarantees are method-specific and assumption-specific:
-
-!!! theorem "FDR Control"
-    For methods in the proven regime, $\mathbb{E}[\text{FDR}] \leq \alpha$ under the documented assumptions.
-
-!!! theorem "FWER Control"  
-    For methods in the proven regime, $\mathbb{P}(\text{FWER} > 0) \leq \alpha$ under the documented assumptions.
-
-See [Theory Guarantee Matrix](theory/guarantee_matrix.md) for the exact per-method status.
-
-## Getting Started
-
-=== "New Users"
-    Start with our [Quick Start Guide](quickstart.md) for a hands-on introduction to the library.
-
-=== "Researchers"
-    Explore the [Theory Section](theory/index.md) for mathematical foundations and algorithm details.
-
-=== "Practitioners" 
-    Jump to [Examples](examples/index.md) for real-world use cases and method comparisons.
-
-=== "Developers"
-    Check the [API Reference](api/index.md) for detailed class and method documentation.
-
-## Acknowledgements
-
-This library is inspired by and validated against the R package [onlineFDR](https://dsrobertson.github.io/onlineFDR/).
-
-**Key differentiator**: Our implementation provides a truly online API with `test_one()` method calls, enabling real-time sequential applications. The R package requires pre-collected data arrays.
-
-## Support
-
--  **Documentation**: Comprehensive guides and API reference
--  **Issues**: Report bugs on [GitHub Issues](https://github.com/OliverHennhoefer/online-fdr/issues)  
--  **Discussions**: Ask questions in [GitHub Discussions](https://github.com/OliverHennhoefer/online-fdr/discussions)
--  **Contact**: Reach out to the maintainers for collaboration opportunities
-
-## License
-
-This project is licensed under the BSD 3-Clause License - see the [LICENSE](https://github.com/OliverHennhoefer/online-fdr/blob/main/LICENSE) file for details.
+- [Installation](installation.md)
+- [Quick Start](quickstart.md)
+- [User Guide](user_guide/index.md)
+- [API Reference](api/index.md)
+- [Theory and Guarantees](theory/index.md)
+- [Release Process](release.md)

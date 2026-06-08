@@ -24,7 +24,7 @@ def test_public_api_bindings_are_expected() -> None:
         assert getattr(online_fdr, symbol) is expected
 
 
-def test_lane_level_imports_are_available() -> None:
+def test_package_surface_imports_are_available() -> None:
     assert p_values.Addis is Addis
     assert p_values.Saffron is Saffron
     assert p_values.BatchBH is BatchBH

@@ -1,6 +1,6 @@
 # E-Value Examples
 
-These examples mirror the p-value examples but use the e-value lane. E-values
+These examples mirror the p-value examples but use the e-value API. E-values
 are large-is-strong evidence, so the decision boundaries are reciprocal levels.
 
 ## Batch E-BH

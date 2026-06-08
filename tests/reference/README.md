@@ -3,7 +3,7 @@
 This test suite validates Python implementations directly against the live
 Bioconductor `onlineFDR` package through `rpy2`.
 
-## Mandatory Setup
+## Mandatory Setup For Parity Tests
 
 1. Install R `4.5.x` and verify it is available from your shell:
 
@@ -18,10 +18,10 @@ Bioconductor `onlineFDR` package through `rpy2`.
    native build libraries, install `build-essential libffi-dev libtirpc-dev
    r-base-dev`.
 
-2. Install development dependencies:
+2. Install development and parity dependencies:
 
    ```bash
-   uv sync --group dev
+   uv sync --group dev --group parity
    ```
 
 3. Install pinned Bioconductor `onlineFDR`:
@@ -40,7 +40,7 @@ Bioconductor `onlineFDR` package through `rpy2`.
    ```
 
 If `rpy2`, R, or `onlineFDR` are missing, parity tests fail with setup
-instructions. These checks are not optional.
+instructions. These checks are required for parity-covered behavior.
 
 **Shell note:** Linux commands such as `apt-get`, `sudo`, `dpkg`, `ldconfig`,
 and `grep` must be run in a Linux shell (for example WSL/Ubuntu), not in
@@ -62,10 +62,15 @@ upgrade local R to `4.5.x` before installing `onlineFDR`.
 
 ## CI Execution
 
-GitHub Actions runs the entire test suite (including live R parity tests) in a
-containerized environment via:
+GitHub Actions runs live parity in two places:
 
+- `.github/workflows/ci.yml` has a required `Live R parity` job for pull
+  requests and pushes to `main`.
 - `.github/workflows/tests-container.yml`
 
-The workflow uses a container with R preinstalled, installs pinned
-`onlineFDR==2.18.0`, then runs `uv run python -m pytest -q`.
+The container workflow is scheduled/manual coverage using a Rocker R image. It
+installs pinned `onlineFDR==2.18.0`, then runs:
+
+```bash
+uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+```
