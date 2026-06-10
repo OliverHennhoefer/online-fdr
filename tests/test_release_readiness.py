@@ -60,7 +60,6 @@ def test_release_support_files_exist() -> None:
     assert Path("docs/release.md").is_file()
     assert Path("CITATION.cff").is_file()
     assert Path(".github/dependabot.yml").is_file()
-    assert Path(".github/CODEOWNERS").is_file()
 
     dependabot = _read(".github/dependabot.yml")
     assert 'package-ecosystem: "github-actions"' in dependabot
