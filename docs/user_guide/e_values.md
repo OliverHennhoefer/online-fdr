@@ -81,9 +81,9 @@ $$
 E_t \geq 1 / \alpha_t.
 $$
 
-The class exposes the configured target as `target_fdr`, the current e-value
+The class exposes the configured target as `target_level`, the current e-value
 test level as `current_level`, the reciprocal rejection boundary as
-`current_threshold`, and the stream length as `num_tests`.
+`last_rejection_threshold`, and the stream length as `num_hypotheses`.
 
 ```python
 from online_fdr.e_values import ELond
@@ -92,7 +92,7 @@ method = ELond(alpha=0.05)
 
 for e_value in [1.0, 20.0, 3.0, 500.0]:
     rejected = method.test_one(e_value)
-    print(method.num_tests, method.current_level, method.current_threshold, rejected)
+    print(method.num_hypotheses, method.current_level, method.last_rejection_threshold, rejected)
 ```
 
 You may inject a custom gamma sequence by passing an object with

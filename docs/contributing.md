@@ -25,7 +25,7 @@ Run these before opening a pull request:
 uv run python -m ruff check .
 uv run python -m ruff format --check online_fdr tests
 uv run python -m mypy online_fdr
-uv run python -m pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
+uv run python -m pytest -q
 ```
 
 Run focused tests while developing:
@@ -55,7 +55,7 @@ Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.
 Run the parity tests:
 
 ```bash
-uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+uv run python -m pytest -m live_r_parity tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
 ```
 
 If Bioconductor reports that version `3.22` requires R `4.5`, upgrade R and
@@ -66,8 +66,9 @@ rerun the `Rscript` commands.
 - Prefer existing public interfaces and helper functions over new abstractions.
 - Validate p-values, e-values, alphas, horizons, and method-specific parameters
   at the boundary.
-- Keep state names consistent with the package interface: `target_fdr`,
-  `current_threshold`, and `num_tests` where available.
+- Keep state names consistent with the package interface: `target_level`,
+  `error_rate`, `last_test_level`, `last_rejection_threshold`,
+  `num_hypotheses`, and `num_batches` where available.
 - For new methods, cite the paper and inspect an author or reputable reference
   implementation before coding.
 - Add focused tests for input validation, boundary behavior, state accounting,

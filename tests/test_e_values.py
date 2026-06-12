@@ -66,16 +66,16 @@ def test_ebh_rejects_invalid_e_values_before_state_updates() -> None:
     method = EBH(alpha=0.05)
     with pytest.raises(ValueError, match="index 0"):
         method.test_batch(["x"])  # type: ignore[list-item]
-    assert method.num_tests == 0
+    assert method.num_hypotheses == 0
     assert method.num_batches == 0
 
 
 def test_ebh_empty_batch_is_noop() -> None:
     method = EBH(alpha=0.05)
     assert method.test_batch([]) == []
-    assert method.num_tests == 0
+    assert method.num_hypotheses == 0
     assert method.num_batches == 0
-    assert method.current_threshold is None
+    assert method.last_rejection_threshold is None
 
 
 def test_ebh_updates_state_after_nonempty_batch() -> None:
@@ -86,10 +86,10 @@ def test_ebh_updates_state_after_nonempty_batch() -> None:
         False,
         True,
     ]
-    assert method.num_tests == 4
+    assert method.num_hypotheses == 4
     assert method.num_batches == 1
     assert method.current_k == 2
-    assert method.current_threshold == pytest.approx(4.0)
+    assert method.last_rejection_threshold == pytest.approx(4.0)
 
 
 def test_elond_level_threshold_and_rejections() -> None:
@@ -97,14 +97,14 @@ def test_elond_level_threshold_and_rejections() -> None:
 
     assert method.test_one(2.0) is True
     assert method.current_level == pytest.approx(0.5)
-    assert method.current_threshold == pytest.approx(2.0)
-    assert method.num_tests == 1
+    assert method.last_rejection_threshold == pytest.approx(2.0)
+    assert method.num_hypotheses == 1
     assert method.num_reject == 1
 
     assert method.test_one(1.0) is False
     assert method.current_level == pytest.approx(0.5)
-    assert method.current_threshold == pytest.approx(2.0)
-    assert method.num_tests == 2
+    assert method.last_rejection_threshold == pytest.approx(2.0)
+    assert method.num_hypotheses == 2
     assert method.num_reject == 1
 
 

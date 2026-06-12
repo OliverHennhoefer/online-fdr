@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    name: Build distributions
+    name: Validate and build distributions
     runs-on: ubuntu-latest
 
     steps:
@@ -28,8 +28,23 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Install build dependencies
-        run: uv sync --locked --group dev --python 3.12
+      - name: Install dependencies
+        run: uv sync --locked --group dev --group docs --python 3.12
+
+      - name: Lint
+        run: uv run python -m ruff check .
+
+      - name: Format check
+        run: uv run python -m ruff format --check online_fdr tests
+
+      - name: Type check
+        run: uv run python -m mypy online_fdr
+
+      - name: Test without live R parity
+        run: uv run python -m pytest -q
+
+      - name: Build docs
+        run: uv run mkdocs build --strict
 
       - name: Build sdist and wheel
         run: uv run python -m build
@@ -47,10 +62,57 @@ jobs:
           path: dist/*
           if-no-files-found: error
 
+  parity:
+    name: Live R parity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install system libraries for rpy2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libbz2-dev \
+            libdeflate-dev \
+            libicu-dev \
+            liblzma-dev \
+            libpcre2-dev \
+            libzstd-dev \
+            zlib1g-dev
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.5.1"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          enable-cache: true
+
+      - name: Install onlineFDR (pinned)
+        run: |
+          Rscript -e "if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org')"
+          Rscript -e "BiocManager::install('onlineFDR', version='3.22', ask=FALSE, update=FALSE)"
+          Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
+
+      - name: Install dependencies
+        run: uv sync --locked --group dev --group parity --python 3.12
+
+      - name: Run live parity tests
+        run: uv run python -m pytest -m live_r_parity tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+
   publish:
     name: Publish to PyPI
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    needs: [build, parity]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:

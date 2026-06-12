@@ -17,6 +17,8 @@ from tests.parity_oracle import (
     require_r_onlinefdr,
 )
 
+pytestmark = pytest.mark.live_r_parity
+
 
 @dataclass(frozen=True)
 class ParityScenario:

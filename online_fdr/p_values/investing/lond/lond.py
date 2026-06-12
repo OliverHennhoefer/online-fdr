@@ -63,7 +63,6 @@ class Lond(AbstractSequentialTest):
         super().__init__(alpha)
         self.alpha0: float = alpha
 
-        self.num_test: int = 0
         self.num_reject: int = 0
 
         self.seq = DefaultLondGammaSequence(c=0.07720838)
@@ -103,19 +102,21 @@ class Lond(AbstractSequentialTest):
             if no discoveries are made early on, leading to low power.
         """
         validity.check_p_val(p_val)
-        self.num_test += 1
+        index = self.num_hypotheses + 1
 
-        self.alpha = self.seq.calc_gamma(self.num_test, alpha=self.alpha0)
-        self.alpha /= (
-            sum(1 / i for i in range(1, self.num_test + 1))
+        alpha_t = self.seq.calc_gamma(index, alpha=self.alpha0)
+        alpha_t /= (
+            sum(1 / i for i in range(1, index + 1))
             if self.dependent
             else 1  # fmt: split
         )
-        self.alpha *= (
+        alpha_t *= (
             self.num_reject + 1 if self.original else max(self.num_reject, 1)
         )  # fmt: split
+        self._set_test_level(alpha_t)
+        self._advance_hypotheses()
 
-        is_rejected = p_val <= self.alpha
+        is_rejected = p_val <= alpha_t
         self.num_reject += 1 if is_rejected else 0
 
         return is_rejected

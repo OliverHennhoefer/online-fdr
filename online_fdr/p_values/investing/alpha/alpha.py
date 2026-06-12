@@ -62,7 +62,6 @@ class Gai(AbstractSequentialTest):
         validity.check_initial_wealth(wealth, alpha)
         validity.check_candidate_threshold(alpha)
 
-        self.num_test: int = 0
         self.candidates: list[bool] = []
         self.reject_idx: list[int] = []
 
@@ -70,36 +69,37 @@ class Gai(AbstractSequentialTest):
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
-        self.num_test += 1
-        self.alpha = self.calc_alpha_t()
+        self._advance_hypotheses()
+        alpha_t = self.calc_alpha_t()
+        self._set_test_level(alpha_t)
 
-        is_candidate = p_val <= self.alpha  # candidate
+        is_candidate = p_val <= alpha_t  # candidate
         self.candidates.append(is_candidate)
 
-        is_rejected = p_val <= self.alpha  # rejection
-        self.reject_idx.append(self.num_test) if is_rejected else None
+        is_rejected = p_val <= alpha_t  # rejection
+        self.reject_idx.append(self.num_hypotheses) if is_rejected else None
         return is_rejected
 
-    def calc_alpha_t(self):
-        if self.num_test == 1:
+    def calc_alpha_t(self) -> float:
+        if self.num_hypotheses == 1:
             alpha_t = (
                 self.seq.calc_gamma(1, None)  # fmt: skip
                 * self.wealth0
             )
         else:
             alpha_t = self.wealth0 * self.seq.calc_gamma(
-                self.num_test - sum(self.candidates), None
+                self.num_hypotheses - sum(self.candidates), None
             )
             if len(self.reject_idx) >= 1:
                 tau_1 = self.reject_idx[0]
                 c_1_plus = sum(self.candidates[tau_1:])
                 alpha_t += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
-                    (self.num_test - tau_1 - c_1_plus), None
+                    (self.num_hypotheses - tau_1 - c_1_plus), None
                 )
             if len(self.reject_idx) >= 2:
                 alpha_t += self.alpha0 * sum(
                     self.seq.calc_gamma(
-                        (self.num_test - idx - sum(self.candidates[idx:])),
+                        (self.num_hypotheses - idx - sum(self.candidates[idx:])),
                         None,
                     )
                     for idx in self.reject_idx[1:]

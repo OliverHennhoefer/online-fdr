@@ -97,31 +97,31 @@ class LordThree(AbstractSequentialTest):
             False
         """
         validity.check_p_val(p_val)
-        self.num_test += 1
+        index = self.num_hypotheses + 1
 
-        self.alpha = (
-            self.seq.calc_gamma(self.num_test - self.last_reject)  # fmt: skip
+        alpha_t = (
+            self.seq.calc_gamma(index - self.last_reject)  # fmt: skip
             * self.wealth_reject
         )
+        self._set_test_level(alpha_t)
+        self._advance_hypotheses()
 
-        is_rejected = p_val <= self.alpha
+        is_rejected = p_val <= alpha_t
 
         # onlineFDR applies the spend as min(alpha_t, W_{t-1}).
-        spend = min(self.alpha, self.wealth)
+        spend = min(alpha_t, self.wealth)
 
         # onlineFDR LORD-3 recursion credits reward with one-step lag and
         # sentinel R_0 = TRUE on t=2.
         reward_credited = (
-            is_rejected
-            if self.num_test == 1
-            else self._decision_history[self.num_test - 2]
+            is_rejected if index == 1 else self._decision_history[index - 2]
         )
 
         self.wealth -= spend
         self.wealth += self.reward if reward_credited else 0.0
         self._decision_history.append(is_rejected)
 
-        self.last_reject = self.num_test if is_rejected else self.last_reject
+        self.last_reject = index if is_rejected else self.last_reject
         self.wealth_reject = self.wealth if is_rejected else self.wealth_reject
 
         return is_rejected

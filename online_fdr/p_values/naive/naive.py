@@ -7,6 +7,7 @@ class NaiveTest(AbstractSequentialTest):
 
     def test_one(self, p_val: float) -> bool:
         check_p_val(p_val)
-        self.num_test += 1
-        alpha_t = self.alpha if self.alpha is not None else 0.0
+        self._advance_hypotheses()
+        alpha_t = self.target_level
+        self._set_test_level(alpha_t)
         return p_val <= alpha_t

@@ -16,7 +16,10 @@ the R reference implementation. Both are mathematically valid implementations of
 same core algorithm, but this version provides the exact behavior of the authors' code.
 """
 
+from collections.abc import Sequence
+
 from online_fdr.core.abstract.abstract_batching_test import AbstractBatchingTest
+from online_fdr.core.results import BatchDecision
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import (
     BatchBHHalfGammaSequence,
@@ -55,7 +58,6 @@ class BatchBHOfficial(AbstractBatchingTest):
         """
         super().__init__(alpha)
         self.alpha0 = alpha
-        self.num_test = 0
 
         # Initialize gamma sequences for adaptive selection
         self.poly_seq = BatchBHPolynomialGammaSequence()
@@ -67,7 +69,7 @@ class BatchBHOfficial(AbstractBatchingTest):
         self.r_s_cumulative: list[int] = []  # Cumulative rejection tracking
         self.alpha_s: list[float] = []  # Alpha values used for each batch
 
-    def test_batch(self, p_vals: list[float]) -> list[bool]:
+    def test_batch(self, p_vals: Sequence[float]) -> list[bool]:
         """Test a batch of p-values using the official BatchBH procedure.
 
         Args:
@@ -76,30 +78,32 @@ class BatchBHOfficial(AbstractBatchingTest):
         Returns:
             List of boolean values indicating which hypotheses are rejected
         """
-        rejections, _, _, _ = self.test_batch_extended(p_vals)
-        return rejections
+        return list(self.test_batch_detail(p_vals).rejected)
 
-    def test_batch_extended(
-        self, p_vals: list[float]
-    ) -> tuple[list[bool], float, float, float]:
-        """Test a batch of p-values using the official BatchBH procedure with extended output.
+    def test_batch_detail(self, p_vals: Sequence[float]) -> BatchDecision:
+        """Test a batch of p-values and return a stable detailed result.
 
         Args:
             p_vals: List of p-values for the current batch
 
         Returns:
-            Tuple containing:
-            - rejections: List of boolean values indicating which hypotheses are rejected
-            - fdh: False Discovery Hat (FDH) estimate
-            - alpha_t: Alpha threshold used for this batch
-            - additional_rejections: R_plus - num_rejects (additional possible rejections)
+            Immutable decision details, with FDH and additional-rejection
+            metadata available in ``metadata``.
         """
         p_vals = list(p_vals)
         batch_size = len(p_vals)
         if batch_size == 0:
-            return [], 0.0, 0.0, 0.0
+            return BatchDecision(
+                rejected=(),
+                values=(),
+                rejection_threshold=self.last_rejection_threshold,
+                batch_index=self.num_batches,
+                test_level=self.last_test_level,
+                error_rate=self.error_rate,
+                metadata={"fdh": 0.0, "additional_rejections": 0.0},
+            )
         validity.check_p_vals_batch(p_vals)
-        t = self.num_test
+        t = self.num_batches
 
         # Calculate alpha_t
         if t == 0:
@@ -152,7 +156,8 @@ class BatchBHOfficial(AbstractBatchingTest):
         self.r_s_plus.append(r_plus)
 
         # Move to next batch
-        self.num_test += 1
+        self._set_test_level(alpha_t, rejection_threshold=threshold)
+        self._advance_batch(batch_size)
 
         # Calculate FDH (False Discovery Hat) estimate
         fdh = 0.0
@@ -164,7 +169,19 @@ class BatchBHOfficial(AbstractBatchingTest):
         # Generate rejection decisions
         rejections = [p_val <= threshold for p_val in p_vals]
 
-        return rejections, fdh, alpha_t, r_plus - num_rejections
+        return BatchDecision(
+            rejected=tuple(rejections),
+            values=tuple(float(p_val) for p_val in p_vals),
+            rejection_threshold=threshold,
+            batch_index=self.num_batches,
+            test_level=alpha_t,
+            error_rate=self.error_rate,
+            metadata={
+                "fdh": fdh,
+                "additional_rejections": r_plus - num_rejections,
+                "num_rejections": num_rejections,
+            },
+        )
 
     def _get_gamma(self, j: int, batch_size: int) -> float:
         """Get gamma value using adaptive sequence selection based on batch size."""

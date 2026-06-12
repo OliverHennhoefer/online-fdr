@@ -1,4 +1,4 @@
-﻿# Basic Usage Examples
+# Basic Usage Examples
 
 This page provides practical examples of using **online-fdr** for common multiple testing scenarios.
 
@@ -9,7 +9,7 @@ This page provides practical examples of using **online-fdr** for common multipl
 The most basic use case: test p-values one at a time as they arrive.
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 # Create an ADDIS instance for online FDR control
 method = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
@@ -38,7 +38,7 @@ print(f"Discovery indices: {discoveries}")
 When you have all p-values upfront, batch methods are optimal:
 
 ```python
-from online_fdr.p_values.batching.bh import BatchBH
+from online_fdr.p_values import BatchBH
 
 # Create Benjamini-Hochberg instance
 bh = BatchBH(alpha=0.05)
@@ -67,8 +67,8 @@ print(f"\nBatch discoveries: {len(discoveries)}")
 Use the built-in data generation utilities for testing:
 
 ```python
-from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.core.utils import DataGenerator, GaussianLocationModel
+from online_fdr.p_values import Addis
 
 # Set up data generation
 dgp = GaussianLocationModel(
@@ -119,7 +119,7 @@ print(f"False discoveries: {false_discoveries}")
 total_discoveries = true_discoveries + false_discoveries
 empirical_fdr = false_discoveries / max(total_discoveries, 1)
 print(f"Empirical FDR: {empirical_fdr:.3f}")
-print(f"Target FDR: {addis.alpha0}")
+print(f"Target FDR: {addis.target_level}")
 ```
 
 ### Performance Evaluation
@@ -127,7 +127,7 @@ print(f"Target FDR: {addis.alpha0}")
 Compare your method's performance systematically:
 
 ```python
-from online_fdr.core.utils.evaluation import calculate_sfdr, calculate_power
+from online_fdr.core.utils import calculate_sfdr, calculate_power
 
 def evaluate_method_on_simulation(method, generator, n_tests=100):
     """Evaluate method performance on simulated data."""
@@ -202,9 +202,9 @@ results = evaluate_method_on_simulation(addis, generator, n_tests=200)
 ### Compare Sequential Methods
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.p_values.investing.lord.three import LordThree
-from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.p_values import Addis
+from online_fdr.p_values import LordThree
+from online_fdr.p_values import Saffron
 
 def compare_sequential_methods(p_values, methods_config):
     """Compare multiple sequential methods on same data."""
@@ -265,8 +265,8 @@ for method_name, results in comparison_results.items():
 ### Compare with Batch Methods
 
 ```python
-from online_fdr.p_values.batching.bh import BatchBH
-from online_fdr.p_values.batching.storey_bh import BatchStoreyBH
+from online_fdr.p_values import BatchBH
+from online_fdr.p_values import BatchStoreyBH
 
 def compare_online_vs_batch(p_values):
     """Compare online methods with batch methods."""
@@ -396,9 +396,9 @@ ab_results = ab_testing_example()
 def genomics_example():
     """Simplified genomics differential expression example."""
     
-    from online_fdr.core.utils.generation import DataGenerator, BetaMixtureModel
-    from online_fdr.p_values.investing.addis.addis import Addis
-    from online_fdr.p_values.batching.bh import BatchBH
+    from online_fdr.core.utils import DataGenerator, BetaMixtureModel
+    from online_fdr.p_values import Addis
+    from online_fdr.p_values import BatchBH
     
     print("Genomics Example: Differential Gene Expression")
     print("=" * 50)
@@ -475,8 +475,8 @@ online_genes, batch_genes = genomics_example()
 def demonstrate_parameter_effects():
     """Show how parameter choices affect performance."""
     
-    from online_fdr.p_values.investing.addis.addis import Addis
-    from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
+    from online_fdr.p_values import Addis
+    from online_fdr.core.utils import DataGenerator, GaussianLocationModel
     
     print("Parameter Effects Demonstration")
     print("=" * 35)
@@ -519,7 +519,7 @@ demonstrate_parameter_effects()
 def robust_fdr_testing(p_values, alpha=0.05):
     """Demonstrate robust FDR testing with error handling."""
     
-    from online_fdr.p_values.investing.addis.addis import Addis
+    from online_fdr.p_values import Addis
     
     print("Robust FDR Testing with Error Handling")
     print("=" * 42)

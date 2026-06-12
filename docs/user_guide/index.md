@@ -1,4 +1,4 @@
-﻿# User Guide
+# User Guide
 
 Welcome to the comprehensive **online-fdr** user guide. This section provides in-depth explanations of concepts, methods, and best practices for online false discovery rate control.
 
@@ -110,7 +110,7 @@ Most methods require careful parameter tuning:
 Track key metrics during online testing:
 
 ```python
-from online_fdr.core.utils.evaluation import MemoryDecayFDR
+from online_fdr.core.utils import MemoryDecayFDR
 
 # Initialize tracking
 fdr_tracker = MemoryDecayFDR(delta=0.99, offset=0)
@@ -147,7 +147,7 @@ for p_value, true_label in data_stream:
 ```python
 from sklearn.pipeline import Pipeline
 from sklearn.feature_selection import SelectKBest
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 class OnlineFDRSelector:
     def __init__(self, alpha=0.05):
@@ -177,7 +177,7 @@ class OnlineABTester:
         return {
             'significant': decision,
             'p_value': p_value,
-            'current_alpha': getattr(self.method, 'alpha', None)
+            'current_alpha': getattr(self.method, 'last_rejection_threshold', None)
         }
 ```
 

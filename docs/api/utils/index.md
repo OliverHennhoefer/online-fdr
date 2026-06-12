@@ -6,28 +6,28 @@ The utils module provides essential supporting functions for online FDR control 
 
 Core implementations of classical multiple testing procedures:
 
-::: online_fdr.core.utils.static.bh
-::: online_fdr.core.utils.static.storey_bh
-::: online_fdr.core.utils.static.by
+::: online_fdr.core.utils.bh
+::: online_fdr.core.utils.storey_bh
+::: online_fdr.core.utils.by
 
 ## Gamma Sequences  
 
 Specialized sequences for alpha allocation in online procedures:
 
-::: online_fdr.core.utils.sequence.DefaultSaffronGammaSequence
-::: online_fdr.core.utils.sequence.DefaultLordGammaSequence
-::: online_fdr.core.utils.sequence.DefaultLondGammaSequence
+::: online_fdr.core.utils.DefaultSaffronGammaSequence
+::: online_fdr.core.utils.DefaultLordGammaSequence
+::: online_fdr.core.utils.DefaultLondGammaSequence
 
 ## Validation Functions
 
 Input validation and error checking:
 
-::: online_fdr.core.utils.validity.check_p_val
-::: online_fdr.core.utils.validity.check_alpha
-::: online_fdr.core.utils.validity.check_initial_wealth
-::: online_fdr.core.utils.validity.check_candidate_threshold
-::: online_fdr.core.utils.validity.check_wealth
-::: online_fdr.core.utils.validity.check_decay_factor
+::: online_fdr.core.utils.check_p_val
+::: online_fdr.core.utils.check_alpha
+::: online_fdr.core.utils.check_initial_wealth
+::: online_fdr.core.utils.check_candidate_threshold
+::: online_fdr.core.utils.check_wealth
+::: online_fdr.core.utils.check_decay_factor
 
 ## Overview
 
@@ -62,7 +62,7 @@ The validation module ensures input correctness and provides informative error m
 ### Static Procedures
 
 ```python
-from online_fdr.core.utils.static import bh, storey_bh, by
+from online_fdr.core.utils import bh, storey_bh, by
 
 # Sample p-values  
 p_values = [0.001, 0.02, 0.15, 0.8, 0.9]
@@ -84,7 +84,7 @@ print(f"BY: {num_rej_by} rejections at threshold {threshold_by:.4f}")
 ### Gamma Sequences
 
 ```python
-from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
+from online_fdr.core.utils import DefaultSaffronGammaSequence
 
 # Create SAFFRON gamma sequence
 gamma_seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
@@ -106,7 +106,7 @@ plt.title("SAFFRON Gamma Sequence Decay")
 ### Validation Functions
 
 ```python
-from online_fdr.core.utils.validity import check_p_val, check_alpha, check_initial_wealth
+from online_fdr.core.utils import check_p_val, check_alpha, check_initial_wealth
 
 # Validate inputs
 try:

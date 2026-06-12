@@ -2,7 +2,10 @@ import importlib
 import json
 from pathlib import Path
 
-from tests.parity_oracle import PARITY_PROFILE_COVERAGE
+import pytest
+
+from tests import parity_oracle
+from tests.parity_oracle import PARITY_PROFILE_COVERAGE, _parse_r_version
 
 
 def test_parity_profile_is_well_formed_and_importable() -> None:
@@ -49,3 +52,15 @@ def test_all_parity_profile_methods_are_covered_by_live_parity_suite() -> None:
 
     assert parity_entries
     assert parity_entries == PARITY_PROFILE_COVERAGE
+
+
+def test_r_version_parser_accepts_r_semver_output() -> None:
+    assert _parse_r_version("4.5.1") == (4, 5, 1)
+    assert _parse_r_version("4.5") == (4, 5, 0)
+
+
+def test_r_runtime_preflight_requires_rscript_on_path(monkeypatch) -> None:
+    monkeypatch.setattr(parity_oracle.shutil, "which", lambda name: None)
+
+    with pytest.raises(RuntimeError, match="Rscript.*PATH"):
+        parity_oracle._require_supported_r_runtime()

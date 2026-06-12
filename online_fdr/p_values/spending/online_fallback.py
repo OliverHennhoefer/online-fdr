@@ -50,6 +50,8 @@ class OnlineFallback(AbstractSequentialTest):
         ArXiv preprint: https://arxiv.org/abs/1910.04900
     """
 
+    error_rate = "FWER"
+
     def __init__(
         self,
         alpha: float,
@@ -90,13 +92,15 @@ class OnlineFallback(AbstractSequentialTest):
             the "fallback" mechanism that provides additional testing power.
         """
         validity.check_p_val(p_val)
-        self.num_test += 1
+        next_index = self.num_hypotheses + 1
 
-        prev_alpha = self.alpha if self.alpha is not None else 0.0
-        self.alpha = prev_alpha if self.last_rejected else 0.0
-        self.alpha += self.alpha0 * self.seq.calc_gamma(self.num_test)
+        prev_alpha = self.last_test_level if self.last_test_level is not None else 0.0
+        alpha_t = prev_alpha if self.last_rejected else 0.0
+        alpha_t += self.alpha0 * self.seq.calc_gamma(next_index)
+        self._set_test_level(alpha_t)
+        self._advance_hypotheses()
 
-        is_rejected = p_val <= self.alpha
+        is_rejected = p_val <= alpha_t
         self.last_rejected = bool(
             is_rejected
         )  # Fix SIM210: Use bool() instead of True if else False

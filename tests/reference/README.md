@@ -36,7 +36,7 @@ Bioconductor `onlineFDR` package through `rpy2`.
 4. Verify live parity:
 
    ```bash
-   uv run pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+   uv run python -m pytest -m live_r_parity tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
    ```
 
 If `rpy2`, R, or `onlineFDR` are missing, parity tests fail with setup
@@ -72,5 +72,5 @@ The container workflow is scheduled/manual coverage using a Rocker R image. It
 installs pinned `onlineFDR==2.18.0`, then runs:
 
 ```bash
-uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+uv run python -m pytest -m live_r_parity tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
 ```

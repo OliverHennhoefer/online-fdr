@@ -1,4 +1,4 @@
-﻿# Performance Evaluation
+# Performance Evaluation
 
 Evaluating FDR control methods requires careful measurement of statistical performance, computational efficiency, and robustness. This guide covers the evaluation utilities and best practices for assessing method performance.
 
@@ -13,7 +13,7 @@ $$\text{FDR} = \mathbb{E}\left[\frac{V}{R \vee 1}\right]$$
 where $V$ = false discoveries, $R$ = total discoveries.
 
 ```python
-from online_fdr.core.utils.evaluation import calculate_sfdr
+from online_fdr.core.utils import calculate_sfdr
 
 # Example evaluation
 true_positives = 45   # Correctly rejected nulls
@@ -37,7 +37,7 @@ The proportion of true alternatives correctly identified:
 $$\text{Power} = \mathbb{E}\left[\frac{\text{True Positives}}{\text{Total Alternatives}}\right]$$
 
 ```python
-from online_fdr.core.utils.evaluation import calculate_power
+from online_fdr.core.utils import calculate_power
 
 # Power calculation
 true_positives = 45
@@ -57,7 +57,7 @@ print(f"Statistical power: {power:.3f}")
 def evaluate_method_performance(decisions, true_labels, alpha=0.05):
     """Comprehensive performance evaluation."""
     
-    from online_fdr.core.utils.evaluation import calculate_sfdr, calculate_power
+    from online_fdr.core.utils import calculate_sfdr, calculate_power
     
     # Convert to boolean arrays if needed
     decisions = [bool(d) for d in decisions]
@@ -180,8 +180,8 @@ class OnlineFDRTracker:
             print("Matplotlib not available for plotting")
 
 # Example usage with sequential testing
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values import Addis
+from online_fdr.core.utils import DataGenerator, GaussianLocationModel
 
 # Set up simulation
 dgp = GaussianLocationModel(alt_mean=2.0, alt_std=1.0, one_sided=True)
@@ -210,7 +210,7 @@ print(f"Final Power: {tracker.power_history[-1]:.3f}")
 For non-stationary sequences, use memory-decay FDR:
 
 ```python
-from online_fdr.core.utils.evaluation import MemoryDecayFDR
+from online_fdr.core.utils import MemoryDecayFDR
 
 # Memory-decay FDR with forgetting factor
 memory_fdr = MemoryDecayFDR(delta=0.99, offset=0)
@@ -236,7 +236,7 @@ print(f"Final memory-decay FDR: {current_fdr:.4f}")
 def compare_methods_simulation(methods, simulation_configs, n_reps=100):
     """Comprehensive method comparison via simulation."""
     
-    from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
+    from online_fdr.core.utils import DataGenerator, GaussianLocationModel
     import random
     
     results = {name: [] for name in methods.keys()}
@@ -318,9 +318,9 @@ def compare_methods_simulation(methods, simulation_configs, n_reps=100):
     return summary
 
 # Example comparison
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.p_values.investing.lord.three import LordThree
-from online_fdr.p_values.batching.bh import BatchBH
+from online_fdr.p_values import Addis
+from online_fdr.p_values import LordThree
+from online_fdr.p_values import BatchBH
 
 methods_to_compare = {
     'ADDIS': lambda: Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5),
@@ -428,7 +428,7 @@ print(f"\nSpeedup: {addis_perf['mean_time'] / bh_perf['mean_time']:.1f}x "
 def parameter_sensitivity_analysis(method_class, param_grid, base_params):
     """Analyze method sensitivity to parameter changes."""
     
-    from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
+    from online_fdr.core.utils import DataGenerator, GaussianLocationModel
     
     print("Parameter Sensitivity Analysis:")
     print("=" * 40)
@@ -564,7 +564,7 @@ dependency_scenarios = {
     'Strong positive': 0.9
 }
 
-from online_fdr.p_values.batching.bh import BatchBH
+from online_fdr.p_values import BatchBH
 
 dependency_results = test_dependency_robustness(
     lambda: BatchBH(alpha=0.05),

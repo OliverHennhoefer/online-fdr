@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import math
+import re
+import shutil
+import subprocess
 from dataclasses import dataclass
 from typing import Any, Callable, Literal
 
@@ -23,6 +26,9 @@ from online_fdr.p_values.spending.online_fallback import OnlineFallback
 from tests.parity_cases import BatchParityCase, SequentialParityCase
 
 PINNED_ONLINEFDR_VERSION = "2.18.0"
+REQUIRED_R_MAJOR_MINOR = (4, 5)
+_R_VERSION_EXPR = "cat(as.character(getRversion()))"
+_R_VERSION_PATTERN = re.compile(r"^(\d+)\.(\d+)(?:\.(\d+))?")
 
 
 @dataclass(frozen=True)
@@ -40,7 +46,62 @@ class MethodSpec:
     run_r: Callable[[Any, Any, SequentialParityCase | BatchParityCase], ParityResult]
 
 
+def _parse_r_version(version: str) -> tuple[int, int, int]:
+    match = _R_VERSION_PATTERN.search(version.strip())
+    if not match:
+        raise RuntimeError(
+            "Unable to parse R version for live parity tests. "
+            f"Rscript reported {version!r}."
+        )
+
+    major, minor, patch = match.groups()
+    return int(major), int(minor), int(patch or 0)
+
+
+def _require_supported_r_runtime() -> None:
+    if shutil.which("Rscript") is None:
+        raise RuntimeError(
+            "Rscript is required for live parity tests but is not available on "
+            "PATH. Install R 4.5.x, ensure Rscript is on PATH, then rerun "
+            "`uv sync --group dev --group parity`."
+        )
+
+    try:
+        result = subprocess.run(
+            ["Rscript", "-e", _R_VERSION_EXPR],
+            capture_output=True,
+            check=False,
+            text=True,
+            timeout=15,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise RuntimeError(
+            "Unable to execute Rscript while checking the live parity R runtime. "
+            "Install R 4.5.x and ensure Rscript is on PATH."
+        ) from exc
+
+    if result.returncode != 0:
+        details = (result.stderr or result.stdout).strip()
+        raise RuntimeError(
+            "Rscript failed while checking the live parity R runtime. "
+            f"Details: {details or 'no output'}"
+        )
+
+    version = result.stdout.strip()
+    major, minor, _patch = _parse_r_version(version)
+    if (major, minor) != REQUIRED_R_MAJOR_MINOR:
+        required = ".".join(str(part) for part in REQUIRED_R_MAJOR_MINOR)
+        raise RuntimeError(
+            "Live parity tests require R "
+            f"{required}.x for Bioconductor 3.22 and onlineFDR "
+            f"{PINNED_ONLINEFDR_VERSION}; found R {version}. Upgrade R and "
+            "ensure the matching Rscript is first on PATH."
+        )
+
+
 def require_r_onlinefdr() -> tuple[Any, Any]:
+    _require_supported_r_runtime()
+
     try:
         import rpy2.robjects as ro
         from rpy2.robjects.packages import importr
@@ -93,7 +154,9 @@ def _run_python_sequential(
     decisions: list[bool] = []
     for p_value in case.p_values:
         decisions.append(bool(method.test_one(p_value)))
-        alpha.append(None if method.alpha is None else float(method.alpha))
+        alpha.append(
+            None if method.last_test_level is None else float(method.last_test_level)
+        )
     return ParityResult(alpha=alpha, decisions=decisions)
 
 
@@ -114,7 +177,7 @@ def _run_python_batch(method: Any, case: BatchParityCase) -> ParityResult:
         if alpha_s:
             batch_alpha = float(alpha_s[-1])
         else:
-            raw_alpha = method.alpha
+            raw_alpha = method.last_test_level
             batch_alpha = None if raw_alpha is None else float(raw_alpha)
         alpha.extend([batch_alpha] * batch_size)
 

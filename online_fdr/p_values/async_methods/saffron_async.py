@@ -36,7 +36,7 @@ class SaffronAsync(AbstractAsyncTest):
         return float(self.seq.calc_gamma(idx + 1))
 
     def _is_candidate_available(self, idx: int, stage: int) -> bool:
-        record = self.records[idx]
+        record = self._records[idx]
         return (
             self._is_available(record, stage)
             and record.p_val is not None
@@ -51,7 +51,7 @@ class SaffronAsync(AbstractAsyncTest):
         return sum(
             self._is_candidate_available(idx, stage)
             for idx in range(start_idx, end_idx + 1)
-            if idx < len(self.records)
+            if idx < len(self._records)
         )
 
     def _calc_alpha_for_stage(self, stage: int) -> float:

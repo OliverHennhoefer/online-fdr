@@ -75,7 +75,6 @@ class Addis(AbstractSequentialTest):
         if not 0 <= lambda_ < tau:
             raise ValueError("lambda_ must satisfy 0 <= lambda_ < tau.")
 
-        self.num_test: int = 0
         self.candidates: list[bool] = []
         self.selected: list[bool] = []
         self._candidate_prefix: list[int] = [0]
@@ -112,8 +111,9 @@ class Addis(AbstractSequentialTest):
         """
         validity.check_p_val(p_val)
 
-        self.alpha = self.calc_alpha_t()
-        is_rejected = p_val <= self.alpha  # rejection uses unscaled p-values
+        alpha_t = self.calc_alpha_t()
+        self._set_test_level(alpha_t)
+        is_rejected = p_val <= alpha_t  # rejection uses unscaled p-values
 
         is_selected = p_val <= self.tau
         is_candidate = p_val <= self.lambda_
@@ -122,9 +122,9 @@ class Addis(AbstractSequentialTest):
         self._selected_prefix.append(self._selected_prefix[-1] + int(is_selected))
         self._candidate_prefix.append(self._candidate_prefix[-1] + int(is_candidate))
 
-        self.num_test += 1
+        self._advance_hypotheses()
         if is_rejected:
-            self.reject_idx.append(self.num_test)
+            self.reject_idx.append(self.num_hypotheses)
         return is_rejected
 
     def calc_alpha_t(self) -> float:

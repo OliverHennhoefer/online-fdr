@@ -22,7 +22,7 @@ discoveries = [
 ]
 
 print(discoveries)
-print(method.current_threshold)
+print(method.last_rejection_threshold)
 ```
 
 `EBH` sorts internally and returns decisions in the original input order.
@@ -44,12 +44,12 @@ for idx, e_value in enumerate(stream, start=1):
         idx,
         e_value,
         method.current_level,
-        method.current_threshold,
+        method.last_rejection_threshold,
         rejected,
     )
 ```
 
-`current_level` is the e-LOND level `alpha_t`; `current_threshold` is
+`current_level` is the e-LOND level `alpha_t`; `last_rejection_threshold` is
 `1 / alpha_t`.
 
 ## Calibrating P-Values To E-Values

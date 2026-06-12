@@ -17,9 +17,9 @@ The root package no longer re-exports every method.
 # from online_fdr.utils.generation import DataGenerator
 
 # Now
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.p_values.batching.bh import BatchBH
-from online_fdr.core.utils.generation import DataGenerator
+from online_fdr.p_values import Addis
+from online_fdr.p_values import BatchBH
+from online_fdr.core.utils import DataGenerator
 ```
 
 For common p-value methods, prefer package-level imports:
@@ -38,9 +38,12 @@ from online_fdr.e_values import EBH, ELond
 
 New code should use:
 
-- `target_fdr` for the configured FDR level
-- `current_threshold` for the current rejection boundary
-- `num_tests` for processed tests
+- `target_level` for the configured error-control level
+- `error_rate` for the controlled error-rate family (`FDR`, `mFDR`, or `FWER`)
+- `last_test_level` for the last method-specific test level
+- `last_rejection_threshold` for the last input-scale rejection boundary
+- `num_hypotheses` for processed hypotheses
+- `num_batches` for processed non-empty batches where applicable
 
-Moved p-value methods still expose `alpha` and `num_test` internally for
-algorithm compatibility, but new code should not rely on those names.
+Use `test_one_detail(...)` and `test_batch_detail(...)` when downstream audit
+logs need thresholds, indices, or metadata in addition to boolean decisions.

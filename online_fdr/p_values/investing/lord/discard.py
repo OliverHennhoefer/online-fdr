@@ -25,18 +25,14 @@ class LordDiscard(AbstractSequentialTest):
 
         self.seq = DefaultLordGammaSequence(c=0.07720838)
 
-        self._num_processed: int = 0
+        self._num_selected: int = 0
         self.first_reject: int | None = None  # first rejection index
         self.last_reject: list = []  # without first rejection
 
     @property
-    def num_tests(self) -> int:
-        """Number of hypotheses processed so far, including discarded p-values."""
-        return self._num_processed
-
-    @num_tests.setter
-    def num_tests(self, value: int) -> None:
-        self._num_processed = value
+    def num_selected(self) -> int:
+        """Number of hypotheses not discarded by the tau rule."""
+        return self._num_selected
 
     def _compute_alpha(self, tested_index: int) -> float:
         alpha = self.wealth0 * self.seq.calc_gamma(tested_index)
@@ -60,23 +56,25 @@ class LordDiscard(AbstractSequentialTest):
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
-        self._num_processed += 1
-        next_tested_index = self.num_test + 1
+        self._advance_hypotheses()
+        next_tested_index = self.num_selected + 1
         # Expose the same per-step threshold semantics as onlineFDR,
         # including discarded p-values.
-        self.alpha = self._compute_alpha(next_tested_index)
+        alpha_t = self._compute_alpha(next_tested_index)
+        threshold = min(self.tau, alpha_t)
+        self._set_test_level(alpha_t, rejection_threshold=threshold)
 
         if p_val > self.tau:
             return False  # discard
 
-        self.num_test = next_tested_index
+        self._num_selected = next_tested_index
 
-        is_rejected = p_val <= min(self.tau, self.alpha)
+        is_rejected = p_val <= threshold
 
         if is_rejected:
             if self.first_reject is None:
-                self.first_reject = self.num_test
+                self.first_reject = self.num_selected
             else:
-                self.last_reject.append(self.num_test)
+                self.last_reject.append(self.num_selected)
 
         return is_rejected

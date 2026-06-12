@@ -50,6 +50,8 @@ class AlphaSpending(AbstractSequentialTest):
         Applications to Clinical Trials." Chapman and Hall/CRC.
     """
 
+    error_rate = "FWER"
+
     def __init__(
         self,
         alpha: float,
@@ -83,12 +85,13 @@ class AlphaSpending(AbstractSequentialTest):
             False
         """
         validity.check_p_val(p_val)
-        if self.rule.k is not None and self.num_test >= self.rule.k:
+        if self.rule.k is not None and self.num_hypotheses >= self.rule.k:
             raise ValueError(
                 "AlphaSpending horizon exceeded for finite-k spend function. "
                 "Increase k or choose an adaptive spend rule."
             )
 
-        self.alpha = self.rule.spend(index=self.num_test, alpha=self.alpha0)
-        self.num_test += 1
-        return p_val <= self.alpha
+        alpha_t = self.rule.spend(index=self.num_hypotheses, alpha=self.alpha0)
+        self._set_test_level(alpha_t)
+        self._advance_hypotheses()
+        return p_val <= alpha_t

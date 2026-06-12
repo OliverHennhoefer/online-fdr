@@ -9,10 +9,10 @@ The alpha spending approach, developed by Lan and DeMets (1983), overcomes key l
 ## Available Methods
 
 ### Alpha Spending Function
-::: online_fdr.p_values.spending.alpha_spending.AlphaSpending
+::: online_fdr.p_values.AlphaSpending
 
 ### Online Fallback Procedure  
-::: online_fdr.p_values.spending.online_fallback.OnlineFallback
+::: online_fdr.p_values.OnlineFallback
 
 ## Spending Function Types
 

@@ -1,4 +1,4 @@
-﻿# ADDIS: Adaptive Discarding Algorithm
+# ADDIS: Adaptive Discarding Algorithm
 
 **ADDIS** (ADaptive algorithm that DIScards conservative nulls) is a state-of-the-art online FDR control method that addresses a critical limitation of existing methods: power loss when null p-values are conservative (stochastically larger than uniform).
 
@@ -39,14 +39,14 @@ The algorithm maintains **alpha-wealth** that:
 
 ## Class Reference
 
-::: online_fdr.p_values.investing.addis.addis.Addis
+::: online_fdr.p_values.Addis
 
 ## Usage Examples
 
 ### Basic Usage
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 # Initialize ADDIS with standard parameters
 addis = Addis(
@@ -61,7 +61,7 @@ p_values = [0.001, 0.15, 0.03, 0.8, 0.02, 0.45]
 
 for i, p_val in enumerate(p_values):
     decision = addis.test_one(p_val)
-    current_alpha = addis.alpha
+    current_alpha = addis.last_rejection_threshold
     threshold_msg = (
         f"(alpha_t={current_alpha:.4f})"
         if current_alpha is not None
@@ -77,8 +77,8 @@ for i, p_val in enumerate(p_values):
 ADDIS excels when null p-values are conservative (shifted toward 1):
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.p_values import Addis
+from online_fdr.p_values import Saffron
 import numpy as np
 
 # Simulate conservative nulls (Beta(1, 3) distribution)
@@ -103,8 +103,8 @@ print(f"ADDIS advantage: {addis_discoveries - saffron_discoveries}")
 ### Parameter Sensitivity Analysis
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values import Addis
+from online_fdr.core.utils import DataGenerator, GaussianLocationModel
 
 def evaluate_parameters(lambda_values, tau_values, p_values):
     """Evaluate ADDIS performance across parameter grid."""
@@ -231,7 +231,7 @@ def monitor_addis_wealth(addis, p_values):
         
         # Get state after testing  
         post_wealth = getattr(addis, 'wealth', 0)
-        current_alpha = addis.alpha
+        current_alpha = addis.last_rejection_threshold
         
         results.append({
             'test': i + 1,
@@ -255,8 +255,8 @@ def monitor_addis_wealth(addis, p_values):
 ### Custom Gamma Sequence
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
+from online_fdr.p_values import Addis
+from online_fdr.core.utils import DefaultSaffronGammaSequence
 
 class CustomGammaSequence(DefaultSaffronGammaSequence):
     """Custom gamma sequence for ADDIS candidate selection."""

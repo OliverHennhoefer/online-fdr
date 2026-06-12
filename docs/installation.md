@@ -88,7 +88,7 @@ parity tests.
    ```bash
    Rscript --version
    uv run python -c "import rpy2.robjects as ro; print(ro.r('R.version.string')[0])"
-   uv run pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+   uv run python -m pytest -m live_r_parity tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
    ```
 
 If Bioconductor reports that version `3.22` requires R `4.5`, upgrade R and
@@ -132,7 +132,7 @@ cd online-fdr
 uv sync --group dev --group docs
 
 # Run tests to verify installation
-uv run pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
+uv run python -m pytest -q
 ```
 
 ## Verify Installation
@@ -141,7 +141,7 @@ Test your installation by running:
 
 ```python
 import online_fdr
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 # Create a simple test
 addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)

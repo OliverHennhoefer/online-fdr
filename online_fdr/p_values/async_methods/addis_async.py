@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
-from online_fdr.p_values.async_methods.base import AbstractAsyncTest, AsyncRecord
+from online_fdr.p_values.async_methods.base import AbstractAsyncTest, _AsyncRecord
 
 
 class AddisAsync(AbstractAsyncTest):
@@ -48,11 +48,11 @@ class AddisAsync(AbstractAsyncTest):
             raise ValueError("ADDIS async gamma index became negative.")
         return float(self.seq.calc_gamma(idx + 1))
 
-    def _is_selected(self, record: AsyncRecord) -> bool:
+    def _is_selected(self, record: _AsyncRecord) -> bool:
         return record.p_val is not None and record.p_val <= self.tau
 
     def _is_candidate_available(self, idx: int, stage: int) -> bool:
-        record = self.records[idx]
+        record = self._records[idx]
         return (
             self._is_available(record, stage)
             and record.p_val is not None
@@ -61,7 +61,7 @@ class AddisAsync(AbstractAsyncTest):
 
     def _selected_prefix_count(self, end_exclusive: int) -> int:
         count = 0
-        for record in self.records[:end_exclusive]:
+        for record in self._records[:end_exclusive]:
             if record.finish_stage is None:
                 count += 1
             else:
@@ -76,7 +76,7 @@ class AddisAsync(AbstractAsyncTest):
         return sum(
             self._is_candidate_available(idx, stage)
             for idx in range(start_idx, end_idx + 1)
-            if idx < len(self.records)
+            if idx < len(self._records)
         )
 
     def _calc_alpha_for_stage(self, stage: int) -> float:
@@ -86,7 +86,7 @@ class AddisAsync(AbstractAsyncTest):
                 (self.tau - self.lambda_) * self.wealth0 * self._gamma_at_zero_based(0),
             )
 
-        previous = self.records[: stage - 1]
+        previous = self._records[: stage - 1]
         selected_or_active = sum(
             (
                 self._is_selected(record)

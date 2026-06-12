@@ -52,7 +52,6 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
         self.wealth = self.wealth0
         self.wealth_history = [self.wealth]
         self.base_alpha: float | None = self._gamma(1) * self.wealth0
-        self.alpha = self.base_alpha
         self.reject_idx: list[int] = []
         self.decisions: list[bool] = []
         self.base_alpha_history: list[float] = []
@@ -77,8 +76,8 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
         if penalty_weight <= 0:
             raise ValueError("penalty_weight must be positive.")
 
-        self.num_test += 1
-        idx = self.num_test
+        self._advance_hypotheses()
+        idx = self.num_hypotheses
         base_alpha = float(self._next_base_alpha)
         first_flag = 0 if self._first_rejection_seen else 1
         b_t = self.alpha0 - first_flag * self.wealth0 / penalty_weight
@@ -120,7 +119,7 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
         self._next_base_alpha = self._calc_next_base_alpha(idx)
 
         self.base_alpha = base_alpha
-        self.alpha = threshold
+        self._set_test_level(base_alpha, rejection_threshold=threshold)
         self.decisions.append(rejected)
         self.base_alpha_history.append(base_alpha)
         self.alpha_history.append(threshold)

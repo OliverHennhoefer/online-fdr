@@ -1,4 +1,4 @@
-﻿# Sequential Testing Methods
+# Sequential Testing Methods
 
 Sequential testing methods process hypotheses one at a time as they arrive, making immediate decisions without waiting for future p-values. This is essential for real-time applications like A/B testing, clinical trials, and streaming data analysis.
 
@@ -21,7 +21,7 @@ All alpha investing methods follow the **wealth dynamics** principle:
 ```python
 # Conceptual wealth update
 # Pseudocode (conceptual only)
-if p_value <= current_threshold:
+if p_value <= last_rejection_threshold:
     wealth += reward  # Earn wealth from discovery
     discoveries += 1
 else:
@@ -34,7 +34,7 @@ else:
 **Best for**: General-purpose online FDR control with conservative nulls
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 # Create ADDIS instance
 addis = Addis(
@@ -60,7 +60,7 @@ for i, p_val in enumerate(p_values):
 **Best for**: High-throughput screening applications
 
 ```python
-from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.p_values import Saffron
 
 # Create SAFFRON instance  
 saffron = Saffron(
@@ -88,8 +88,8 @@ print(f"Total discoveries: {discoveries}")
 **Best for**: Time series and temporally structured data
 
 ```python
-from online_fdr.p_values.investing.lord.three import LordThree
-from online_fdr.p_values.investing.lord.plus_plus import LordPlusPlus
+from online_fdr.p_values import LordThree
+from online_fdr.p_values import LordPlusPlus
 
 # LORD3: Recent discovery weighting
 lord3 = LordThree(
@@ -130,7 +130,7 @@ for p_val in p_values:
 **Best for**: Independent or weakly dependent p-values
 
 ```python
-from online_fdr.p_values.investing.lond.lond import Lond
+from online_fdr.p_values import Lond
 
 # For independent p-values
 lond_indep = Lond(alpha=0.05, dependent=False)
@@ -154,7 +154,7 @@ print(f"Discoveries: {dep_discoveries}")
 **Best for**: Educational purposes and simple scenarios
 
 ```python
-from online_fdr.p_values.investing.alpha.alpha import Gai
+from online_fdr.p_values import Gai
 
 # Create GAI instance
 gai = Gai(alpha=0.05, wealth=0.025)
@@ -190,8 +190,8 @@ for p_value in p_values:
 **Best for**: Conservative control when number of tests is known
 
 ```python
-from online_fdr.p_values.spending.alpha_spending import AlphaSpending
-from online_fdr.p_values.spending.functions.bonferroni import Bonferroni
+from online_fdr.p_values import AlphaSpending
+from online_fdr.p_values import Bonferroni
 
 # Bonferroni spending function
 bonf_func = Bonferroni(k=100)  # Expecting 100 tests
@@ -206,7 +206,7 @@ alpha_spend = AlphaSpending(
 p_values = [0.0001, 0.1, 0.0005, 0.3]
 for i, p_val in enumerate(p_values):
     decision = alpha_spend.test_one(p_val)
-    current_alpha = alpha_spend.alpha if alpha_spend.alpha else 0
+    current_alpha = alpha_spend.last_rejection_threshold if alpha_spend.last_rejection_threshold else 0
     print(f"Test {i+1}: p={p_val:.4f}, alpha_t={current_alpha:.6f}, "
           f"decision={'REJECT' if decision else 'ACCEPT'}")
 ```
@@ -215,7 +215,7 @@ for i, p_val in enumerate(p_values):
 **Best for**: Combining different strategies
 
 ```python
-from online_fdr.p_values.spending.online_fallback import OnlineFallback
+from online_fdr.p_values import OnlineFallback
 
 # Create online fallback instance
 fallback = OnlineFallback(alpha=0.05)
@@ -297,7 +297,7 @@ Based on simulation studies:
 
 ```python
 # Use when false positives are costly
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 conservative_addis = Addis(
     alpha=0.05,      # Strict FDR control
@@ -311,7 +311,7 @@ conservative_addis = Addis(
 
 ```python
 # Use when processing many tests quickly
-from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.p_values import Saffron
 
 screening_saffron = Saffron(
     alpha=0.1,       # Allow more discoveries
@@ -324,7 +324,7 @@ screening_saffron = Saffron(
 
 ```python
 # Use when tests have temporal structure
-from online_fdr.p_values.investing.lord.three import LordThree
+from online_fdr.p_values import LordThree
 
 timeseries_lord = LordThree(
     alpha=0.05,
@@ -359,7 +359,7 @@ def track_wealth(method, p_values):
     return wealth_history, decisions
 
 # Example usage
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 addis = Addis(alpha=0.1, wealth=0.05, lambda_=0.5, tau=0.7)
 p_vals = [0.01, 0.3, 0.02, 0.8, 0.005]
@@ -397,7 +397,7 @@ def p_value_generator():
     while True:
         yield random.uniform(0, 1)
 
-from online_fdr.p_values.investing.lord.three import LordThree
+from online_fdr.p_values import LordThree
 
 lord3 = LordThree(alpha=0.1, wealth=0.05, reward=0.05)
 total_discoveries = test_with_early_stopping(lord3, p_value_generator(), 

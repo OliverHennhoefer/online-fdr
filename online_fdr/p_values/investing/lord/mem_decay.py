@@ -68,18 +68,18 @@ class LORDMemoryDecay(AbstractSequentialTest):
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
-        self.num_test += 1
+        index = self.num_hypotheses + 1
 
         # Base component with smoothing and minimum threshold
-        if self.num_test not in self._gamma_cache:
-            self._gamma_cache[self.num_test] = self.seq.calc_gamma(self.num_test)
+        if index not in self._gamma_cache:
+            self._gamma_cache[index] = self.seq.calc_gamma(index)
 
-        gamma_t = self._gamma_cache[self.num_test]
-        self.alpha = self.alpha0 * self.eta * max(gamma_t, 1 - self.delta)
+        gamma_t = self._gamma_cache[index]
+        alpha_t = self.alpha0 * self.eta * max(gamma_t, 1 - self.delta)
 
         # Add decayed contributions from past rejections
         for reject_idx in self.rejection_times:
-            time_diff = self.num_test - reject_idx - self.l
+            time_diff = index - reject_idx - self.l
             if time_diff > 0:
                 # Cache gamma values for efficiency
                 if time_diff not in self._gamma_cache:
@@ -87,11 +87,13 @@ class LORDMemoryDecay(AbstractSequentialTest):
 
                 decay_weight = self.delta**time_diff
                 gamma_val = self._gamma_cache[time_diff]
-                self.alpha += self.alpha0 * decay_weight * gamma_val
+                alpha_t += self.alpha0 * decay_weight * gamma_val
 
-        is_rejected = p_val <= self.alpha
+        self._set_test_level(alpha_t)
+        self._advance_hypotheses()
+        is_rejected = p_val <= alpha_t
 
         if is_rejected:
-            self.rejection_times.append(self.num_test)
+            self.rejection_times.append(index)
 
         return is_rejected

@@ -1,4 +1,4 @@
-﻿# Examples
+# Examples
 
 This section provides practical, real-world examples of using **online-fdr** for various applications. Each example includes complete code, explanations, and interpretations to help you apply online FDR control in your domain.
 
@@ -42,7 +42,7 @@ This section provides practical, real-world examples of using **online-fdr** for
 ### 1. **Basic Online Testing**
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 # Initialize method
 addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
@@ -63,7 +63,7 @@ print(f"\nFound {len(significant_results)} significant results out of {len(p_val
 ### 2. **A/B Test Monitoring**
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 import numpy as np
 
 def ab_test_with_fdr_control(variants, control_data, alpha=0.05):
@@ -110,7 +110,7 @@ results = ab_test_with_fdr_control(variants, control, alpha=0.1)
 ### 3. **Gene Expression Analysis**
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 from scipy.stats import ttest_ind
 import numpy as np
 
@@ -165,7 +165,7 @@ print(f"Found {len(significant_genes)} differentially expressed genes")
 ### 4. **Clinical Trial Interim Analysis**
 
 ```python
-from online_fdr.p_values.investing.lord.three import LordThree
+from online_fdr.p_values import LordThree
 from scipy.stats import chi2_contingency
 import numpy as np
 
@@ -384,7 +384,7 @@ def evaluate_fdr_method(method, p_values, true_labels, alpha=0.05):
         'power': power,
         'precision': precision,
         'recall': recall,
-        'target_fdr': alpha,
+        'target_level': alpha,
         'fdr_controlled': empirical_fdr <= alpha * 1.1  # 10% tolerance
     }
     

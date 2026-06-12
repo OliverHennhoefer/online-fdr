@@ -21,7 +21,9 @@ from online_fdr.p_values.investing import (
     Saffron,
     WeightedGaiPlusPlus,
 )
+from online_fdr.p_values.naive import NaiveTest
 from online_fdr.p_values.spending import AlphaSpending, OnlineFallback
+from online_fdr.p_values.spending.functions import Bonferroni
 
 __all__ = [
     "Addis",
@@ -33,6 +35,7 @@ __all__ = [
     "BatchBY",
     "BatchPRDS",
     "BatchStoreyBH",
+    "Bonferroni",
     "Gai",
     "LORDMemoryDecay",
     "Lond",
@@ -40,6 +43,7 @@ __all__ = [
     "LordDiscard",
     "LordPlusPlus",
     "LordThree",
+    "NaiveTest",
     "OnlineFallback",
     "Saffron",
     "SaffronAsync",

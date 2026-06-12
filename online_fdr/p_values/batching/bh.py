@@ -4,6 +4,8 @@ Implementation based on "The Power of Batching in Multiple Hypothesis Testing"
 by Zrnic, Jiang, Ramdas, and Jordan (2020)
 """
 
+from collections.abc import Sequence
+
 from online_fdr.core.abstract.abstract_batching_test import AbstractBatchingTest
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
@@ -80,13 +82,12 @@ class BatchBH(AbstractBatchingTest):
         """
         super().__init__(alpha)
         self.alpha0 = alpha
-        self.num_test = 0  # Number of batches tested so far
         self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
         self.r_s_plus: list[int] = []  # R^+ values for each batch
         self.r_s: list[int] = []  # R values (number of rejections) for each batch
         self.alpha_s: list[float] = []  # Alpha values used for each batch
 
-    def test_batch(self, p_vals: list[float]) -> list[bool]:
+    def test_batch(self, p_vals: Sequence[float]) -> list[bool]:
         """Test a batch of p-values using the BatchBH procedure.
 
         Args:
@@ -100,7 +101,7 @@ class BatchBH(AbstractBatchingTest):
         if n_batch == 0:
             return []
         validity.check_p_vals_batch(p_vals_local)
-        t = self.num_test  # Current batch index (0-based)
+        t = self.num_batches  # Current batch index (0-based)
 
         if t == 0:
             # First batch: Î±â‚ = Î³â‚Î±
@@ -146,7 +147,8 @@ class BatchBH(AbstractBatchingTest):
         self.r_s.append(num_reject)
         self.r_s_plus.append(r_plus)
         self.alpha_s.append(alpha_t)
-        self.num_test += 1
+        self._set_test_level(alpha_t, rejection_threshold=threshold)
+        self._advance_batch(n_batch)
 
         # Return rejection decisions
         return [p_val <= threshold for p_val in p_vals_local]

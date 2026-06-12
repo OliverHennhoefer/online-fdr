@@ -1,7 +1,7 @@
 import online_fdr
 from online_fdr import e_values, p_values
 from online_fdr.e_values import EBH, ELond, make_power_calibrator
-from online_fdr.p_values import Addis, BatchBH, Saffron
+from online_fdr.p_values import Addis, BatchBH, Bonferroni, NaiveTest, Saffron
 
 EXPECTED_PUBLIC_API = [
     "__version__",
@@ -28,6 +28,8 @@ def test_package_surface_imports_are_available() -> None:
     assert p_values.Addis is Addis
     assert p_values.Saffron is Saffron
     assert p_values.BatchBH is BatchBH
+    assert p_values.Bonferroni is Bonferroni
+    assert p_values.NaiveTest is NaiveTest
     assert e_values.EBH is EBH
     assert e_values.ELond is ELond
     assert e_values.make_power_calibrator is make_power_calibrator

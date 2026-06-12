@@ -38,18 +38,20 @@ class LordDependent(AbstractSequentialTest):
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
-        self.num_test += 1
+        index = self.num_hypotheses + 1
 
-        self.alpha = (  # fmt: skip
-            self.seq.calc_gamma(self.num_test)  # fmt: skip
+        alpha_t = (  # fmt: skip
+            self.seq.calc_gamma(index)  # fmt: skip
             * self.wealth_reject
         )
+        self._set_test_level(alpha_t)
+        self._advance_hypotheses()
 
-        is_rejected = p_val <= self.alpha
+        is_rejected = p_val <= alpha_t
 
-        self.wealth -= self.alpha
+        self.wealth -= alpha_t
         self.wealth += self.reward if is_rejected else 0
-        self.last_reject = self.num_test if is_rejected else self.last_reject
+        self.last_reject = index if is_rejected else self.last_reject
         self.wealth_reject = self.wealth if is_rejected else self.wealth_reject
 
         return is_rejected

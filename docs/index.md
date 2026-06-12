@@ -43,7 +43,7 @@ method = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
 
 decisions = [method.test_one(p_value) for p_value in p_values]
 
-print(f"Tests processed: {method.num_tests}")
+print(f"Tests processed: {method.num_hypotheses}")
 print(f"Discoveries: {sum(decisions)}")
 print(f"Decisions: {decisions}")
 ```

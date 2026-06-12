@@ -21,8 +21,8 @@ This page is a hub for practical comparisons between procedures.
 ```python
 import random
 
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.p_values.investing.saffron.saffron import Saffron
+from online_fdr.p_values import Addis
+from online_fdr.p_values import Saffron
 
 rng = random.Random(42)
 p_values = [rng.random() for _ in range(500)]

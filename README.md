@@ -47,7 +47,7 @@ method = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
 decisions = [method.test_one(p_value) for p_value in p_values]
 
 print("ADDIS sequential p-value test")
-print(f"Tests processed: {method.num_tests}")
+print(f"Tests processed: {method.num_hypotheses}")
 print(f"Discoveries: {sum(decisions)}")
 print(f"Decisions: {decisions}")
 ```
@@ -63,7 +63,7 @@ method = BatchStoreyBH(alpha=0.10, lambda_=0.5)
 decisions = method.test_batch(p_values)
 
 print("Batch Storey-BH p-value test")
-print(f"Batch threshold: {method.current_threshold:.6f}")
+print(f"Batch threshold: {method.last_rejection_threshold:.6f}")
 print(f"Discoveries: {sum(decisions)} of {len(decisions)}")
 print(f"Decisions: {decisions}")
 ```
@@ -88,7 +88,7 @@ print(f"Discoveries: {sum(batch_decisions)} of {len(batch_decisions)}")
 print(f"Decisions: {batch_decisions}")
 print("")
 print("e-LOND sequential test")
-print(f"Tests processed: {stream.num_tests}")
+print(f"Tests processed: {stream.num_hypotheses}")
 print(f"Discoveries: {sum(stream_decisions)}")
 print(f"Decisions: {stream_decisions}")
 ```

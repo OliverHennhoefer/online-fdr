@@ -42,39 +42,41 @@ class LordPlusPlus(AbstractSequentialTest):
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
-        self.num_test += 1
+        index = self.num_hypotheses + 1
 
         # Calculate alpha based on LORD++ formula
-        self.alpha = self.wealth0 * self.seq.calc_gamma(self.num_test)
+        alpha_t = self.wealth0 * self.seq.calc_gamma(index)
 
         if self.first_reject is not None:
             # Add contribution from first rejection
-            self.alpha += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
-                self.num_test - self.first_reject
+            alpha_t += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
+                index - self.first_reject
             )
 
             # Add contributions from subsequent rejections
-            self.alpha += self.alpha0 * sum(
-                self.seq.calc_gamma(self.num_test - reject_idx)
+            alpha_t += self.alpha0 * sum(
+                self.seq.calc_gamma(index - reject_idx)
                 for reject_idx in self.last_reject
             )
 
         # Ensure we don't spend more than available wealth
-        self.alpha = min(self.alpha, self.wealth)
+        alpha_t = min(alpha_t, self.wealth)
+        self._set_test_level(alpha_t)
+        self._advance_hypotheses()
 
-        is_rejected = p_val <= self.alpha
+        is_rejected = p_val <= alpha_t
 
         # Update wealth: spend alpha, gain reward if rejected
-        self.wealth -= self.alpha
+        self.wealth -= alpha_t
         if is_rejected:
             self.wealth += self.reward
 
             if self.first_reject is None:
                 # First rejection
-                self.first_reject = self.num_test
+                self.first_reject = index
                 self.wealth_at_first_reject = self.wealth
             else:
                 # Subsequent rejection
-                self.last_reject.append(self.num_test)
+                self.last_reject.append(index)
 
         return is_rejected

@@ -1,4 +1,4 @@
-﻿# GAI: Generalized Alpha-Investing
+# GAI: Generalized Alpha-Investing
 
 **GAI** (Generalized Alpha-Investing) extends the original alpha-investing procedure of Foster and Stine (2008) for sequential control of expected false discoveries, using SAFFRON-style update rules for improved power.
 
@@ -23,14 +23,14 @@ This implementation combines the original alpha-investing philosophy with SAFFRO
 
 ## Class Reference
 
-::: online_fdr.p_values.investing.alpha.alpha.Gai
+::: online_fdr.p_values.Gai
 
 ## Usage Examples
 
 ### Basic Alpha-Investing
 
 ```python
-from online_fdr.p_values.investing.alpha.alpha import Gai
+from online_fdr.p_values import Gai
 
 # Create GAI instance
 gai = Gai(alpha=0.05, wealth=0.025)
@@ -72,16 +72,12 @@ def demonstrate_gai_mechanism():
     gai_discoveries = 0
     
     for i, p_val in enumerate(test_sequence, 1):
-        # Calculate threshold before testing
-        gai.num_test += 1
-        threshold = gai.calc_alpha_t()
-        
-        decision = p_val <= threshold
+        detail = gai.test_one_detail(p_val)
+        threshold = detail.rejection_threshold or 0.0
+        decision = detail.rejected
         
         if decision:
             gai_discoveries += 1
-            gai.candidates.append(p_val <= gai.alpha0)  # Assuming p_val as candidate check
-            gai.reject_idx.append(gai.num_test)
             
         print(f"Test {i}: p={p_val:.3f}, threshold={threshold:.6f}  {'REJECT' if decision else 'ACCEPT'}")
     
@@ -159,8 +155,8 @@ gai_with_prior_knowledge()
 ### Comparison with Other Alpha-Investing Methods
 
 ```python
-from online_fdr.p_values.investing.saffron.saffron import Saffron
-from online_fdr.p_values.investing.lord.three import LordThree
+from online_fdr.p_values import Saffron
+from online_fdr.p_values import LordThree
 
 def compare_alpha_investing_family():
     """Compare different alpha-investing approaches."""
@@ -200,7 +196,7 @@ compare_alpha_investing_family()
 ### Simulating Industrial A/B Testing
 
 ```python
-from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.core.utils import DataGenerator, GaussianLocationModel
 
 def simulate_ab_testing_with_gai():
     """Simulate GAI in an industrial A/B testing environment."""

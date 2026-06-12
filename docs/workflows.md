@@ -18,7 +18,7 @@ Run the same core checks used during development:
 uv run python -m ruff check .
 uv run python -m ruff format --check online_fdr tests
 uv run python -m mypy online_fdr
-uv run python -m pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
+uv run python -m pytest -q
 ```
 
 ## Focused Test Runs
@@ -49,13 +49,13 @@ uv sync --group dev --group parity
 Run parity tests directly:
 
 ```bash
-uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+uv run python -m pytest -m live_r_parity tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
 ```
 
-If parity setup is not available yet, run a local non-parity subset:
+If parity setup is not available yet, run the standard suite:
 
 ```bash
-uv run python -m pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
+uv run python -m pytest -q
 ```
 
 ## Packaging Smoke

@@ -63,7 +63,6 @@ class Saffron(AbstractSequentialTest):
         validity.check_initial_wealth(wealth, alpha)
         validity.check_candidate_threshold(lambda_)
 
-        self.num_test: int = 0
         self.candidates: list[bool] = []
         self._candidate_prefix: list[int] = [0]
         self.reject_idx: list[int] = []
@@ -95,15 +94,16 @@ class Saffron(AbstractSequentialTest):
             False
         """
         validity.check_p_val(p_val)
-        self.num_test += 1
-        self.alpha = self.calc_alpha_t()
+        self._advance_hypotheses()
+        alpha_t = self.calc_alpha_t()
+        self._set_test_level(alpha_t)
 
         is_candidate = p_val <= self.lambda_  # candidate
         self.candidates.append(is_candidate)
         self._candidate_prefix.append(self._candidate_prefix[-1] + int(is_candidate))
 
-        is_rejected = p_val <= self.alpha  # rejection
-        self.reject_idx.append(self.num_test) if is_rejected else None
+        is_rejected = p_val <= alpha_t  # rejection
+        self.reject_idx.append(self.num_hypotheses) if is_rejected else None
         return is_rejected
 
     def calc_alpha_t(self) -> float:
@@ -123,7 +123,7 @@ class Saffron(AbstractSequentialTest):
             follows the SAFFRON procedure in Ramdas et al. (2018).
         """
 
-        if self.num_test == 1:
+        if self.num_hypotheses == 1:
             alpha_t = (
                 (1 - self.lambda_)
                 * self.seq.calc_gamma(1, None)  # fmt: skip
@@ -132,13 +132,13 @@ class Saffron(AbstractSequentialTest):
         else:
             total_candidates = self._candidate_prefix[-1]
             alpha_t = self.wealth0 * self.seq.calc_gamma(
-                self.num_test - total_candidates, None
+                self.num_hypotheses - total_candidates, None
             )
             if len(self.reject_idx) >= 1:
                 tau_1 = self.reject_idx[0]
                 c_1_plus = self._candidate_count_after(tau_1)
                 alpha_t += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
-                    (self.num_test - tau_1 - c_1_plus), None
+                    (self.num_hypotheses - tau_1 - c_1_plus), None
                 )
             if len(self.reject_idx) >= 2:
                 alpha_t += self.alpha0 * sum(
@@ -157,4 +157,6 @@ class Saffron(AbstractSequentialTest):
 
     def _gamma_arg_for_rejection(self, reject_idx: int) -> int:
         """Compute SAFFRON gamma index contribution for a past rejection."""
-        return self.num_test - reject_idx - self._candidate_count_after(reject_idx)
+        return (
+            self.num_hypotheses - reject_idx - self._candidate_count_after(reject_idx)
+        )

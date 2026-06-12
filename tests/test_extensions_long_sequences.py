@@ -72,8 +72,8 @@ def test_lord_memory_decay_long_sequence_regression() -> None:
     alpha: list[float] = []
     for p_value in case.p_values:
         decisions.append(method.test_one(p_value))
-        assert method.alpha is not None
-        alpha.append(round(method.alpha, 12))
+        assert method.last_rejection_threshold is not None
+        alpha.append(round(method.last_rejection_threshold, 12))
 
     assert sum(decisions) == 87
     assert alpha[:12] == [

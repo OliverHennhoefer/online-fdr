@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from online_fdr.core.abstract.abstract_batching_test import AbstractBatchingTest
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
@@ -84,21 +86,11 @@ class BatchPRDS(AbstractBatchingTest):
         self.alpha0 = alpha
 
         self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
-        self.num_test: int = 1
         self.r_total: int = 0
 
         self.alpha_s: list[float] = []  # only for test
 
-    @property
-    def num_tests(self) -> int:
-        """Number of batches processed so far."""
-        return self.num_test - 1
-
-    @num_tests.setter
-    def num_tests(self, value: int) -> None:
-        self.num_test = value + 1
-
-    def test_batch(self, p_vals: list[float]) -> list[bool]:
+    def test_batch(self, p_vals: Sequence[float]) -> list[bool]:
         """Test a batch of p-values under PRDS conditions.
 
         The algorithm calculates an adaptive significance level based on the
@@ -134,16 +126,18 @@ class BatchPRDS(AbstractBatchingTest):
         if batch_size == 0:
             return []
         validity.check_p_vals_batch(p_vals_local)
-        self.alpha = (
+        batch_number = self.num_batches + 1
+        alpha_t = (
             self.alpha0
-            * self.seq.calc_gamma(self.num_test)
+            * self.seq.calc_gamma(batch_number)
             / batch_size
             * (batch_size + self.r_total)
         )
-        self.alpha_s.append(self.alpha)
-        num_reject, threshold = bh(p_vals_local, self.alpha)
+        self.alpha_s.append(alpha_t)
+        num_reject, threshold = bh(p_vals_local, alpha_t)
 
         self.r_total += num_reject
 
-        self.num_test += 1
+        self._set_test_level(alpha_t, rejection_threshold=threshold)
+        self._advance_batch(batch_size)
         return [p_val <= threshold for p_val in p_vals_local]

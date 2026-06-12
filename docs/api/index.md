@@ -108,14 +108,14 @@ class AsyncMethod:
 |------------|-----------------|--------------|
 | e-BH | `online_fdr.e_values.EBH` | Batch FDR with e-values under arbitrary dependence |
 | e-LOND | `online_fdr.e_values.ELond` | Online FDR with e-values under arbitrary dependence |
-| ADDIS | `online_fdr.p_values.investing.addis.addis.Addis` | General-purpose online FDR |
-| Async ADDIS | `online_fdr.p_values.async_methods.AddisAsync` | Overlapping tests with delayed p-values |
-| Async SAFFRON | `online_fdr.p_values.async_methods.SaffronAsync` | Asynchronous high-throughput screening |
-| Weighted GAI++ | `online_fdr.p_values.investing.alpha.weighted_gai_plus_plus.WeightedGaiPlusPlus` | Side-information weighted streams |
-| LORD3 | `online_fdr.p_values.investing.lord.three.LordThree` | Sequential with temporal structure |
-| SAFFRON | `online_fdr.p_values.investing.saffron.saffron.Saffron` | High-throughput screening |
-| Batch BH | `online_fdr.p_values.batching.bh.BatchBH` | Traditional batch FDR control |
-| TOAD | `online_fdr.p_values.batching.toad.Toad` | Tests with decision deadlines |
+| ADDIS | `online_fdr.p_values.Addis` | General-purpose online FDR |
+| Async ADDIS | `online_fdr.p_values.AddisAsync` | Overlapping tests with delayed p-values |
+| Async SAFFRON | `online_fdr.p_values.SaffronAsync` | Asynchronous high-throughput screening |
+| Weighted GAI++ | `online_fdr.p_values.WeightedGaiPlusPlus` | Side-information weighted streams |
+| LORD3 | `online_fdr.p_values.LordThree` | Sequential with temporal structure |
+| SAFFRON | `online_fdr.p_values.Saffron` | High-throughput screening |
+| Batch BH | `online_fdr.p_values.BatchBH` | Traditional batch FDR control |
+| TOAD | `online_fdr.p_values.Toad` | Tests with decision deadlines |
 
 ### Parameter Quick Start
 
@@ -123,7 +123,7 @@ Most common parameter combinations for getting started:
 
 === "ADDIS (Recommended Default)"
     ```python
-    from online_fdr.p_values.investing.addis.addis import Addis
+    from online_fdr.p_values import Addis
     
     # Conservative
     addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
@@ -148,7 +148,7 @@ Most common parameter combinations for getting started:
 
 === "LORD3 (Time Series)"
     ```python
-    from online_fdr.p_values.investing.lord.three import LordThree
+    from online_fdr.p_values import LordThree
     
     # Conservative
     lord3 = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
@@ -162,7 +162,7 @@ Most common parameter combinations for getting started:
 
 === "Batch BH (Traditional)"
     ```python
-    from online_fdr.p_values.batching.bh import BatchBH
+    from online_fdr.p_values import BatchBH
     
     # Standard usage
     bh = BatchBH(alpha=0.05)
@@ -202,7 +202,7 @@ Helper functions and utilities for simulation and evaluation.
 ### Basic Sequential Testing
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 # Initialize method
 method = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
@@ -217,7 +217,7 @@ for i, p in enumerate(p_values):
 ### Batch Testing
 
 ```python
-from online_fdr.p_values.batching.bh import BatchBH
+from online_fdr.p_values import BatchBH
 
 # Initialize method  
 method = BatchBH(alpha=0.05)
@@ -233,8 +233,8 @@ for i, (p, decision) in enumerate(zip(p_values, decisions)):
 ### With Data Generation
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
-from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.p_values import Addis
+from online_fdr.core.utils import DataGenerator, GaussianLocationModel
 
 # Set up simulation
 dgp = GaussianLocationModel(alt_mean=3.0, alt_std=1.0, one_sided=True)
@@ -254,7 +254,7 @@ print(f"Made {discoveries} discoveries")
 ### Performance Evaluation
 
 ```python
-from online_fdr.core.utils.evaluation import calculate_sfdr, calculate_power
+from online_fdr.core.utils import calculate_sfdr, calculate_power
 
 # Track results during testing
 true_positives = false_positives = false_negatives = 0
@@ -282,7 +282,7 @@ print(f"Empirical Power: {power:.3f}")
 The library includes comprehensive input validation:
 
 ```python
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 try:
     # Invalid parameters will raise ValueError
@@ -304,7 +304,7 @@ All methods include comprehensive type hints for better IDE support:
 
 ```python
 from typing import List
-from online_fdr.p_values.investing.addis.addis import Addis
+from online_fdr.p_values import Addis
 
 def run_online_fdr(p_values: List[float], alpha: float = 0.05) -> List[bool]:
     """Run ADDIS on a sequence of p-values."""

@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from online_fdr.core.abstract.abstract_batching_test import AbstractBatchingTest
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import (
@@ -86,7 +88,6 @@ class BatchBY(AbstractBatchingTest):
         """
         super().__init__(alpha)
         self.alpha0: float = alpha
-        self.num_test: int = 1
 
         self.seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
         self.r_s_plus: list[int] = []
@@ -95,16 +96,7 @@ class BatchBY(AbstractBatchingTest):
         self.r_sums: list[int] = [0]
         self.alpha_s: list[float] = []
 
-    @property
-    def num_tests(self) -> int:
-        """Number of batches processed so far."""
-        return self.num_test - 1
-
-    @num_tests.setter
-    def num_tests(self, value: int) -> None:
-        self.num_test = value + 1
-
-    def test_batch(self, p_vals: list[float]) -> list[bool]:
+    def test_batch(self, p_vals: Sequence[float]) -> list[bool]:
         """Test a batch of p-values using the Benjamini-Yekutieli procedure.
 
         The BY procedure uses harmonic weights in the rejection threshold calculation.
@@ -137,41 +129,43 @@ class BatchBY(AbstractBatchingTest):
         if n_batch == 0:
             return []
         validity.check_p_vals_batch(p_vals_local)
-        if self.num_test == 1:
-            self.alpha = (
+        batch_number = self.num_batches + 1
+        if batch_number == 1:
+            alpha_t = (
                 self.alpha0  # fmt: skip
                 * self.seq.calc_gamma(j=1)
             )
         else:
-            self.alpha = (
-                sum(self.seq.calc_gamma(i) for i in range(1, self.num_test + 1))
+            alpha_t = (
+                sum(self.seq.calc_gamma(i) for i in range(1, batch_number + 1))
                 * self.alpha0  # fmt: skip
             )
-            self.alpha -= sum(
+            alpha_t -= sum(
                 [
                     self.alpha_s[i]
                     * self.r_s_plus[i]
                     / (self.r_s_plus[i] + self.r_sums[i + 1])
-                    for i in range(0, self.num_test - 1)
+                    for i in range(0, batch_number - 1)
                 ]
             )
-            self.alpha *= (n_batch + self.r_total) / n_batch
+            alpha_t *= (n_batch + self.r_total) / n_batch
 
-        num_reject, threshold = by(p_vals_local, self.alpha)
+        num_reject, threshold = by(p_vals_local, alpha_t)
 
         self.r_sums.append(self.r_total)
-        self.r_sums[1:self.num_test] = \
-            [x + num_reject for x in self.r_sums[1:self.num_test]]  # fmt: skip
+        self.r_sums[1:batch_number] = \
+            [x + num_reject for x in self.r_sums[1:batch_number]]  # fmt: skip
         self.r_total += num_reject
-        self.alpha_s.append(self.alpha)
+        self.alpha_s.append(alpha_t)
 
         r_plus = 0
         adjusted = list(p_vals_local)
         for i, p_val in enumerate(adjusted):
             adjusted[i] = 0.0
-            r_plus = max(r_plus, by(adjusted, self.alpha)[0])
+            r_plus = max(r_plus, by(adjusted, alpha_t)[0])
             adjusted[i] = p_val
         self.r_s_plus.append(r_plus)
 
-        self.num_test += 1
+        self._set_test_level(alpha_t, rejection_threshold=threshold)
+        self._advance_batch(n_batch)
         return [p_val <= threshold for p_val in p_vals_local]

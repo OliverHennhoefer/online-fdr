@@ -45,6 +45,7 @@ def r_env():
         pytest.exit(str(exc), returncode=1)
 
 
+@pytest.mark.live_r_parity
 def test_saffron_async_matches_onlinefdr_async(r_env) -> None:
     ro, onlinefdr = r_env
     alpha_py, decisions_py = _run_lifecycle(
@@ -65,6 +66,7 @@ def test_saffron_async_matches_onlinefdr_async(r_env) -> None:
     assert alpha_py == pytest.approx(parity_r.alpha, rel=0.0, abs=1e-12)
 
 
+@pytest.mark.live_r_parity
 def test_addis_async_matches_onlinefdr_async_for_lifecycle_safe_order(r_env) -> None:
     ro, onlinefdr = r_env
     alpha_py, decisions_py = _run_lifecycle(

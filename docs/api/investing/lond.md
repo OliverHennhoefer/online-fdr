@@ -1,4 +1,4 @@
-﻿# LOND: Levels based On Number of Discoveries
+# LOND: Levels based On Number of Discoveries
 
 **LOND** (significance Levels based On Number of Discoveries) is one of the first procedures for online false discovery rate (FDR) control, where significance levels are multiplied by the number of discoveries made so far.
 
@@ -23,14 +23,14 @@ While LOND provably controls FDR, it has a significant drawback: unless many dis
 
 ## Class Reference
 
-::: online_fdr.p_values.investing.lond.lond.Lond
+::: online_fdr.p_values.Lond
 
 ## Usage Examples
 
 ### Basic Usage
 
 ```python
-from online_fdr.p_values.investing.lond.lond import Lond
+from online_fdr.p_values import Lond
 
 # Create LOND instance
 lond = Lond(alpha=0.05)
@@ -48,7 +48,7 @@ for i, p_value in enumerate(p_values):
         discoveries.append(i + 1)
         print(f" Test {i+1}: p={p_value:.3f}  discovery (total: {lond.num_reject})")
     else:
-        print(f"  Test {i+1}: p={p_value:.3f}  no rejection (threshold: {lond.alpha:.6f})")
+        print(f"  Test {i+1}: p={p_value:.3f}  no rejection (threshold: {lond.last_rejection_threshold:.6f})")
 
 print(f"\nTotal discoveries: {len(discoveries)}")
 print(f"Discovery indices: {discoveries}")
@@ -70,7 +70,7 @@ def demonstrate_discovery_momentum():
     for i, p_val in enumerate(early_discoveries, 1):
         decision = lond1.test_one(p_val)
         print(f"Test {i}: p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'} "
-              f"(threshold: {lond1.alpha:.6f}, discoveries: {lond1.num_reject})")
+              f"(threshold: {lond1.last_rejection_threshold:.6f}, discoveries: {lond1.num_reject})")
     
     print(f"Final discoveries: {lond1.num_reject}\n")
     
@@ -84,7 +84,7 @@ def demonstrate_discovery_momentum():
     for i, p_val in enumerate(no_early, 1):
         decision = lond2.test_one(p_val)
         print(f"Test {i}: p={p_val:.3f}  {'REJECT' if decision else 'ACCEPT'} "
-              f"(threshold: {lond2.alpha:.6f}, discoveries: {lond2.num_reject})")
+              f"(threshold: {lond2.last_rejection_threshold:.6f}, discoveries: {lond2.num_reject})")
     
     print(f"Final discoveries: {lond2.num_reject}")
     print(f"\nPower difference due to ordering: {lond1.num_reject - lond2.num_reject} discoveries")
@@ -119,8 +119,8 @@ def lond_with_dependence():
     
     # Show threshold differences
     print(f"\nFinal thresholds:")
-    print(f"Independent: {lond_indep.alpha:.6f}")  
-    print(f"Dependent: {lond_dep.alpha:.6f}")
+    print(f"Independent: {lond_indep.last_rejection_threshold:.6f}")  
+    print(f"Dependent: {lond_dep.last_rejection_threshold:.6f}")
 
 lond_with_dependence()
 ```
@@ -161,7 +161,7 @@ compare_lond_variants()
 ### Performance Evaluation
 
 ```python
-from online_fdr.core.utils.generation import DataGenerator, GaussianLocationModel
+from online_fdr.core.utils import DataGenerator, GaussianLocationModel
 
 def evaluate_lond_performance():
     """Evaluate LOND on simulated data."""
@@ -208,8 +208,8 @@ def evaluate_lond_performance():
     print(f"True positives: {true_positives}")
     print(f"False positives: {false_positives}")
     print(f"Empirical FDR: {empirical_fdr:.3f}")
-    print(f"Target FDR: {lond.alpha0}")
-    print(f"FDR controlled: {'yes' if empirical_fdr <= lond.alpha0 else 'no'}")
+    print(f"Target FDR: {lond.target_level}")
+    print(f"FDR controlled: {'yes' if empirical_fdr <= lond.target_level else 'no'}")
 
 evaluate_lond_performance()
 ```

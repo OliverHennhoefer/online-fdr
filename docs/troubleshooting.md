@@ -67,18 +67,19 @@ uv run python -c "import online_fdr; print(online_fdr.__version__)"
 
 ## Test Selection Problems
 
-### Symptom: full test run fails locally because R parity setup is incomplete
+### Symptom: R parity setup is incomplete
 
-Run core suite first while completing R setup:
+The default test command excludes live R parity through the `live_r_parity`
+pytest marker, so local development can run without R:
 
 ```bash
-uv run python -m pytest -q --ignore=tests/test_onlinefdr_parity.py --ignore=tests/test_async_methods.py
+uv run python -m pytest -q
 ```
 
 After R setup is complete, run:
 
 ```bash
-uv run python -m pytest tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
+uv run python -m pytest -m live_r_parity tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
 ```
 
 ## Documentation Build Issues

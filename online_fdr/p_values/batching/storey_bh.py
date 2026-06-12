@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from online_fdr.core.abstract.abstract_batching_test import AbstractBatchingTest
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
@@ -9,7 +11,6 @@ class BatchStoreyBH(AbstractBatchingTest):
     def __init__(self, alpha: float, lambda_: float):
         super().__init__(alpha)
         self.alpha0: float = alpha
-        self.num_test: int = 1
         self.lambda_: float = lambda_
 
         if not 0 < lambda_ < 1:
@@ -22,43 +23,31 @@ class BatchStoreyBH(AbstractBatchingTest):
         self.r_sums: list[int] = []
         self.alpha_s: list[float] = []
 
-    @property
-    def num_tests(self) -> int:
-        """Number of batches processed so far."""
-        return self.num_test - 1
-
-    @num_tests.setter
-    def num_tests(self, value: int) -> None:
-        self.num_test = value + 1
-
-    def test_batch(self, p_vals: list[float]) -> list[bool]:
+    def test_batch(self, p_vals: Sequence[float]) -> list[bool]:
         p_vals_local = list(p_vals)
         n_batch = len(p_vals_local)
         if n_batch == 0:
             return []
         validity.check_p_vals_batch(p_vals_local)
 
-        if self.num_test == 1:
-            self.alpha = self.alpha0 * self.seq.calc_gamma(j=1)
+        batch_number = self.num_batches + 1
+        if batch_number == 1:
+            alpha_batch = self.alpha0 * self.seq.calc_gamma(j=1)
         else:
             gamma_sum = self.alpha0 * sum(
-                self.seq.calc_gamma(i) for i in range(1, self.num_test + 1)
+                self.seq.calc_gamma(i) for i in range(1, batch_number + 1)
             )
             total_rejections = sum(self.r_sums)
             penalty = 0.0
-            for idx in range(self.num_test - 1):
+            for idx in range(batch_number - 1):
                 denom = self.r_s_plus[idx] + (total_rejections - self.r_sums[idx])
                 if denom > 0:
                     penalty += (
                         self.k_s[idx] * self.alpha_s[idx] * (self.r_s_plus[idx] / denom)
                     )
-            self.alpha = (gamma_sum - penalty) * (
+            alpha_batch = (gamma_sum - penalty) * (
                 (n_batch + total_rejections) / n_batch
             )
-
-        if self.alpha is None:
-            raise AssertionError("BatchStoreyBH alpha threshold was not initialized.")
-        alpha_batch = float(self.alpha)
 
         batch_decisions, pi0_batch = self._storey_batch_decisions(
             p_vals_local, alpha_batch
@@ -72,7 +61,16 @@ class BatchStoreyBH(AbstractBatchingTest):
         r_plus = self._calculate_r_plus(p_vals_local, alpha_batch)
         self.r_s_plus.append(r_plus)
 
-        self.num_test += 1
+        threshold = max(
+            (
+                p_val
+                for p_val, rejected in zip(p_vals_local, batch_decisions)
+                if rejected
+            ),
+            default=0.0,
+        )
+        self._set_test_level(alpha_batch, rejection_threshold=threshold)
+        self._advance_batch(n_batch)
         return batch_decisions
 
     def _calculate_r_plus(
@@ -82,11 +80,11 @@ class BatchStoreyBH(AbstractBatchingTest):
         if not p_vals:
             return 0
         if alpha_batch is None:
-            if self.alpha is None:
+            if self.last_test_level is None:
                 raise AssertionError(
                     "BatchStoreyBH alpha threshold was not initialized."
                 )
-            alpha_batch = float(self.alpha)
+            alpha_batch = float(self.last_test_level)
 
         r_plus = 0
         n = len(p_vals)

@@ -115,8 +115,10 @@ def test_lord_memory_decay_matches_paper_equation_no_lag() -> None:
         )
         decision = method.test_one(p_value)
 
-        assert method.alpha is not None
-        assert math.isclose(method.alpha, expected_alpha, rel_tol=0.0, abs_tol=1e-15)
+        assert method.last_rejection_threshold is not None
+        assert math.isclose(
+            method.last_rejection_threshold, expected_alpha, rel_tol=0.0, abs_tol=1e-15
+        )
 
         if decision:
             rejections.append(t)
@@ -142,17 +144,21 @@ def test_lord_memory_decay_matches_paper_equation_with_lag() -> None:
         )
         decision = method.test_one(p_value)
 
-        assert method.alpha is not None
-        assert math.isclose(method.alpha, expected_alpha, rel_tol=0.0, abs_tol=1e-15)
+        assert method.last_rejection_threshold is not None
+        assert math.isclose(
+            method.last_rejection_threshold, expected_alpha, rel_tol=0.0, abs_tol=1e-15
+        )
 
         if t in (3, 4):
             base_only = 0.05 * 0.2 * max(seq.calc_gamma(t), 1 - 0.99)
-            assert math.isclose(method.alpha, base_only, rel_tol=0.0, abs_tol=1e-15)
+            assert math.isclose(
+                method.last_rejection_threshold, base_only, rel_tol=0.0, abs_tol=1e-15
+            )
         if t == 5:
             base_only = 0.05 * 0.2 * max(seq.calc_gamma(t), 1 - 0.99)
             first_contribution = 0.05 * (0.99**1) * seq.calc_gamma(1)
             assert math.isclose(
-                method.alpha,
+                method.last_rejection_threshold,
                 base_only + first_contribution,
                 rel_tol=0.0,
                 abs_tol=1e-15,
@@ -170,8 +176,10 @@ def test_lord_memory_decay_boundary_policy_is_less_or_equal() -> None:
     first_threshold = 0.05 * 0.001 * max(method.seq.calc_gamma(1), 1 - 0.99)
     decision = method.test_one(first_threshold)
 
-    assert method.alpha is not None
-    assert math.isclose(method.alpha, first_threshold, rel_tol=0.0, abs_tol=1e-15)
+    assert method.last_rejection_threshold is not None
+    assert math.isclose(
+        method.last_rejection_threshold, first_threshold, rel_tol=0.0, abs_tol=1e-15
+    )
     assert decision is True
 
     # The author implementation uses strict inequality (`p < alpha_t`).
@@ -186,8 +194,8 @@ def test_lord_memory_decay_diverges_from_author_default_gamma_policy() -> None:
     local_thresholds: list[float] = []
     for p_value in p_values:
         local_decisions.append(local_method.test_one(p_value))
-        assert local_method.alpha is not None
-        local_thresholds.append(local_method.alpha)
+        assert local_method.last_rejection_threshold is not None
+        local_thresholds.append(local_method.last_rejection_threshold)
 
     author_decisions, author_thresholds = _author_decay_lord_stream(
         p_values=p_values,

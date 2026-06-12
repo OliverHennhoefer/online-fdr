@@ -89,7 +89,7 @@ def test_naive_rejects_on_boundary() -> None:
     method = NaiveTest(alpha=0.05)
 
     assert method.test_one(0.05) is True
-    assert method.num_tests == 1
+    assert method.num_hypotheses == 1
 
 
 def test_alpha_spending_finite_horizon_raises_cleanly() -> None:
@@ -127,16 +127,18 @@ def test_d_lord_first_reject_only_set_on_discovery() -> None:
     assert method.first_reject == 2
 
 
-def test_lord_discard_public_num_tests_counts_discarded_inputs() -> None:
+def test_lord_discard_counts_processed_and_selected_inputs() -> None:
     method = LordDiscard(alpha=0.05, wealth=0.025, tau=0.5)
 
     assert method.test_one(0.8) is False
-    assert method.num_tests == 1
-    assert method.num_test == 0
+    assert method.num_hypotheses == 1
+    assert method.num_hypotheses == 1
+    assert method.num_selected == 0
 
     method.test_one(0.4)
-    assert method.num_tests == 2
-    assert method.num_test == 1
+    assert method.num_hypotheses == 2
+    assert method.num_hypotheses == 2
+    assert method.num_selected == 1
 
 
 @pytest.mark.parametrize(
@@ -147,19 +149,22 @@ def test_lord_discard_public_num_tests_counts_discarded_inputs() -> None:
         BatchStoreyBH(alpha=0.05, lambda_=0.5),
     ],
 )
-def test_one_based_batch_methods_public_num_tests_counts_processed_batches(
+def test_batch_methods_count_hypotheses_and_batches_explicitly(
     method,
 ) -> None:
-    assert method.num_tests == 0
-    assert method.num_test == 1
+    assert method.num_hypotheses == 0
+    assert method.num_hypotheses == 0
+    assert method.num_batches == 0
 
     method.test_batch([0.5, 0.8])
-    assert method.num_tests == 1
-    assert method.num_test == 2
+    assert method.num_hypotheses == 2
+    assert method.num_hypotheses == 2
+    assert method.num_batches == 1
 
     assert method.test_batch([]) == []
-    assert method.num_tests == 1
-    assert method.num_test == 2
+    assert method.num_hypotheses == 2
+    assert method.num_hypotheses == 2
+    assert method.num_batches == 1
 
 
 def test_batch_storey_bh_r_plus_matches_direct_definition() -> None:
@@ -168,7 +173,7 @@ def test_batch_storey_bh_r_plus_matches_direct_definition() -> None:
 
     for _ in range(100):
         p_vals = [rng.random() for _ in range(rng.randint(2, 30))]
-        method.alpha = rng.uniform(1e-4, 0.2)
-        assert method._calculate_r_plus(p_vals) == _storey_bh_r_plus_direct(
-            p_vals, method.alpha, method.lambda_
-        )
+        alpha_batch = rng.uniform(1e-4, 0.2)
+        assert method._calculate_r_plus(
+            p_vals, alpha_batch
+        ) == _storey_bh_r_plus_direct(p_vals, alpha_batch, method.lambda_)

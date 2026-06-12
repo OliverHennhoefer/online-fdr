@@ -13,19 +13,19 @@ The batching framework, developed by Zrnic et al. (2020), addresses scenarios wh
 ## Available Methods
 
 ### Benjamini-Hochberg Batch Testing
-::: online_fdr.p_values.batching.bh.BatchBH
+::: online_fdr.p_values.BatchBH
 
 ### Storey-BH Batch Testing  
-::: online_fdr.p_values.batching.storey_bh.BatchStoreyBH
+::: online_fdr.p_values.BatchStoreyBH
 
 ### Benjamini-Yekutieli Batch Testing
-::: online_fdr.p_values.batching.by.BatchBY
+::: online_fdr.p_values.BatchBY
 
 ### PRDS Batch Testing
-::: online_fdr.p_values.batching.prds.BatchPRDS
+::: online_fdr.p_values.BatchPRDS
 
 ### TOAD Decision Deadlines
-::: online_fdr.p_values.batching.toad.Toad
+::: online_fdr.p_values.Toad
 
 ## Key Concepts
 
@@ -99,7 +99,7 @@ where n = batch size, T = number of batches.
 ### Practical Implementation
 
 ```python
-from online_fdr.p_values.batching import BatchBH
+from online_fdr.p_values import BatchBH
 
 # Initialize batch testing procedure
 batch_test = BatchBH(alpha=0.05)

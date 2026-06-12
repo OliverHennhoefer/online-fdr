@@ -1,6 +1,6 @@
 # Online Fallback Procedure
 
-::: online_fdr.p_values.spending.online_fallback.OnlineFallback
+::: online_fdr.p_values.OnlineFallback
 
 ## Overview
 
@@ -58,7 +58,7 @@ The `OnlineFallback` class uses:
 ### Basic FWER Control
 
 ```python
-from online_fdr.p_values.spending import OnlineFallback
+from online_fdr.p_values import OnlineFallback
 
 # Initialize online fallback procedure
 fallback = OnlineFallback(alpha=0.05)
@@ -70,10 +70,10 @@ decisions = []
 for i, p_val in enumerate(p_values, 1):
     decision = fallback.test_one(p_val)
     decisions.append(decision)
-    print(f"Test {i}: p={p_val:.3f}, alpha={fallback.alpha:.4f}, reject={decision}")
+    print(f"Test {i}: p={p_val:.3f}, alpha={fallback.last_rejection_threshold:.4f}, reject={decision}")
 
 print(f"Total discoveries: {sum(decisions)}")
-print(f"FWER controlled at level {fallback.alpha0}")
+print(f"FWER controlled at level {fallback.target_level}")
 ```
 
 ### Demonstrating Fallback Effect
@@ -84,12 +84,12 @@ fallback = OnlineFallback(alpha=0.05)
 
 print("Without discovery:")
 fallback.test_one(0.8)  # No rejection
-print(f"Next alpha: {fallback.alpha:.4f}")
+print(f"Next alpha: {fallback.last_rejection_threshold:.4f}")
 
 print("\\nWith discovery:")
 fallback_2 = OnlineFallback(alpha=0.05)
 fallback_2.test_one(0.01)  # Rejection
-print(f"Next alpha after discovery: {fallback_2.alpha:.4f}")
+print(f"Next alpha after discovery: {fallback_2.last_rejection_threshold:.4f}")
 ```
 
 ### Sequential Testing Scenario
@@ -107,7 +107,7 @@ print(f"Screening phase: {sum(decisions)} compounds selected")
 detailed_p = [0.03, 0.008, 0.15]  # Follow-up on promising leads
 for p in detailed_p:
     decision = fallback.test_one(p)
-    print(f"Detailed test: p={p}, alpha={fallback.alpha:.4f}, reject={decision}")
+    print(f"Detailed test: p={p}, alpha={fallback.last_rejection_threshold:.4f}, reject={decision}")
 ```
 
 ## Comparison with Other Methods

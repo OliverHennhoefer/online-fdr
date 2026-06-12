@@ -18,14 +18,14 @@ This page collects higher-complexity examples for production-like workflows.
 ## Asynchronous Tests
 
 ```python
-from online_fdr.p_values.async_methods import AddisAsync
+from online_fdr.p_values import AddisAsync
 
 method = AddisAsync(alpha=0.05, lambda_=0.25, tau=0.5)
 
 level_a = method.start_test("experiment-a")
 level_b = method.start_test("experiment-b")
 
-print(level_a.alpha, level_b.alpha)
+print(level_a.test_level, level_b.test_level)
 
 decision_b = method.finish_test("experiment-b", 0.0001)
 decision_a = method.finish_test("experiment-a", 0.2)
@@ -35,7 +35,7 @@ print(decision_a, decision_b)
 ## Weighted Side Information
 
 ```python
-from online_fdr.p_values.investing.alpha.weighted_gai_plus_plus import WeightedGaiPlusPlus
+from online_fdr.p_values import WeightedGaiPlusPlus
 
 method = WeightedGaiPlusPlus(alpha=0.05, decay=0.95)
 
@@ -51,13 +51,13 @@ for p_value, prior_weight, penalty_weight in events:
         prior_weight=prior_weight,
         penalty_weight=penalty_weight,
     )
-    print(rejected, method.alpha)
+    print(rejected, method.last_rejection_threshold)
 ```
 
 ## Decision Deadlines
 
 ```python
-from online_fdr.p_values.batching.toad import Toad
+from online_fdr.p_values import Toad
 
 method = Toad(alpha=0.05)
 
