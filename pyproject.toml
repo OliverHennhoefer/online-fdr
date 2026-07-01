@@ -48,7 +48,7 @@ dependencies = [
 
 [project.optional-dependencies]
 docs = [
-    "mkdocs-material>=9.0,<9.7",
+    "mkdocs-material>=9.0,<9.8",
     "mkdocstrings[python]>=0.20",
     "mkdocs-git-revision-date-localized-plugin>=1.2",
     "mkdocs-minify-plugin>=0.6",
@@ -66,7 +66,7 @@ parity = [
     "rpy2>=3.5",
 ]
 docs = [
-    "mkdocs-material>=9.0,<9.7",
+    "mkdocs-material>=9.0,<9.8",
     "mkdocstrings[python]>=0.20",
     "mkdocs-git-revision-date-localized-plugin>=1.2",
     "mkdocs-minify-plugin>=0.6",
