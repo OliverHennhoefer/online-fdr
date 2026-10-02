@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
-from online_fdr.p_values.async_methods.base import AbstractAsyncTest
+from online_fdr.p_values.async_methods._history import (
+    _AsyncHistoryIndex,
+    _FenwickCounter,
+)
+from online_fdr.p_values.async_methods.base import AbstractAsyncTest, _AsyncRecord
 
 
 class SaffronAsync(AbstractAsyncTest):
@@ -35,26 +39,52 @@ class SaffronAsync(AbstractAsyncTest):
             raise ValueError("SAFFRONstar gamma index became negative.")
         return float(self.seq.calc_gamma(idx + 1))
 
-    def _is_candidate_available(self, idx: int, stage: int) -> bool:
-        record = self._records[idx]
-        return (
-            self._is_available(record, stage)
-            and record.p_val is not None
-            and record.p_val <= self.lambda_
+    def _prepare_history_index(self) -> None:
+        signature = (self.lambda_,)
+        if (
+            self._history_index is not None
+            and self._history_index.signature == signature
+        ):
+            return
+
+        candidates: list[int] = []
+        finish_counts = [0] * len(self._records)
+        for record in self._records:
+            candidates.append(
+                int(
+                    record.finish_stage is not None
+                    and record.p_val is not None
+                    and record.p_val <= self.lambda_
+                )
+            )
+            if record.rejected and record.finish_stage is not None:
+                finish_counts[record.finish_stage - 1] += 1
+        positions = [
+            position
+            for position, count in enumerate(finish_counts)
+            for _ in range(count)
+        ]
+        self._history_index = _AsyncHistoryIndex(
+            signature, _FenwickCounter(candidates), positions
         )
 
-    def _candidate_count_between_available(
-        self, start_idx: int, end_idx: int, stage: int
-    ) -> int:
-        if end_idx < start_idx:
-            return 0
-        return sum(
-            self._is_candidate_available(idx, stage)
-            for idx in range(start_idx, end_idx + 1)
-            if idx < len(self._records)
-        )
+    def _on_test_started(self, record: _AsyncRecord) -> None:
+        assert self._history_index is not None
+        self._history_index.counts.append(0)
+
+    def _on_test_finished(self, record: _AsyncRecord) -> None:
+        assert self._history_index is not None
+        assert record.p_val is not None and record.finish_stage is not None
+        if record.p_val <= self.lambda_:
+            self._history_index.counts.add(record.start_stage - 1, 1)
+        if record.rejected:
+            # Discoveries sharing a completion stage have identical positions.
+            self._history_index.rejections.append(record.finish_stage - 1)
 
     def _calc_alpha_for_stage(self, stage: int) -> float:
+        self._prepare_history_index()
+        assert self._history_index is not None
+        counts = self._history_index.counts
         i = stage - 1
         if stage == 1:
             return min(
@@ -62,10 +92,8 @@ class SaffronAsync(AbstractAsyncTest):
                 (1 - self.lambda_) * self._gamma_at_zero_based(0) * self.wealth0,
             )
 
-        candsum = sum(
-            self._is_candidate_available(idx, stage) for idx in range(stage - 1)
-        )
-        rejection_positions = self._available_rejection_positions(stage)
+        candsum = counts.prefix(i)
+        rejection_positions = self._history_index.rejections
         num_rejections = len(rejection_positions)
 
         if num_rejections == 0:
@@ -76,15 +104,9 @@ class SaffronAsync(AbstractAsyncTest):
             )
             return min(self.lambda_, alpha_tilde)
 
-        c_plus: list[int] = []
-        for position in rejection_positions:
-            c_plus.append(
-                self._candidate_count_between_available(
-                    position + 1,
-                    max(i - 1, position + 1),
-                    stage,
-                )
-            )
+        c_plus = [
+            candsum - counts.prefix(position + 1) for position in rejection_positions
+        ]
 
         first_gamma = self._gamma_at_zero_based(
             i - rejection_positions[0] - c_plus[0] - 1

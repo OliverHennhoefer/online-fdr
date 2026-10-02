@@ -5,6 +5,7 @@ from typing import Any, Hashable
 
 from online_fdr.core.abstract.abstract_sequential_test import AbstractSequentialTest
 from online_fdr.core.utils import validity
+from online_fdr.p_values.async_methods._history import _AsyncHistoryIndex
 
 
 @dataclass(frozen=True)
@@ -70,11 +71,13 @@ class AbstractAsyncTest(AbstractSequentialTest):
         self._next_auto_id = 1
         self.alpha_history: list[float] = []
         self._decisions: list[bool | None] = []
+        self._history_index: _AsyncHistoryIndex | None = None
 
     def _snapshot_state(self) -> dict[str, Any]:
         state = dict(self.__dict__)
         state["_records"] = [dict(record.__dict__) for record in self._records]
         state.pop("_records_by_id", None)
+        state.pop("_history_index", None)
         return state
 
     @classmethod
@@ -82,6 +85,7 @@ class AbstractAsyncTest(AbstractSequentialTest):
         records = [_AsyncRecord(**record) for record in state.get("_records", [])]
         state["_records"] = records
         state["_records_by_id"] = {record.test_id: record for record in records}
+        state["_history_index"] = None
         return state
 
     @property
@@ -115,6 +119,7 @@ class AbstractAsyncTest(AbstractSequentialTest):
         if test_id in self._records_by_id:
             raise ValueError(f"test_id {test_id!r} has already been started.")
 
+        self._prepare_history_index()
         stage = len(self._records) + 1
         alpha_t = self._calc_alpha_for_stage(stage)
         record = _AsyncRecord(test_id=test_id, start_stage=stage, test_level=alpha_t)
@@ -124,6 +129,7 @@ class AbstractAsyncTest(AbstractSequentialTest):
         self._set_test_level(alpha_t)
         self.alpha_history.append(alpha_t)
         self._decisions.append(None)
+        self._on_test_started(record)
         return AsyncTestLevel(test_id=test_id, test_level=alpha_t)
 
     def finish_test(self, test_id: Hashable, p_val: float) -> bool:
@@ -134,10 +140,12 @@ class AbstractAsyncTest(AbstractSequentialTest):
         if record.finish_stage is not None:
             raise ValueError(f"test_id {test_id!r} has already been finished.")
 
+        self._prepare_history_index()
         record.p_val = float(p_val)
         record.finish_stage = len(self._records)
         record.rejected = p_val <= record.test_level
         self._decisions[record.start_stage - 1] = record.rejected
+        self._on_test_finished(record)
         return bool(record.rejected)
 
     def test_one(self, p_val: float) -> bool:
@@ -150,29 +158,14 @@ class AbstractAsyncTest(AbstractSequentialTest):
     def _is_active_at(self, record: _AsyncRecord, stage: int) -> bool:
         return record.finish_stage is None or record.finish_stage >= stage
 
-    def _available_rejection_positions(self, stage: int) -> list[int]:
-        """Return zero-based conflict-adjusted discovery positions for STAR rules."""
-        r_dec: list[int] = []
-        for observed_stage in range(2, stage + 1):
-            r_dec.append(
-                sum(
-                    bool(record.rejected)
-                    and record.finish_stage is not None
-                    and record.finish_stage <= observed_stage - 1
-                    for record in self._records[: observed_stage - 1]
-                )
-            )
+    def _prepare_history_index(self) -> None:
+        """Prepare derived accounting before a lifecycle operation."""
 
-        if not r_dec:
-            return []
+    def _on_test_started(self, record: _AsyncRecord) -> None:
+        """Update derived accounting after a successful start."""
 
-        positions: list[int] = []
-        for target in range(max(r_dec)):
-            for idx, value in enumerate(r_dec):
-                if value > target:
-                    positions.append(idx)
-                    break
-        return positions
+    def _on_test_finished(self, record: _AsyncRecord) -> None:
+        """Update derived accounting after a successful completion."""
 
     def _calc_alpha_for_stage(self, stage: int) -> float:
         raise NotImplementedError

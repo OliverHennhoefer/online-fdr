@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+- Replaced repeated history scans in asynchronous SAFFRON and ADDIS with
+  incremental prefix counts, preserving assigned levels, decisions, and
+  schema-1 snapshots. Records still require linear memory, and threshold
+  calculations still sum contributions from past discoveries.
+- Added exact async reference regressions, deterministic scalability checks,
+  and a standalone comparison benchmark in `benchmarks/async_scaling.py`.
 - Unified execution state and detailed decision records across p-value and
   e-value methods while retaining existing evidence keyword arguments.
 - Made detailed batch calls preserve the same input validation and state
