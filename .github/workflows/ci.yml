@@ -121,6 +121,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # The revision-date plugin needs the complete Git history.
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v7
