@@ -120,6 +120,11 @@ class _CustomBonferroni(Bonferroni):
         return alpha / 10
 
 
+class _TableGamma(DefaultLondGammaSequence, dict[str, float]):
+    def calc_gamma(self, j: int, **kwargs: object) -> float:
+        return 1.0
+
+
 def test_snapshot_rejects_gamma_subclass_instead_of_changing_next_decision() -> None:
     method = ELond(alpha=0.05, gamma_seq=_CustomLondGamma(c=0.07720838))
     assert method.test_one(25.0) is True
@@ -131,6 +136,16 @@ def test_snapshot_rejects_gamma_subclass_instead_of_changing_next_decision() -> 
 def test_snapshot_rejects_spending_subclass_with_field_path() -> None:
     method = AlphaSpending(alpha=0.05, spend_func=_CustomBonferroni(k=4))
     with pytest.raises(TypeError, match="'rule'.*helper subclass _CustomBonferroni"):
+        method.snapshot()
+
+
+def test_snapshot_rejects_helper_subclass_before_mapping_serialization() -> None:
+    helper = _TableGamma(c=0.07720838)
+    helper["row"] = 0.5
+    method = ELond(alpha=0.05, gamma_seq=helper)
+    assert method.test_one(25.0) is True
+
+    with pytest.raises(TypeError, match="'seq'.*helper subclass _TableGamma"):
         method.snapshot()
 
 

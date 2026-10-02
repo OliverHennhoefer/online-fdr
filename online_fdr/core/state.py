@@ -71,6 +71,9 @@ def _deserialize_state(state: dict[str, Any]) -> dict[str, Any]:
 
 
 def _serialize_value(value: Any, path: str) -> Any:
+    helper = _serialize_helper(value, path)
+    if helper is not None:
+        return helper
     if isinstance(value, np.bool_):
         value = bool(value)
     elif isinstance(value, np.integer):
@@ -119,9 +122,6 @@ def _serialize_value(value: Any, path: str) -> Any:
                 for key, item in value.items()
             ],
         }
-    helper = _serialize_helper(value, path)
-    if helper is not None:
-        return helper
     raise TypeError(
         f"snapshot field {path!r} contains unsupported object "
         f"of type {type(value).__name__}"
