@@ -3,7 +3,10 @@ from __future__ import annotations
 import json
 import math
 from collections.abc import Mapping
+from functools import cache
 from typing import Any
+
+import numpy as np
 
 from online_fdr.core.utils.sequence import (
     BatchBHAdaptiveGammaSequence,
@@ -68,9 +71,12 @@ def _deserialize_state(state: dict[str, Any]) -> dict[str, Any]:
 
 
 def _serialize_value(value: Any, path: str) -> Any:
-    helper = _serialize_helper(value)
-    if helper is not None:
-        return helper
+    if isinstance(value, np.bool_):
+        value = bool(value)
+    elif isinstance(value, np.integer):
+        value = int(value)
+    elif isinstance(value, np.floating):
+        value = float(value)
     if value is None or isinstance(value, bool | int | str):
         return value
     if isinstance(value, float):
@@ -113,6 +119,9 @@ def _serialize_value(value: Any, path: str) -> Any:
                 for key, item in value.items()
             ],
         }
+    helper = _serialize_helper(value, path)
+    if helper is not None:
+        return helper
     raise TypeError(
         f"snapshot field {path!r} contains unsupported object "
         f"of type {type(value).__name__}"
@@ -150,44 +159,44 @@ def _deserialize_value(value: Any) -> Any:
     return value
 
 
-def _serialize_helper(value: Any) -> dict[str, Any] | None:
-    if isinstance(value, DefaultLondGammaSequence):
-        return _helper_payload("DefaultLondGammaSequence", {"c": value.c})
-    if isinstance(value, DefaultLordGammaSequence):
-        return _helper_payload("DefaultLordGammaSequence", {"c": value.c})
-    if isinstance(value, DefaultSaffronGammaSequence):
-        return _helper_payload(
+@cache
+def _helper_codecs() -> dict[type[Any], tuple[str, tuple[str, ...]]]:
+    # Spending methods import this module through their base class, so load their
+    # helper types only when a snapshot actually contains a helper.
+    from online_fdr.p_values.spending.functions.bonferroni import Bonferroni
+    from online_fdr.p_values.spending.functions.lord_three import LordThree
+
+    return {
+        DefaultLondGammaSequence: ("DefaultLondGammaSequence", ("c",)),
+        DefaultLordGammaSequence: ("DefaultLordGammaSequence", ("c",)),
+        DefaultSaffronGammaSequence: (
             "DefaultSaffronGammaSequence",
-            {"gamma_exp": value.gamma_exp, "c": value.c},
-        )
-    if isinstance(value, DependentLordGammaSequence):
-        return _helper_payload(
-            "DependentLordGammaSequence", {"c": value.c, "b0": value.b0}
-        )
-    if isinstance(value, BatchGammaSequenceSmall):
-        return _helper_payload(
-            "BatchGammaSequenceSmall", {"gamma_exp": value.gamma_exp}
-        )
-    if isinstance(value, BatchGammaSequenceLarge):
-        return _helper_payload("BatchGammaSequenceLarge", {})
-    if isinstance(value, BatchBHPolynomialGammaSequence):
-        return _helper_payload("BatchBHPolynomialGammaSequence", {})
-    if isinstance(value, BatchBHHalfGammaSequence):
-        return _helper_payload("BatchBHHalfGammaSequence", {})
-    if isinstance(value, BatchBHAdaptiveGammaSequence):
-        return _helper_payload("BatchBHAdaptiveGammaSequence", {})
+            ("gamma_exp", "c"),
+        ),
+        DependentLordGammaSequence: ("DependentLordGammaSequence", ("c", "b0")),
+        BatchGammaSequenceSmall: ("BatchGammaSequenceSmall", ("gamma_exp",)),
+        BatchGammaSequenceLarge: ("BatchGammaSequenceLarge", ()),
+        BatchBHPolynomialGammaSequence: ("BatchBHPolynomialGammaSequence", ()),
+        BatchBHHalfGammaSequence: ("BatchBHHalfGammaSequence", ()),
+        BatchBHAdaptiveGammaSequence: ("BatchBHAdaptiveGammaSequence", ()),
+        Bonferroni: ("Bonferroni", ("k",)),
+        LordThree: ("LordThreeSpend", ("k",)),
+    }
 
-    try:
-        from online_fdr.p_values.spending.functions.bonferroni import Bonferroni
-        from online_fdr.p_values.spending.functions.lord_three import LordThree
-    except ImportError:
+
+def _serialize_helper(value: Any, path: str) -> dict[str, Any] | None:
+    codecs = _helper_codecs()
+    codec = codecs.get(type(value))
+    if codec is None:
+        if isinstance(value, tuple(codecs)):
+            raise TypeError(
+                f"snapshot field {path!r} contains unsupported helper subclass "
+                f"{type(value).__name__}; only registered exact helper types "
+                "can be restored without changing behavior"
+            )
         return None
-
-    if isinstance(value, Bonferroni):
-        return _helper_payload("Bonferroni", {"k": value.k})
-    if isinstance(value, LordThree):
-        return _helper_payload("LordThreeSpend", {"k": value.k})
-    return None
+    kind, fields = codec
+    return _helper_payload(kind, {field: getattr(value, field) for field in fields})
 
 
 def _helper_payload(kind: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -204,26 +213,7 @@ def _deserialize_helper(value: dict[str, Any]) -> Any:
     if not isinstance(params, dict):
         raise ValueError("helper params must be a dictionary")
 
-    helper_classes: dict[str, type[Any]] = {
-        "DefaultLondGammaSequence": DefaultLondGammaSequence,
-        "DefaultLordGammaSequence": DefaultLordGammaSequence,
-        "DefaultSaffronGammaSequence": DefaultSaffronGammaSequence,
-        "DependentLordGammaSequence": DependentLordGammaSequence,
-        "BatchGammaSequenceSmall": BatchGammaSequenceSmall,
-        "BatchGammaSequenceLarge": BatchGammaSequenceLarge,
-        "BatchBHPolynomialGammaSequence": BatchBHPolynomialGammaSequence,
-        "BatchBHHalfGammaSequence": BatchBHHalfGammaSequence,
-        "BatchBHAdaptiveGammaSequence": BatchBHAdaptiveGammaSequence,
-    }
-    if kind == "Bonferroni":
-        from online_fdr.p_values.spending.functions.bonferroni import Bonferroni
-
-        return Bonferroni(**params)
-    if kind == "LordThreeSpend":
-        from online_fdr.p_values.spending.functions.lord_three import LordThree
-
-        return LordThree(**params)
-    helper_class = helper_classes.get(kind)
-    if helper_class is None:
-        raise ValueError(f"unsupported helper kind: {kind!r}")
-    return helper_class(**params)
+    for helper_class, (known_kind, _) in _helper_codecs().items():
+        if kind == known_kind:
+            return helper_class(**params)
+    raise ValueError(f"unsupported helper kind: {kind!r}")
