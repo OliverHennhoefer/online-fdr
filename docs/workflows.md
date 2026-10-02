@@ -52,11 +52,45 @@ Run parity tests directly:
 uv run python -m pytest -m live_r_parity tests/test_onlinefdr_parity.py tests/test_async_methods.py -q
 ```
 
+The pinned `onlineFDR==2.18.0` implementation [stores async ADDIS discovery
+positions as booleans](https://github.com/bioconductor-source/onlineFDR/blob/RELEASE_3_22/src/addis.cpp#L154),
+collapsing start indices above 1. The repeated 20-block case directly checks
+decision equality, the matching threshold prefix, and the known stage-9
+difference. An independent frozen-reference regression requires exact
+preservation of prior Python behavior. Supported 20-block live R comparisons
+keep pending tests selected and discoveries at positions 0 and/or 1, covering
+both single and multiple discoveries. The scalability optimization preserves
+the prior Python accounting.
+
 If parity setup is not available yet, run the standard suite:
 
 ```bash
 uv run python -m pytest -q
 ```
+
+## Async Scalability Benchmark
+
+Compare asynchronous SAFFRON and ADDIS with the frozen scan-based reference:
+
+```bash
+uv run python benchmarks/async_scaling.py
+```
+
+The benchmark reports median times over five fresh instances for no-discovery,
+candidate-heavy, mixed, and discovery-heavy streams. Reference runs stop at 800
+tests; optimized no-discovery runs extend through 10,000 tests. The default run
+takes several minutes because the reference implementation repeatedly scans
+history. For a shorter check of the original SAFFRON bottleneck:
+
+```bash
+uv run python benchmarks/async_scaling.py --methods saffron --scenarios no-discovery --sizes 800
+```
+
+Timing results are descriptive. CI uses deterministic record-inspection tests
+to detect repeated history scans without imposing machine-specific time limits.
+The optimized methods retain all records and still sum past discovery
+contributions when assigning a new level, so memory grows with the number of
+tests and discovery-heavy streams require more work.
 
 ## Packaging Smoke
 

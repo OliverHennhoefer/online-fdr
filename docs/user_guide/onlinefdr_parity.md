@@ -33,7 +33,7 @@ The parity harness uses deterministic long p-value sequences and checks:
 | `Addis` | `Parity` | Enforces `0 < tau < 1` and `0 <= lambda_ < tau`. |
 | `Saffron` | `Parity` | Candidate-based online FDR as in `onlineFDR`. |
 | `SaffronAsync` | `Extension` | True lifecycle API with dedicated live R parity against `SAFFRONstar(version="async")`. |
-| `AddisAsync` | `Extension` | True lifecycle API with dedicated live R parity against `ADDIS(async=TRUE)`. |
+| `AddisAsync` | `Extension` | True lifecycle API with restricted live R parity against `ADDIS(async=TRUE)`; see the async limitations below. |
 | `LordThree` | `Parity` | Sequential LORD-3 semantics. |
 | `LordPlusPlus` | `Parity` | LORD++ semantics under strict guaranteed payout mode (`reward == alpha`). |
 | `LordDiscard` | `Parity` | First-rejection state keyed to first discovery time. |
@@ -52,6 +52,21 @@ The parity harness uses deterministic long p-value sequences and checks:
 | `BatchBHOfficial` | `Extension` | Matches the AISTATS supplementary BatchBH code profile, including the normalized `j^-2` small-batch gamma sequence. |
 | Stateful `test_one` / `test_batch` API | `IntentionalDivergence` | True-online interface by design. |
 | Date-level internal randomization | `IntentionalDivergence` | Not done internally; caller controls ordering. |
+
+## Asynchronous ADDIS Limitations
+
+Live ADDIS comparisons keep unfinished tests selected in the R input, matching
+the lifecycle API's conservative treatment before their p-values are known.
+
+The pinned R implementation also stores integer discovery positions in a
+`std::vector<bool>`, collapsing every positive position to `1`. This can change
+thresholds for discoveries beyond zero-based position `1`; see the
+[pinned ADDIS source](https://github.com/bioconductor-source/onlineFDR/blob/RELEASE_3_22/src/addis.cpp#L154-L163).
+Python retains the original integer positions. The expanded suite directly
+checks decisions, the unaffected threshold prefix, and the known difference
+at stage 9, while separately requiring exact equality with the frozen
+pre-optimization Python implementation.
+This scalability pass preserves that existing difference.
 
 ## References
 
