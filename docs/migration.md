@@ -47,3 +47,19 @@ New code should use:
 
 Use `test_one_detail(...)` and `test_batch_detail(...)` when downstream audit
 logs need thresholds, indices, or metadata in addition to boolean decisions.
+
+Detailed calls execute the same validation and state updates as boolean calls.
+Requesting a record does not make numeric strings valid input. E-value methods
+continue to accept `e_value=` and `e_values=` keyword arguments.
+
+## Persisting Method State
+
+Use `snapshot()` to obtain an opaque JSON-compatible payload, then restore it
+with the same method's `from_snapshot(...)` class method. Snapshot state is
+detached from the running method and supports NumPy scalar values produced by
+array-based streams. Existing schema-1 e-LOND snapshots remain restorable.
+
+The built-in gamma sequences and spending functions have explicit snapshot
+codecs. Custom helpers, including subclasses of those built-ins, raise
+`TypeError` when taking a snapshot; they are never silently restored as a
+different helper implementation.

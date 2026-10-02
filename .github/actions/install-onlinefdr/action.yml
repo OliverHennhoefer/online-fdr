@@ -1,0 +1,13 @@
+name: Install pinned onlineFDR
+description: Install Bioconductor 3.22 and onlineFDR 2.18.0 using explicit repositories.
+
+runs:
+  using: composite
+  steps:
+    - name: Install onlineFDR (pinned)
+      shell: bash
+      run: |
+        Rscript -e "options(timeout=600, repos=c(CRAN='https://cloud.r-project.org')); if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager')"
+        Rscript -e "options(timeout=600, repos=BiocManager::repositories(version='3.22')); BiocManager::install(version='3.22', ask=FALSE, update=FALSE)"
+        Rscript -e "options(timeout=600, repos=BiocManager::repositories(version='3.22')); BiocManager::install('onlineFDR', version='3.22', ask=FALSE, update=FALSE, Ncpus=2)"
+        Rscript -e "stopifnot(as.character(utils::packageVersion('onlineFDR')) == '2.18.0')"
