@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+- Unified execution state and detailed decision records across p-value and
+  e-value methods while retaining existing evidence keyword arguments.
+- Made detailed batch calls preserve the same input validation and state
+  updates as boolean batch calls.
+- Fixed JSON snapshots for NumPy scalar state and rejected unsupported helper
+  subclasses instead of silently restoring a different algorithm.
+- Preserved restoration of existing schema-1 e-LOND snapshots.
+- Aligned public protocols with read-only method state and added consumer
+  type-check regressions.
+- Shared the stabilized live R parity setup between CI and release, including
+  the pinned Bioconductor installation used by container parity checks.
+
 ## [1.0.0] - 2026-06-08
 
 - Promoted package metadata to the stable `1.0.0` release line.
