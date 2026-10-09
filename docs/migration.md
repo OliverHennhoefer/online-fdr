@@ -1,4 +1,14 @@
-# Migration To Package Surfaces
+# Migration to 1.0.0
+
+This guide covers migration from the last published PyPI version, 0.0.3, to
+the first stable release, 1.0.0.
+
+## Python Requirement
+
+Version 1.0.0 requires Python 3.10 or higher. Version 0.0.3 supported Python
+3.8 and higher; upgrade the interpreter before installing 1.0.0.
+
+## Package Surfaces
 
 `online-fdr` exposes p-value and e-value methods through separate package
 surfaces:
@@ -33,6 +43,14 @@ For e-value methods:
 ```python
 from online_fdr.e_values import EBH, ELond
 ```
+
+## Validation Changes
+
+Constructors reject invalid parameter tuples that older versions accepted.
+`LordPlusPlus` requires `reward == alpha`, and SAFFRON gamma sequences require
+finite `c` and `gamma_exp > 1`. Batch p-values receive shared strict validation.
+An empty batch is a no-op, and exceeding a finite spending horizon raises a
+user-facing `ValueError`.
 
 ## State Names
 
