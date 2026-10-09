@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import math
 from functools import cache
+from typing import Any
 
 from online_fdr.core.abstract.abstract_sequential_test import AbstractSequentialTest
+from online_fdr.core.results import TestDecision
 from online_fdr.core.utils import validity
 
 
@@ -44,14 +46,18 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
         validity.check_initial_wealth(self.wealth0, alpha)
         if not 0 < decay <= 1:
             raise ValueError("decay must be in (0, 1].")
-        if gamma_horizon < 1:
-            raise ValueError("gamma_horizon must be positive.")
+        if (
+            isinstance(gamma_horizon, bool)
+            or not isinstance(gamma_horizon, int)
+            or gamma_horizon < 1
+        ):
+            raise ValueError("gamma_horizon must be a positive integer.")
 
         self.decay = decay
         self.gamma_horizon = gamma_horizon
         self.wealth = self.wealth0
         self.wealth_history = [self.wealth]
-        self.base_alpha: float | None = self._gamma(1) * self.wealth0
+        self.base_alpha: float = self._gamma(1) * self.wealth0
         self.reject_idx: list[int] = []
         self.decisions: list[bool] = []
         self.base_alpha_history: list[float] = []
@@ -60,9 +66,14 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
         self.penalty_weights: list[float] = []
         self.phi_history: list[float] = []
         self.psi_history: list[float] = []
-        self._next_base_alpha = self.base_alpha
         self._psi_rejections: list[float] = []
         self._first_rejection_seen = False
+
+    @classmethod
+    def _restore_snapshot_state(cls, state: dict[str, Any]) -> dict[str, Any]:
+        # Older schema-1 snapshots prefetched a redundant next test level.
+        state.pop("_next_base_alpha", None)
+        return state
 
     def _gamma(self, j: int) -> float:
         return _finite_lord_gamma(j, self.gamma_horizon)
@@ -71,14 +82,19 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
         self, p_val: float, prior_weight: float = 1.0, penalty_weight: float = 1.0
     ) -> bool:
         validity.check_p_val(p_val)
-        if prior_weight <= 0:
-            raise ValueError("prior_weight must be positive.")
-        if penalty_weight <= 0:
-            raise ValueError("penalty_weight must be positive.")
+        for name, weight in (
+            ("prior_weight", prior_weight),
+            ("penalty_weight", penalty_weight),
+        ):
+            if (
+                not isinstance(weight, int | float)
+                or not math.isfinite(weight)
+                or weight <= 0
+            ):
+                raise ValueError(f"{name} must be finite and positive.")
 
-        self._advance_hypotheses()
-        idx = self.num_hypotheses
-        base_alpha = float(self._next_base_alpha)
+        idx = self.num_hypotheses + 1
+        base_alpha = self._calc_base_alpha(idx)
         first_flag = 0 if self._first_rejection_seen else 1
         b_t = self.alpha0 - first_flag * self.wealth0 / penalty_weight
         phi = min(
@@ -105,6 +121,7 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
             )
 
         rejected = p_val < threshold
+        self._advance_hypotheses()
         if rejected:
             self._first_rejection_seen = True
             self.reject_idx.append(idx)
@@ -116,8 +133,6 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
             - phi
             + int(rejected) * psi
         )
-        self._next_base_alpha = self._calc_next_base_alpha(idx)
-
         self.base_alpha = base_alpha
         self._set_test_level(base_alpha, rejection_threshold=threshold)
         self.decisions.append(rejected)
@@ -130,10 +145,16 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
         self.wealth_history.append(self.wealth)
         return bool(rejected)
 
-    def _calc_next_base_alpha(self, idx: int) -> float:
-        alpha_t = self._gamma(idx + 1) * self.wealth0
+    def test_one_detail(
+        self, p_val: float, prior_weight: float = 1.0, penalty_weight: float = 1.0
+    ) -> TestDecision:
+        """Test with explicit weights and return an immutable decision record."""
+        return self._decision(p_val, self.test_one(p_val, prior_weight, penalty_weight))
+
+    def _calc_base_alpha(self, idx: int) -> float:
+        alpha_t = self._gamma(idx) * self.wealth0
         for reject_idx, psi in zip(self.reject_idx, self._psi_rejections):
-            zero_distance = idx - reject_idx
+            zero_distance = idx - reject_idx - 1
             alpha_t += (
                 psi * (self.decay**zero_distance) * self._gamma(zero_distance + 1)
             )

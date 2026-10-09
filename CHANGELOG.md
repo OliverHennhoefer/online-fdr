@@ -37,6 +37,10 @@ repository milestones are consolidated into the first stable release below.
   different algorithm.
 - Keep runtime dependencies limited to NumPy and SciPy; documentation and
   live R parity tooling have separate dependency groups.
+- Likelihood-ratio mixture priors are fixed and returned as detached weight
+  lists. Undefined zero-times-infinity products raise `ValueError` regardless
+  of input order, and undefined cumulative likelihood ratios leave capital
+  unchanged.
 
 ### Fixed
 
@@ -48,6 +52,18 @@ repository milestones are consolidated into the first stable release below.
 - BatchStoreyBH computes `R+` with same-size replacement semantics.
 - JSON snapshots preserve NumPy scalar state and helper identity; existing
   schema-1 e-LOND snapshots remain restorable.
+- Invalid synchronous calls to asynchronous methods no longer allocate tests;
+  failed starts preserve automatic IDs, which skip explicit IDs already in use.
+- Weighted GAI++ validates finite positive weights before state changes, permits
+  every test through its configured horizon, and raises before changing state
+  when the horizon is exhausted. Earlier schema-1 snapshots remain restorable.
+- Likelihood-ratio mixtures commit component capitals together after successful
+  evaluation. E-value means and mixtures share overflow-safe log-weight
+  normalization; zero-weight infinite evidence is ignored, while positive
+  weights remain active even when ordinary-scale normalization would underflow.
+- Typed snapshot restoration preserves concrete method types, and weighted
+  detailed calls expose explicit weight arguments instead of arbitrary `Any`
+  arguments.
 
 ### Performance
 

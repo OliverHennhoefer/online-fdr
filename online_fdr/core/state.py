@@ -4,7 +4,7 @@ import json
 import math
 from collections.abc import Mapping
 from functools import cache
-from typing import Any
+from typing import Any, TypeVar
 
 import numpy as np
 
@@ -22,6 +22,7 @@ from online_fdr.core.utils.sequence import (
 
 _TYPE_KEY = "__online_fdr_type__"
 _HELPER_KEY = "helper"
+_Method = TypeVar("_Method", bound="StatefulMethodMixin")
 
 
 class StatefulMethodMixin:
@@ -40,7 +41,7 @@ class StatefulMethodMixin:
         return payload
 
     @classmethod
-    def from_snapshot(cls, snapshot: dict[str, Any]):
+    def from_snapshot(cls: type[_Method], snapshot: dict[str, Any]) -> _Method:
         """Restore an instance from :meth:`snapshot` output."""
         if snapshot.get("schema_version") != cls._snapshot_schema_version:
             raise ValueError("unsupported snapshot schema_version")

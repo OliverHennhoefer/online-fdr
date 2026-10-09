@@ -52,6 +52,19 @@ finite `c` and `gamma_exp > 1`. Batch p-values receive shared strict validation.
 An empty batch is a no-op, and exceeding a finite spending horizon raises a
 user-facing `ValueError`.
 
+Weighted GAI++ requires finite positive `prior_weight` and `penalty_weight`
+values and a positive integer `gamma_horizon`. It processes exactly that many
+tests; the next call raises before changing wealth, counters, or history.
+Invalid p-values passed to an asynchronous method's synchronous `test_one`
+convenience call leave the testing state unchanged.
+
+Likelihood-ratio mixtures own a fixed prior. The `weights` property returns a
+copy; construct a new process to choose a different prior. Products containing
+both zero and infinity raise `ValueError` instead of depending on input order.
+Likelihood-ratio updates also reject undefined cumulative log capital without
+committing a partial component update. This protects the process's internal
+capital; caller-supplied functions remain responsible for their own side effects.
+
 ## State Names
 
 New code should use:
@@ -75,7 +88,8 @@ continue to accept `e_value=` and `e_values=` keyword arguments.
 Use `snapshot()` to obtain an opaque JSON-compatible payload, then restore it
 with the same method's `from_snapshot(...)` class method. Snapshot state is
 detached from the running method and supports NumPy scalar values produced by
-array-based streams. Existing schema-1 e-LOND snapshots remain restorable.
+array-based streams. Existing schema-1 e-LOND and weighted GAI++ snapshots remain
+restorable, including snapshots containing a prefetched next test level.
 
 The built-in gamma sequences and spending functions have explicit snapshot
 codecs. Custom helpers, including subclasses of those built-ins, raise

@@ -141,6 +141,11 @@ are fixed independently of the null evidence. Product helpers are intended for
 independent or conditionally valid sequential e-values; that assumption is
 supplied by the user.
 
+Zero-weight components do not contribute, including infinite e-values. Weight
+normalization uses log space to avoid overflowing the sum of finite weights or
+silently discarding tiny positive components. A product containing both zero
+and infinity is undefined and raises `ValueError` in either input order.
+
 ## E-Processes
 
 An e-process is an anytime-valid process whose value at a valid stopping time is
@@ -156,6 +161,12 @@ process.update(1.1)
 
 stopped_e_value = value_at_stop(process)
 ```
+
+Likelihood-ratio mixtures keep their constructor prior fixed; `weights` returns
+a detached list. Component updates commit together after all functions succeed.
+A rejected NaN or undefined cumulative log ratio leaves internal capital
+unchanged. Side effects inside supplied functions cannot be rolled back by the
+process.
 
 For stopped local e-processes used in multiple testing, the global filtration
 condition matters. The stopped e-BH literature shows that local stopping-time
