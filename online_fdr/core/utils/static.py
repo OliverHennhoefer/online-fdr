@@ -21,6 +21,16 @@ def bh(p_vals: list[float], alpha: float) -> tuple[int, float]:
     return k, (alpha * k / n if k else 0.0)
 
 
+def _bh_r_plus(p_vals: list[float], alpha: float) -> int:
+    """Maximum BH rejections after replacing one p-value with zero."""
+    if not p_vals:
+        return 0
+    # Replacing the largest value minimizes every order statistic among all
+    # one-zero replacements, maximizing the monotone BH rejection count.
+    augmented = [0.0, *sorted(p_vals)[:-1]]
+    return bh(augmented, alpha)[0]
+
+
 def storey_bh(p_vals: list[float], alpha: float, lambda_: float) -> tuple[int, float]:
     """Storey-BH step-up procedure with pi0 estimation."""
     if not p_vals:

@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from collections.abc import Hashable, Sequence
 from dataclasses import dataclass
-from numbers import Integral, Real
+from numbers import Integral
 from typing import Any
 
 from online_fdr.core.state import StatefulMethodMixin
@@ -55,13 +55,9 @@ def _check_stage(value: int, minimum: int, name: str) -> None:
 
 
 def _check_weight(weight: float) -> float:
-    if isinstance(weight, bool) or not isinstance(weight, Real):
-        raise ValueError("weight must be finite and in (0, 1].")
-    try:
-        normalized = float(weight)
-    except OverflowError as exc:
-        raise ValueError("weight must be finite and in (0, 1].") from exc
-    if not math.isfinite(normalized) or not 0 < normalized <= 1:
+    validity.check_finite_number(weight, "weight")
+    normalized = float(weight)
+    if not 0 < normalized <= 1:
         raise ValueError("weight must be finite and in (0, 1].")
     return normalized
 

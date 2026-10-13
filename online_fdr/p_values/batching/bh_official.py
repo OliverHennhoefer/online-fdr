@@ -16,7 +16,7 @@ from online_fdr.core.utils.sequence import (
     BatchBHHalfGammaSequence,
     BatchBHPolynomialGammaSequence,
 )
-from online_fdr.core.utils.static import bh
+from online_fdr.core.utils.static import _bh_r_plus, bh
 
 
 def _estimate_fdp(
@@ -205,6 +205,7 @@ class BatchBHOfficial(AbstractBatchingTest):
 
         # Run BH procedure on current batch
         num_rejections, threshold = bh(p_vals, alpha_t)
+        r_plus = _bh_r_plus(p_vals, alpha_t)
 
         self._gamma_profile = profile
         # Update cumulative tracking (matches official implementation)
@@ -217,15 +218,6 @@ class BatchBHOfficial(AbstractBatchingTest):
             self.r_s_cumulative[i] += num_rejections
         self.r_total_sum += num_rejections  # Update total
         self.alpha_s.append(alpha_t)  # Store alpha used
-
-        # Calculate R^+ (maximum rejections with one p-value set to 0)
-        r_plus = num_rejections
-        for i in range(len(p_vals)):
-            original_p = p_vals[i]
-            p_vals[i] = 0
-            temp_rejections, _ = bh(p_vals, alpha_t)
-            r_plus = max(r_plus, temp_rejections)
-            p_vals[i] = original_p
 
         self.r_s_plus.append(r_plus)
 

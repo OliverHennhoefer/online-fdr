@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
 import pytest
 
 from online_fdr.core.utils import DefaultSaffronGammaSequence, MemoryDecayFDR
@@ -14,7 +15,8 @@ from online_fdr.p_values.spending.functions.lord_three import (
 
 @pytest.mark.parametrize("factory", [Bonferroni, LordThreeSpendFunc])
 @pytest.mark.parametrize(
-    "horizon", [True, False, 0, -1, 0.5, 1.5, math.inf, math.nan, "2", None]
+    "horizon",
+    [True, False, np.bool_(True), 0, -1, 0.5, 1.5, math.inf, math.nan, "2", None],
 )
 def test_spending_horizon_requires_a_positive_integer(factory, horizon):
     with pytest.raises(ValueError, match="k must be a positive integer"):
@@ -36,6 +38,53 @@ def test_spending_stays_within_budget_and_stops_without_changing_state(
     with pytest.raises(ValueError, match="horizon"):
         method.test_one(0.0)
     assert method.snapshot() == before
+
+
+@pytest.mark.parametrize("factory", [Bonferroni, LordThreeSpendFunc])
+@pytest.mark.parametrize("integer_type", [np.int32, np.int64, np.uint64])
+def test_spending_numpy_integer_horizons_match_builtin_counts(factory, integer_type):
+    spending = factory(k=integer_type(3))
+    method = AlphaSpending(alpha=0.05, spend_func=spending)
+    control = AlphaSpending(alpha=0.05, spend_func=factory(k=3))
+
+    assert type(spending.k) is int
+    for p_val in (0.0, 0.9, 0.01):
+        assert method.test_one_detail(p_val) == control.test_one_detail(p_val)
+    assert method.snapshot() == control.snapshot()
+
+
+@pytest.mark.parametrize("real_type", [np.float32, np.float64])
+def test_numpy_real_configuration_matches_builtin_scalars(real_type):
+    delta, offset = real_type(0.9), real_type(0.2)
+    tracker = MemoryDecayFDR(delta=delta, offset=offset)
+    control = MemoryDecayFDR(delta=float(delta), offset=float(offset))
+    assert type(tracker.delta) is float
+    assert type(tracker.offset) is float
+    for rejected, alternative in ((True, False), (False, False), (True, True)):
+        assert tracker.score_one(rejected, alternative) == control.score_one(
+            rejected, alternative
+        )
+
+    exponent, constant = real_type(1.6), real_type(0.4)
+    sequence = DefaultSaffronGammaSequence(gamma_exp=exponent, c=constant)
+    reference = DefaultSaffronGammaSequence(
+        gamma_exp=float(exponent), c=float(constant)
+    )
+    assert [sequence.calc_gamma(j) for j in range(1, 5)] == [
+        reference.calc_gamma(j) for j in range(1, 5)
+    ]
+
+
+@pytest.mark.parametrize("factory", [LordThree, LordDependent])
+@pytest.mark.parametrize("real_type", [np.float32, np.float64])
+def test_lord_numpy_rewards_match_builtin_configuration(factory, real_type):
+    reward = real_type(0.025)
+    method = factory(alpha=0.05, wealth=0.02, reward=reward)
+    control = factory(alpha=0.05, wealth=0.02, reward=float(reward))
+    assert type(method.reward) is float
+    for p_val in (0.0, 0.1, 0.001, 0.9):
+        assert method.test_one_detail(p_val) == control.test_one_detail(p_val)
+    assert method.snapshot() == control.snapshot()
 
 
 @pytest.mark.parametrize("constant", [math.nan, math.inf, -math.inf, -0.4, "0.4", True])

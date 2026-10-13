@@ -1,16 +1,17 @@
 import math
 from collections.abc import Callable, Sequence
+from numbers import Integral, Real
 
 
 def check_positive_integer(value: int, name: str) -> None:
-    """Validate a count or horizon without silently accepting booleans."""
-    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+    """Validate a positive integer scalar, including NumPy integers."""
+    if isinstance(value, bool) or not isinstance(value, Integral) or value <= 0:
         raise ValueError(f"{name} must be a positive integer.")
 
 
 def check_finite_number(value: float, name: str) -> None:
-    """Validate a real scalar configuration value."""
-    if isinstance(value, bool) or not isinstance(value, int | float):
+    """Validate a finite real scalar, including NumPy scalars, excluding bools."""
+    if isinstance(value, bool) or not isinstance(value, Real):
         raise ValueError(f"{name} must be a finite number.")
     try:
         finite = math.isfinite(value)
@@ -273,5 +274,5 @@ def check_reward_budget(wealth: float, reward: float, alpha: float) -> None:
     check_finite_number(reward, "reward")
     if reward <= 0:
         raise ValueError("reward must be positive.")
-    if wealth + reward > alpha:
+    if float(wealth) + float(reward) > float(alpha):
         raise ValueError("wealth + reward must not exceed alpha.")

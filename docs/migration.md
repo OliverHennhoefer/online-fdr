@@ -71,6 +71,9 @@ convenience call leave the testing state unchanged.
 Finite spending horizons and Gaussian e-value generator dimensions/batch sizes
 must be positive integers; booleans and fractional values are rejected.
 An invalid requested batch size leaves the generator's cursor unchanged.
+NumPy integer scalars are accepted for these counts and horizons and stored as
+Python integers. Finite configuration checks also accept NumPy real scalars;
+accepted configuration values are normalized to Python numbers.
 
 TOAD arrivals advance from the current stage, including after `advance_to`;
 finalized decisions remain final. Its identity-shape guarantee requires

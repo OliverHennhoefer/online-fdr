@@ -14,6 +14,7 @@ class LordThree(AbstractSpendFunc):
 
     def __init__(self, k: int):
         check_positive_integer(k, "k")
+        k = int(k)
         super().__init__(k)
         self.threshold = [
             0.07720838 * log(max(i, 2)) / (i * exp(sqrt(log(i))))

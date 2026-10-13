@@ -6,6 +6,18 @@ repository milestones are consolidated into the first stable release below.
 
 ## [Unreleased]
 
+### Fixed
+
+- Accept NumPy integer horizons and generator sizes, and NumPy real scalar
+  configuration values, while continuing to reject booleans. Normalize these
+  inputs to Python numbers before storing execution state.
+
+### Performance
+
+- BatchBH and BatchBHOfficial compute `R+` with one largest-value replacement
+  instead of rerunning BH for every hypothesis. Decisions and snapshots are
+  preserved, while per-batch sorting work drops from quadratic to `O(n log n)`.
+
 ## [1.0.0] - 2026-10-09
 
 ### Added

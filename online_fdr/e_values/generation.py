@@ -75,12 +75,12 @@ class GaussianEValueGenerator:
             raise ValueError("pi0 must be in [0, 1].")
         if std <= 0:
             raise ValueError("std must be positive.")
-        self.n = n
+        self.n = int(n)
         self.pi0 = float(pi0)
         self.alt_mean = float(alt_mean)
         self.null_mean = float(null_mean)
         self.std = float(std)
-        self.batch_size = batch_size
+        self.batch_size = None if batch_size is None else int(batch_size)
         self.rng = np.random.RandomState(seed)
         self.current_idx = 0
 
@@ -115,6 +115,7 @@ class GaussianEValueGenerator:
         if size is None:
             size = self.batch_size if self.batch_size is not None else self.n
         check_positive_integer(size, "size")
+        size = int(size)
         if self.current_idx >= self.n:
             raise StopIteration("All samples have been generated.")
         end_idx = min(self.current_idx + size, self.n)
