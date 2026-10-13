@@ -50,7 +50,16 @@ def p_to_e_power(p_value: float, exponent: float) -> float:
         raise ValueError("exponent must be in (0, 1).")
     if p_value == 0:
         return math.inf
-    return float(exponent * math.pow(float(p_value), exponent - 1.0))
+    try:
+        return float(exponent * math.pow(float(p_value), exponent - 1.0))
+    except OverflowError:
+        # The power may overflow even when multiplication by k brings the
+        # complete calibrated value back into the representable range.
+        log_value = math.log(exponent) + (exponent - 1.0) * math.log(float(p_value))
+        try:
+            return float(math.exp(log_value))
+        except OverflowError:
+            return math.inf
 
 
 def _prepare_weights(

@@ -82,11 +82,12 @@ def test_weighted_gai_requires_a_positive_integer_horizon(horizon):
         WeightedGaiPlusPlus(gamma_horizon=horizon)
 
 
-def test_pre_refactor_schema_one_snapshot_preserves_weighted_continuation():
+def test_pre_refactor_schema_one_snapshot_preserves_history_and_corrected_continuation():
     snapshot = json.loads(
         (Path(__file__).parent / "fixtures/weighted_gai_schema1.json").read_text()
     )
     restored = WeightedGaiPlusPlus.from_snapshot(snapshot)
+    original_state = snapshot["state"]
     control = WeightedGaiPlusPlus(
         alpha=0.05, wealth=0.025, decay=0.92, gamma_horizon=100
     )
@@ -104,4 +105,22 @@ def test_pre_refactor_schema_one_snapshot_preserves_weighted_continuation():
         assert restored.test_one_detail(
             value, prior, penalty
         ) == control.test_one_detail(value, prior, penalty)
-        assert restored.snapshot() == control.snapshot()
+        # Earlier snapshots retain the historical levels/weights actually used;
+        # future calls follow the corrected reward-feasible cap.
+        for name in (
+            "alpha_history",
+            "prior_weights_used",
+            "penalty_weights",
+            "phi_history",
+            "psi_history",
+            "base_alpha_history",
+            "decisions",
+            "wealth_history",
+        ):
+            original = original_state[name]
+            actual = getattr(restored, name)
+            assert actual[: len(original)] == original
+            assert actual[len(original) :] == pytest.approx(
+                getattr(control, name)[len(original) :]
+            )
+        assert restored.wealth == pytest.approx(control.wealth)

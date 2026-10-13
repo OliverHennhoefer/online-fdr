@@ -209,6 +209,12 @@ print(f"Final Power: {tracker.power_history[-1]:.3f}")
 
 For non-stationary sequences, use memory-decay FDR:
 
+The tracker maintains discounted false-discovery and discovery counts with
+constant work per scalar update. Set `cumulative = True` to request a detached
+list of all scores so far. Its finite `delta` in `[0, 1]` and nonnegative
+`offset` are fixed at construction; observation lists are detached copies.
+Construct another tracker to evaluate the stream with a different decay.
+
 ```python
 from online_fdr.core.utils import MemoryDecayFDR
 

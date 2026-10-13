@@ -1,6 +1,7 @@
 import math
 
 from online_fdr.core.abstract.abstract_gamma_seq import AbstractGammaSequence
+from online_fdr.core.utils.validity import check_finite_number
 
 
 class DefaultLondGammaSequence(AbstractGammaSequence):
@@ -122,16 +123,14 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
     """Default gamma sequence for SAFFRON (Spectral Approach for FDR with Online N-tests).
 
     SAFFRON uses a power-law gamma sequence that provides excellent performance
-    for adaptive online FDR control. The sequence can operate in two modes:
-    with or without a normalization constant c.
+    for adaptive online FDR control, with an explicit normalization constant c.
 
-    The sequence is defined as:
-    - With c: γⱼ = c / j^(gamma_exp)
-    - Without c: γⱼ = j^(gamma_exp)
+    The sequence is defined as γⱼ = c / j^(gamma_exp). Callers must select c so
+    the nonnegative sequence sums to at most one.
 
     Args:
         gamma_exp: Exponent controlling the decay rate. Recommended: 1.6.
-        c: Normalization constant. If None, uses pure power law.
+        c: Finite, nonnegative normalization constant.
 
     Examples:
         >>> # Standard SAFFRON sequence with recommended parameters
@@ -151,13 +150,17 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
 
         Args:
             gamma_exp: Decay exponent. Recommended value: 1.6.
-            c: Normalization constant. Recommended value: 0.4374901658.
-               If None, uses pure power law without normalization.
+            c: Finite, nonnegative normalization constant. Recommended value:
+               0.4374901658. Callers must ensure the sequence sums to at most one.
         """
         if c is None:
             raise ValueError(
                 "DefaultSaffronGammaSequence requires a finite normalization constant c."
             )
+        check_finite_number(c, "c")
+        if c < 0:
+            raise ValueError("c must be nonnegative.")
+        check_finite_number(gamma_exp, "gamma_exp")
         if gamma_exp <= 1:
             raise ValueError("gamma_exp must be > 1 for a summable gamma sequence.")
         super().__init__(gamma_exp=gamma_exp, c=c)
@@ -172,7 +175,14 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
         Returns:
             Gamma value for position j.
         """
-        return float(self.c / math.pow(float(j), self.gamma_exp))
+        try:
+            return float(self.c / math.pow(float(j), self.gamma_exp))
+        except OverflowError:
+            # A finite exponent can overflow the denominator even when the
+            # complete gamma value is representable (or rounds to zero).
+            if self.c == 0:
+                return 0.0
+            return math.exp(math.log(self.c) - self.gamma_exp * math.log(float(j)))
 
 
 class DependentLordGammaSequence(AbstractGammaSequence):

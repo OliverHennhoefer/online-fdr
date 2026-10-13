@@ -122,12 +122,16 @@ def test_batch_bh_official_long_sequence_regression() -> None:
     assert round(sum(method.alpha_s), 12) == 4.599351707459
 
 
-def test_batch_bh_official_matches_author_supplement_reference() -> None:
+@pytest.mark.parametrize("batch_size", [4, 101])
+def test_batch_bh_official_matches_author_supplement_reference(
+    batch_size: int,
+) -> None:
+    # The authors' experiments hold size (and hence gamma policy) fixed per run.
     batches = [
-        [0.001, 0.02, 0.11, 0.7],
-        [0.0005, 0.018, 0.3],
-        [0.0001 if i in {0, 50} else 0.2 + i / 500 for i in range(101)],
-        [0.002, 0.5, 0.9],
+        [0.001, 0.02, 0.11, 0.7] + [0.9] * (batch_size - 4),
+        [0.0005, 0.018, 0.3, 0.9] + [0.9] * (batch_size - 4),
+        [0.0001, 0.2, 0.4, 0.9] + [0.9] * (batch_size - 4),
+        [0.002, 0.5, 0.9, 0.9] + [0.9] * (batch_size - 4),
     ]
     method = BatchBHOfficial(alpha=0.05)
 

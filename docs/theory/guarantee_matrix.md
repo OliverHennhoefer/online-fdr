@@ -19,22 +19,22 @@ This page summarizes the guarantee status of each method in this package.
 | `Lond` | FDR | Independence / PRDS / dep-corrected mode | Proven + Parity | Use `dependent=True` for arbitrary dependence correction. |
 | `LordThree` | FDR | Independence, valid reward budget | Proven + Parity | Requires `reward > 0` and `wealth + reward <= alpha`. |
 | `LordPlusPlus` | FDR | Independence, guaranteed payout regime | Proven + Parity | This implementation enforces `reward == alpha`. |
-| `LordDependent` | FDR | Arbitrary dependence (dependent LORD assumptions) | Proven + Parity | Uses dependent-LORD sequence scaling compatible with `onlineFDR` semantics. |
-| `LordDiscard` | FDR | Conservative/null-adaptive regime with valid `tau` | Parity | Requires `0 < tau < 1`. |
+| `LordDependent` | FDR | Arbitrary dependence, `wealth <= reward`, and `wealth + reward <= alpha` | Proven + Parity | The default dependent-LORD sequence is scaled by `alpha / reward`; its wealth constraint is enforced. |
+| `LordDiscard` | FDR | Conservative/null-adaptive regime with valid `tau` and `wealth <= tau * alpha` | Parity | Requires `0 < tau < 1` and the scaled initial-wealth budget. |
 | `Saffron` | FDR | Independence | Proven + Parity | Candidate-threshold method; parity-tested against `onlineFDR`. |
 | `SaffronAsync` | mFDR | Independent p-values, asynchronous conflict-set assumptions | Proven + Extension | Lifecycle API; parity-tested against `onlineFDR` async reference paths. |
 | `Addis` | FDR/mFDR regime | Conservative nulls, `0 < tau < 1`, `0 <= lambda < tau` | Proven + Parity | Parameter checks enforce supported region. |
 | `AddisAsync` | mFDR | Conservative nulls plus asynchronous conflict-set assumptions | Proven + Extension | Lifecycle API with active unfinished tests counted in conflict accounting. |
 | `Gai` | FDR/mFDR | Alpha-investing assumptions | Parity | Strict guarantees depend on payout specification. |
-| `WeightedGaiPlusPlus` | FDR | Prior and penalty weights fixed independently of null p-values; valid memory decay | Proven + Extension | Implements weighted/memory GAI++ with author-code oracle tests. |
+| `WeightedGaiPlusPlus` | Penalty-weighted FDR; penalty-weighted memory FDR when `decay < 1` | Independent valid p-values, predictable monotone weights, feasible nonnegative rewards | Proven + Extension | Ordinary FDR requires unit penalty weights and `decay=1`. The corrected prior cap is tested against the paper's reward constraints. |
 | `AlphaSpending` | FWER | Valid finite-horizon spending rule | Proven + Parity | Finite horizon is enforced for finite-`k` rules. |
 | `OnlineFallback` | FWER | Online fallback assumptions | Proven + Parity | Boundary uses `p <= alpha_t`. |
 | `BatchBH` | FDR | Batching assumptions from reference | Parity | Empty batch is a no-op. |
 | `BatchStoreyBH` | FDR | Batching + Storey pi0 assumptions | Parity | `R+` uses same-size replacement semantics. |
 | `BatchPRDS` | FDR | PRDS within-batch assumptions | Parity | Empty batch is a no-op. |
 | `BatchBY` | FDR-style batch control | BY within-batch correction; no direct `onlineFDR` reference | Extension | Added conservative extension beyond the `onlineFDR` overlap set. |
-| `Toad` | FDR | Decision deadlines and valid summable weights | Proven + Extension | Finite helper reduces to BH for a single uniform-deadline group. |
-| `BatchBHOfficial` | FDR | AISTATS supplementary implementation assumptions | Extension | Alternate BatchBH profile using the authors' adaptive gamma policy. |
+| `Toad` | FDR | Decision deadlines, summable allocations chosen before observing the corresponding p-value, and conditional positive dependence | Proven + Extension | Uses the identity shape; independent p-values with fixed weights are a supported special case. Arbitrary dependence requires reshaping, which is not implemented. |
+| `BatchBHOfficial` | FDR | Independent null p-values, monotone batch procedure, one gamma profile per stream | Extension | Uses the authors' experimental update. Its fixed gamma budget does not certify monotonicity for adversarial inputs. |
 | `LORDMemoryDecay` | N/A (utility/monitoring use) | Application-specific | Experimental / Extension | Not claimed as a general FDR/FWER-control method in this package docs. |
 | E-value calibrators | E-value construction | Valid input p-values and calibrator assumptions | Tooling | Construction-level guarantee only; FDR control comes from feeding valid e-values to a valid procedure. |
 | E-value merging helpers | E-value construction | Fixed weights for arithmetic means; independence/conditional validity for products | Tooling | The package documents assumptions but cannot infer whether user-supplied evidence satisfies them. |
@@ -46,6 +46,20 @@ This page summarizes the guarantee status of each method in this package.
 - Parity means semantic alignment for overlapping functionality, not identity of every API surface.
 - Live R parity tests (`rpy2`) are required for parity-covered behavior and require R plus `onlineFDR` (`2.18.0`).
 - E-value toolbox helpers are construction utilities. They do not make an invalid input stream valid by themselves.
+
+Weighted GAI++ uses the penalty-weighted ratio
+`sum(penalty_weight * false_rejection) / max(sum(penalty_weight * rejection), 1)`.
+With memory decay, each term also receives the factor `decay ** age`.
+Controlling the expectation of these ratios does not generally control ordinary
+FDR. Its `error_rate` is therefore `"weighted FDR"` or `"weighted mem-FDR"`,
+including when an individual call happens to use unit weights.
+
+The TOAD identity-shape guarantee uses Fisher's conditional positive-dependence
+assumption (Theorem 1, part 1). A sufficiently simple supported setup uses
+independent p-values and prespecified weights. Adaptive weights also need the
+paper's predictability and monotonicity conditions; choosing weights after
+seeing their own p-values invalidates the guarantee. Summable weights alone
+do not establish FDR control for arbitrarily dependent p-values.
 
 ## References
 

@@ -49,6 +49,11 @@ repository milestones are consolidated into the first stable release below.
 - ADDIS validates `0 < tau < 1` and `0 <= lambda_ < tau`.
 - Correct dependent LORD sequence scaling and its first-rejection state
   transition to the supported `onlineFDR` reference regime.
+- Enforce `wealth <= reward` for dependent LORD and `wealth <= tau * alpha`
+  for discarding LORD. Reject nonfinite LORD rewards, nonfinite SAFFRON gamma
+  parameters, and noninteger finite spending horizons.
+- Evaluate SAFFRON gamma values in log space when a finite exponent overflows
+  the power denominator, preserving finite results and valid zero limits.
 - BatchStoreyBH computes `R+` with same-size replacement semantics.
 - JSON snapshots preserve NumPy scalar state and helper identity; existing
   schema-1 e-LOND snapshots remain restorable.
@@ -57,6 +62,20 @@ repository milestones are consolidated into the first stable release below.
 - Weighted GAI++ validates finite positive weights before state changes, permits
   every test through its configured horizon, and raises before changing state
   when the horizon is exhausted. Earlier schema-1 snapshots remain restorable.
+- Correct weighted GAI++'s prior cap to satisfy both nonnegative reward bounds;
+  infeasible penalty weights fail before a state transition. Public metadata
+  and documentation describe penalty-weighted FDR and decaying-memory FDR.
+- TOAD arrivals preserve a monotone stage clock and finalized decisions after
+  explicit advancement. Document conditional positive dependence for its
+  implemented identity shape.
+- Keep BatchBHOfficial's gamma profile fixed across changing batch sizes,
+  preventing retrospective allocations. Clamp floating-point cancellation at
+  an exhausted budget to zero instead of emitting negative test levels.
+- Gaussian e-value generators reject invalid dimensions and batch sizes before
+  changing their cursor. Power calibration handles an overflowing intermediate
+  even when the complete e-value remains finite.
+- Execute representative SAFFRON documentation examples during tests and fix
+  the parameter-selection example's invalid initial wealth.
 - Likelihood-ratio mixtures commit component capitals together after successful
   evaluation. E-value means and mixtures share overflow-safe log-weight
   normalization; zero-weight infinite evidence is ignored, while positive
@@ -71,6 +90,9 @@ repository milestones are consolidated into the first stable release below.
   repeated history scans, preserving assigned levels, decisions, and schema-1
   snapshots. Records still require linear memory, and threshold calculations
   still sum contributions from past discoveries.
+- Memory-decay FDR evaluation maintains discounted counts incrementally instead
+  of recomputing full convolutions. Scalar updates take constant time; tracker
+  configuration is fixed and observation histories are returned as detached lists.
 
 ### Migration
 

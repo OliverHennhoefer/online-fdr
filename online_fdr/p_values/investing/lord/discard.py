@@ -7,6 +7,9 @@ class LordDiscard(AbstractSequentialTest):
     """Implements LORD++ with discarding as
     described in [1]_.
 
+    Initial wealth must satisfy ``0 < wealth <= tau * alpha`` so that the
+    budget for selected hypotheses and the first discovery reward are valid.
+
     References
     ----------
     [1] Tian, J., and A. Ramdas.
@@ -22,6 +25,8 @@ class LordDiscard(AbstractSequentialTest):
         self.tau: float = tau
         validity.check_initial_wealth(wealth, alpha)
         validity.check_tau(tau)
+        if wealth > tau * alpha:
+            raise ValueError("LordDiscard requires wealth <= tau * alpha.")
 
         self.seq = DefaultLordGammaSequence(c=0.07720838)
 

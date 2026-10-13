@@ -29,9 +29,17 @@ def _finite_lord_gamma(j: int, horizon: int) -> float:
 class WeightedGaiPlusPlus(AbstractSequentialTest):
     """Prior/penalty-weighted GAI++ with optional memory decay.
 
-    This follows the authors' ``GAI2_MW_proc_batch`` implementation from
-    Ramdas, Yang, Wainwright, and Jordan's online FDR memory-and-weights paper.
+    Controls penalty-weighted FDR under independent p-values and predictable,
+    monotone weights. With ``decay < 1``, the target is penalty-weighted
+    decaying-memory FDR. Ordinary FDR is the special case of unit penalty
+    weights and no decay. Choose weights before observing the current p-value.
+
+    This follows Ramdas, Yang, Wainwright, and Jordan's memory-and-weights
+    GAI++ reward constraints. It corrects the prior-weight cap in the authors'
+    ``GAI2_MW_proc_batch`` example so that nonnegative rewards are feasible.
     """
+
+    error_rate = "weighted FDR"
 
     def __init__(
         self,
@@ -44,16 +52,13 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
         self.alpha0 = alpha
         self.wealth0 = alpha / 2 if wealth is None else wealth
         validity.check_initial_wealth(self.wealth0, alpha)
+        validity.check_finite_number(decay, "decay")
         if not 0 < decay <= 1:
             raise ValueError("decay must be in (0, 1].")
-        if (
-            isinstance(gamma_horizon, bool)
-            or not isinstance(gamma_horizon, int)
-            or gamma_horizon < 1
-        ):
-            raise ValueError("gamma_horizon must be a positive integer.")
+        validity.check_positive_integer(gamma_horizon, "gamma_horizon")
 
         self.decay = decay
+        self.error_rate = "weighted mem-FDR" if decay < 1 else "weighted FDR"
         self.gamma_horizon = gamma_horizon
         self.wealth = self.wealth0
         self.wealth_history = [self.wealth]
@@ -73,6 +78,9 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
     def _restore_snapshot_state(cls, state: dict[str, Any]) -> dict[str, Any]:
         # Older schema-1 snapshots prefetched a redundant next test level.
         state.pop("_next_base_alpha", None)
+        state["error_rate"] = (
+            "weighted mem-FDR" if state["decay"] < 1 else "weighted FDR"
+        )
         return state
 
     def _gamma(self, j: int) -> float:
@@ -86,24 +94,21 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
             ("prior_weight", prior_weight),
             ("penalty_weight", penalty_weight),
         ):
-            if (
-                not isinstance(weight, int | float)
-                or not math.isfinite(weight)
-                or weight <= 0
-            ):
+            validity.check_finite_number(weight, name)
+            if weight <= 0:
                 raise ValueError(f"{name} must be finite and positive.")
 
         idx = self.num_hypotheses + 1
         base_alpha = self._calc_base_alpha(idx)
         first_flag = 0 if self._first_rejection_seen else 1
         b_t = self.alpha0 - first_flag * self.wealth0 / penalty_weight
+        if not math.isfinite(b_t):
+            raise ValueError("penalty_weight produces a nonfinite reward budget.")
         phi = min(
             base_alpha,
             self.decay * self.wealth + (1 - self.decay) * first_flag * self.wealth0,
         )
-        max_weight = (
-            phi * penalty_weight / ((1 - b_t) * base_alpha) if base_alpha > 0 else 0.0
-        )
+        max_weight = (phi / base_alpha) / (1 - b_t) if base_alpha > 0 else 0.0
         if max_weight <= 0:
             used_prior_weight = 0.0
             threshold = 0.0
@@ -112,27 +117,37 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
             used_prior_weight = min(prior_weight, max_weight)
             ratio = penalty_weight / used_prior_weight
             threshold = base_alpha / ratio
-            psi = max(
-                min(
-                    phi + penalty_weight * b_t,
-                    (phi / base_alpha) * ratio - penalty_weight + penalty_weight * b_t,
-                ),
-                0.0,
+            # Both upper bounds must admit a nonnegative reward (paper Eq. 10a).
+            reward_bound = min(
+                phi + penalty_weight * b_t,
+                (phi / base_alpha) * ratio - penalty_weight + penalty_weight * b_t,
             )
+            tolerance = 8 * math.ulp(
+                max(abs(phi), abs(penalty_weight * b_t), penalty_weight)
+            )
+            if not math.isfinite(reward_bound) or reward_bound < -tolerance:
+                raise ValueError(
+                    "penalty_weight is incompatible with the remaining wealth: "
+                    "no nonnegative reward satisfies the GAI++ bounds."
+                )
+            psi = max(reward_bound, 0.0)
 
         rejected = p_val < threshold
+        next_wealth = (
+            self.decay * self.wealth
+            + (1 - self.decay) * first_flag * self.wealth0
+            - phi
+            + int(rejected) * psi
+        )
+        if not math.isfinite(next_wealth) or next_wealth < 0:
+            raise ValueError("weights produce nonfinite or negative wealth.")
         self._advance_hypotheses()
         if rejected:
             self._first_rejection_seen = True
             self.reject_idx.append(idx)
             self._psi_rejections.append(psi)
 
-        self.wealth = (
-            self.decay * self.wealth
-            + (1 - self.decay) * first_flag * self.wealth0
-            - phi
-            + int(rejected) * psi
-        )
+        self.wealth = next_wealth
         self.base_alpha = base_alpha
         self._set_test_level(base_alpha, rejection_threshold=threshold)
         self.decisions.append(rejected)
