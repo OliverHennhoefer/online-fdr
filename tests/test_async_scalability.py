@@ -233,22 +233,18 @@ def test_parameter_changes_after_restore_rebuild_before_finish_and_next_start(
 
 
 @pytest.mark.parametrize(("method_type", "reference_type"), METHOD_PAIRS)
-def test_invalid_calls_preserve_existing_auto_id_and_test_one_continuation(
+def test_invalid_lifecycle_calls_preserve_state_and_valid_continuation(
     method_type, reference_type
 ) -> None:
     method, reference = method_type(), reference_type()
-    _start_pair(method, reference, 1)
+    _start_pair(method, reference, "active")
     _start_pair(method, reference, "done")
     _finish_pair(method, reference, "done", 0.0)
     actions = [
-        lambda subject: subject.finish_test(1, math.nan),
+        lambda subject: subject.finish_test("active", math.nan),
         lambda subject: subject.finish_test("unknown", 0.1),
         lambda subject: subject.finish_test("done", 0.1),
-        lambda subject: subject.start_test(1),
-        # Existing behavior consumes auto-ID 1 before discovering its collision.
-        lambda subject: subject.start_test(),
-        # Existing test_one starts a test before its p-value validation fails.
-        lambda subject: subject.test_one(math.nan),
+        lambda subject: subject.start_test("active"),
     ]
     for index, action in enumerate(actions):
         before = method.snapshot()
@@ -258,16 +254,14 @@ def test_invalid_calls_preserve_existing_auto_id_and_test_one_continuation(
             action(reference)
         assert str(actual.value) == str(expected.value)
         _assert_equivalent(method, reference)
-        if index < 4:
-            assert method.snapshot() == before
+        assert method.snapshot() == before
         # Excluded caches could be corrupted without changing persistent snapshots.
         _start_pair(method, reference, ("after-invalid", index))
         _finish_pair(method, reference, ("after-invalid", index), 0.8)
-    assert set(method.active) == {1, 2}
-    _finish_pair(method, reference, 2, 0.8)
-    assert _start_pair(method, reference).test_id == 3
-    _finish_pair(method, reference, 1, 0.0)
-    _finish_pair(method, reference, 3, 0.1)
+    assert set(method.active) == {"active"}
+    assert _start_pair(method, reference).test_id == 1
+    _finish_pair(method, reference, "active", 0.0)
+    _finish_pair(method, reference, 1, 0.1)
     assert method.test_one(0.0) is reference.test_one(0.0)
     _assert_equivalent(method, reference)
 

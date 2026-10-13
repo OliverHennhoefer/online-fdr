@@ -2,6 +2,24 @@ import math
 from collections.abc import Callable, Sequence
 
 
+def check_positive_integer(value: int, name: str) -> None:
+    """Validate a count or horizon without silently accepting booleans."""
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer.")
+
+
+def check_finite_number(value: float, name: str) -> None:
+    """Validate a real scalar configuration value."""
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        raise ValueError(f"{name} must be a finite number.")
+    try:
+        finite = math.isfinite(value)
+    except OverflowError:
+        finite = False
+    if not finite:
+        raise ValueError(f"{name} must be a finite number.")
+
+
 def check_p_val(p_val: float) -> None:
     """Validate that a p-value is in the valid range [0, 1].
 
@@ -252,6 +270,7 @@ def check_tau(tau: float) -> None:
 
 def check_reward_budget(wealth: float, reward: float, alpha: float) -> None:
     """Validate LORD reward assumptions used in guarantee regimes."""
+    check_finite_number(reward, "reward")
     if reward <= 0:
         raise ValueError("reward must be positive.")
     if wealth + reward > alpha:

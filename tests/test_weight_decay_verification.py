@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import math
 
+import pytest
+
 from online_fdr.core.utils.evaluation import MemoryDecayFDR
 from online_fdr.core.utils.sequence import DefaultLordGammaSequence
 from online_fdr.p_values.investing.lord.mem_decay import LORDMemoryDecay
@@ -259,7 +261,7 @@ def test_memory_decay_fdr_matches_author_score_non_cumulative() -> None:
         observed.append(observed_value)
         expected.append(expected_value)
 
-    assert observed == expected
+    assert observed == pytest.approx(expected, rel=1e-12, abs=1e-15)
     # At t=1 denominator floor uses max(r_t, 1), so value is exactly 0.
     assert observed[0] == 0.0
 
@@ -282,4 +284,4 @@ def test_memory_decay_fdr_matches_author_score_cumulative() -> None:
         )
         assert isinstance(observed, list)
         assert isinstance(expected, list)
-        assert observed == expected
+        assert observed == pytest.approx(expected, rel=1e-12, abs=1e-15)

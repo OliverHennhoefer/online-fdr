@@ -1,3 +1,6 @@
+from online_fdr.core.utils.validity import check_finite_number
+
+
 def calculate_sfdr(tp: int, fp: int, eta: float = 0.0001) -> float:
     """Calculate smoothed FDR."""
     return fp / (fp + tp + eta)
@@ -9,43 +12,68 @@ def calculate_power(tp: int, fn: int) -> float:
 
 
 class MemoryDecayFDR:
-    def __init__(self, delta: float = 0.99, offset: float = 0):
-        self.delta: float = delta
-        self.offset: float = offset
+    """Track empirical memory-decay FDR with fixed configuration.
 
-        self.labels: list[bool] = []
-        self.ground_truth: list[bool] = []
+    ``delta`` is in [0, 1], and ``offset`` is nonnegative. Both are read-only;
+    construct a new tracker to evaluate a different configuration. ``labels``
+    and ``ground_truth`` return detached copies of the recorded boolean history.
+
+    Set ``cumulative`` to return all scores instead of the latest score. This
+    option can change between calls without losing earlier scores. Returned
+    lists are detached from the tracker. A scalar update costs O(1); cumulative
+    output costs O(n) to copy the requested history.
+    """
+
+    def __init__(self, delta: float = 0.99, offset: float = 0):
+        check_finite_number(delta, "delta")
+        check_finite_number(offset, "offset")
+        if not 0 <= delta <= 1:
+            raise ValueError("delta must be in [0, 1].")
+        if offset < 0:
+            raise ValueError("offset must be nonnegative.")
+
+        self._delta = float(delta)
+        self._offset = float(offset)
+        self._labels: list[bool] = []
+        self._ground_truth: list[bool] = []
+        self._scores: list[float] = []
+        self._decayed_false_positives = 0.0
+        self._decayed_rejections = 0.0
         self.cumulative: bool = False
 
+    @property
+    def delta(self) -> float:
+        """Fixed forgetting factor; zero keeps only the current event."""
+        return self._delta
+
+    @property
+    def offset(self) -> float:
+        """Fixed nonnegative denominator offset."""
+        return self._offset
+
+    @property
+    def labels(self) -> list[bool]:
+        """Detached history of rejection decisions."""
+        return list(self._labels)
+
+    @property
+    def ground_truth(self) -> list[bool]:
+        """Detached history; true marks an alternative hypothesis."""
+        return list(self._ground_truth)
+
     def score_one(self, label: bool, ground_truth: bool) -> float | list[float]:
-        self.labels.append(label)
-        self.ground_truth.append(ground_truth)
+        """Record one decision and return its score or all scores so far."""
+        rejected, alternative = bool(label), bool(ground_truth)
+        false_positives = self._delta * self._decayed_false_positives + int(
+            rejected and not alternative
+        )
+        rejections = self._delta * self._decayed_rejections + int(rejected)
+        score = false_positives / (max(rejections, 1.0) + self._offset)
 
-        fp = [lb and not gt for lb, gt in zip(self.labels, self.ground_truth)]
-        deltas = [self.delta ** float(i) for i in range(len(self.labels))]
+        self._decayed_false_positives = false_positives
+        self._decayed_rejections = rejections
+        self._labels.append(rejected)
+        self._ground_truth.append(alternative)
+        self._scores.append(score)
 
-        v_t = [
-            sum(
-                fp[i] * deltas[j - i]
-                for i in range(max(0, j - len(deltas) + 1), min(j + 1, len(fp)))
-            )
-            for j in range(len(fp) + len(deltas) - 1)
-        ][: len(self.labels)]
-
-        r_t = [
-            sum(
-                self.labels[i] * deltas[j - i]
-                for i in range(
-                    max(0, j - len(deltas) + 1), min(j + 1, len(self.labels))
-                )
-            )
-            for j in range(len(self.labels) + len(deltas) - 1)
-        ][: len(self.labels)]
-
-        if not self.cumulative:
-            v_scalar = float(v_t[-1])
-            r_scalar = float(max(r_t[-1], 1))
-            return float(v_scalar / (r_scalar + self.offset))
-
-        r_t = [max(r, 1) for r in r_t]
-        return [float(v / (r + self.offset)) for v, r in zip(v_t, r_t)]
+        return list(self._scores) if self.cumulative else score

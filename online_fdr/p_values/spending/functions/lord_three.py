@@ -1,6 +1,7 @@
 from math import exp, log, sqrt
 
 from online_fdr.core.abstract.abstract_spend_func import AbstractSpendFunc
+from online_fdr.core.utils.validity import check_positive_integer
 
 
 class LordThree(AbstractSpendFunc):
@@ -12,12 +13,11 @@ class LordThree(AbstractSpendFunc):
     Annals of Statistics, 46(2):526-554, 2018."""
 
     def __init__(self, k: int):
+        check_positive_integer(k, "k")
         super().__init__(k)
-        if self.k is None or self.k <= 0:
-            raise ValueError("LORD3 spending requires k to be a positive integer.")
         self.threshold = [
             0.07720838 * log(max(i, 2)) / (i * exp(sqrt(log(i))))
-            for i in range(1, self.k + 1)
+            for i in range(1, k + 1)
         ]
 
     def spend(self, index: int, alpha: float) -> float:

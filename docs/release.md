@@ -34,15 +34,21 @@ Before tagging a release:
 
 ## PyPI Trusted Publishing
 
-The release workflow expects a PyPI trusted publisher instead of an API token.
-Configure PyPI with:
+The release workflow uses PyPI Trusted Publishing with short-lived credentials.
+In PyPI, open **online-fdr → Manage → Publishing**, select **GitHub Actions**,
+and enter these exact values:
 
-- repository: `OliverHennhoefer/online-fdr`
-- workflow: `release.yml`
-- environment: `pypi`
+| PyPI field | Value |
+| --- | --- |
+| Owner | `OliverHennhoefer` |
+| Repository name | `online-fdr` |
+| Workflow name | `release.yml` |
+| Environment name | `pypi` |
 
-In GitHub, create the `pypi` environment and require reviewer approval if you
-want a manual approval gate before publishing.
+Enter the workflow filename alone, without `.github/workflows/`. No PyPI API
+token or GitHub secret is needed. The workflow uses the GitHub environment
+`pypi`; configure required reviewers there if you want an additional approval
+step before publishing.
 
 ## Tagging
 
@@ -53,14 +59,16 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Pushing a version tag runs `.github/workflows/release.yml`, which reruns lint,
+Pushing a version tag runs `.github/workflows/release.yml`, which first checks
+that the tag matches both the distribution and package version, then reruns lint,
 format, type-check, non-parity tests, strict docs build, live R parity, package
 build, and wheel smoke install. It uploads the distributions as a workflow
 artifact and publishes to PyPI only after the validation jobs and the `pypi`
 environment gate pass.
 
-Manual `workflow_dispatch` runs build the distributions but do not publish to
-PyPI unless the run is associated with a version tag.
+Use **Actions → Release → Run workflow** on a branch to validate the process
+before tagging. Manual `workflow_dispatch` runs on branches validate and build
+the distributions. Publishing requires a matching version tag.
 
 ## After Release
 

@@ -1,5 +1,4 @@
 import abc
-from typing import Any
 
 from online_fdr.core.abstract.abstract_test import AbstractTest
 from online_fdr.core.results import TestDecision
@@ -23,12 +22,15 @@ class AbstractSequentialTest(AbstractTest):
         """
         raise NotImplementedError
 
-    def test_one_detail(self, p_val: float, *args: Any, **kwargs: Any) -> TestDecision:
+    def test_one_detail(self, p_val: float) -> TestDecision:
         """Test one hypothesis and return an immutable decision record."""
-        rejected = self.test_one(p_val, *args, **kwargs)
+        return self._decision(p_val, self.test_one(p_val))
+
+    def _decision(self, value: float, rejected: bool) -> TestDecision:
+        """Capture the shared observations after a completed test."""
         return TestDecision(
             rejected=bool(rejected),
-            value=float(p_val),
+            value=float(value),
             rejection_threshold=self.last_rejection_threshold,
             index=self.num_hypotheses,
             test_level=self.last_test_level,

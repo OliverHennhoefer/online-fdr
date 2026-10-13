@@ -75,7 +75,7 @@ conservative = Saffron(alpha=0.05, wealth=0.01, lambda_=0.25)
 moderate = Saffron(alpha=0.05, wealth=0.025, lambda_=0.5)
 
 # Aggressive: Higher lambda for more candidates
-aggressive = Saffron(alpha=0.05, wealth=0.05, lambda_=0.75)
+aggressive = Saffron(alpha=0.05, wealth=0.04, lambda_=0.75)
 
 # Test on same data for comparison
 test_p_values = [0.001, 0.02, 0.15, 0.03, 0.8, 0.01]
