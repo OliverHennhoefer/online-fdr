@@ -76,7 +76,10 @@ Python integers. Finite configuration checks also accept NumPy real scalars;
 accepted configuration values are normalized to Python numbers.
 
 TOAD arrivals advance from the current stage, including after `advance_to`;
-finalized decisions remain final. Its identity-shape guarantee requires
+finalized decisions remain final. Arrivals also finalize expired decisions;
+those appear in `final_decisions` but are not returned again by a later
+`advance_to`. Deadlines and stages must be integers (NumPy integers are
+accepted, `3.0` is not), and streaming weights must lie in `(0, 1]`. Its identity-shape guarantee requires
 conditional positive dependence and appropriately prespecified or predictable
 weights, as detailed in the guarantee matrix.
 

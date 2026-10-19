@@ -229,7 +229,12 @@ class Toad(StatefulMethodMixin):
         return self._current_decisions[test_id]
 
     def advance_to(self, stage: int) -> dict[Hashable, bool]:
-        """Advance the stage clock and return newly finalized decisions."""
+        """Advance the stage clock and return decisions finalized by this call.
+
+        Arrivals also finalize expired decisions. Those are recorded in
+        ``final_decisions`` and are not returned again here, so read
+        ``final_decisions`` for the complete set.
+        """
         _check_stage(stage, self.current_stage, "stage")
         stage = int(stage)
         self._current_stage = stage

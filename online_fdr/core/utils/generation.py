@@ -12,6 +12,8 @@ from typing import Optional, Tuple
 import numpy as np
 from scipy import stats
 
+from online_fdr.core.utils.validity import check_positive_integer
+
 
 class DataGeneratingProcess(abc.ABC):
     """Abstract base class for data generating processes."""
@@ -331,6 +333,8 @@ class DataGenerator:
         """Sample a batch of p-values."""
         if size is None:
             size = self.batch_size or self.n
+        check_positive_integer(size, "size")
+        size = int(size)
 
         if self.current_idx >= self.n:
             raise StopIteration("All samples have been generated.")
