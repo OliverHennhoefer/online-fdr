@@ -34,6 +34,14 @@ print(decision_a, decision_b)
 
 ## Weighted Side Information
 
+Choose weights before observing their corresponding p-values. Under independent
+p-values and the paper's predictable, monotone weight assumptions, this method
+controls penalty-weighted FDR; with `decay < 1`, it controls penalty-weighted
+decaying-memory FDR. Ordinary FDR is the unit-penalty, no-decay special case.
+The decision metadata reports the weighted target. A penalty weight that cannot
+fund a nonnegative reward from the remaining wealth raises `ValueError` without
+changing the testing state.
+
 ```python
 from online_fdr.p_values import WeightedGaiPlusPlus
 
@@ -55,6 +63,11 @@ for p_value, prior_weight, penalty_weight in events:
 ```
 
 ## Decision Deadlines
+
+The implemented identity-shape TOAD procedure assumes conditional positive
+dependence. Independent p-values and prespecified weights satisfy a supported
+special case. Choose allocations before observing the corresponding p-values;
+the method does not provide arbitrary-dependence reshaping.
 
 ```python
 from online_fdr.p_values import Toad

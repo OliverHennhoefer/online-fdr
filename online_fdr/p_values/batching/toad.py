@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from collections.abc import Hashable, Sequence
 from dataclasses import dataclass
+from numbers import Integral
 from typing import Any
 
 from online_fdr.core.state import StatefulMethodMixin
@@ -46,6 +47,19 @@ class _ToadRecord:
 
 def _default_stream_weight(j: int) -> float:
     return 0.07720838 * math.log(max(j, 2)) / (j * math.exp(math.sqrt(math.log(j))))
+
+
+def _check_stage(value: int, minimum: int, name: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, Integral) or value < minimum:
+        raise ValueError(f"{name} must be an integer at least {minimum}.")
+
+
+def _check_weight(weight: float) -> float:
+    validity.check_finite_number(weight, "weight")
+    normalized = float(weight)
+    if not 0 < normalized <= 1:
+        raise ValueError("weight must be finite and in (0, 1].")
+    return normalized
 
 
 def _toad_step(
@@ -93,12 +107,11 @@ def run_finite(
         weights = [1.0 / n_tests] * n_tests
     if len(weights) != n_tests:
         raise ValueError("weights must have the same length as p_values.")
-    if any(weight <= 0 for weight in weights):
-        raise ValueError("weights must be positive.")
+    weights = [_check_weight(weight) for weight in weights]
     if sum(weights) > 1 + 1e-10:
         raise ValueError("weights must sum to at most 1.")
-    if any(deadline < idx for idx, deadline in enumerate(deadlines, start=1)):
-        raise ValueError("each deadline must be at least its test index.")
+    for idx, deadline in enumerate(deadlines, start=1):
+        _check_stage(deadline, idx, "deadline")
 
     ratios = [float(p_val) / float(weight) for p_val, weight in zip(p_values, weights)]
     stages = sorted(set(deadlines))
@@ -117,7 +130,18 @@ def run_finite(
 
 
 class Toad(StatefulMethodMixin):
-    """Thresholds based on active discoveries for decision-deadline online FDR."""
+    """Thresholds based on active discoveries for decision-deadline online FDR.
+
+    This implements the identity-shape TOAD procedure, whose FDR guarantee
+    requires independence or the positive-dependence assumptions in Fisher's
+    Theorem 1, and weights selected before observing their own null p-values.
+    Summable weights alone do not provide arbitrary-dependence control.
+
+    Each arrival advances the current stage by one, including after an explicit
+    ``advance_to`` call. Decisions are finalized once their deadline has passed.
+    Default weights follow the hypothesis arrival count, independent of gaps
+    in the stage clock.
+    """
 
     error_rate = "FDR"
 
@@ -173,38 +197,46 @@ class Toad(StatefulMethodMixin):
         weight: float | None = None,
     ) -> bool:
         validity.check_p_val(p_val)
+        next_auto_id = None
         if test_id is None:
             test_id = self._next_auto_id
-            self._next_auto_id += 1
+            while test_id in self._records_by_id:
+                test_id += 1
+            next_auto_id = test_id + 1
         if test_id in self._records_by_id:
             raise ValueError(f"test_id {test_id!r} has already been added.")
 
-        stage = len(self._records) + 1
-        if deadline < stage:
-            raise ValueError("deadline must be at least the test's arrival stage.")
+        stage = self.current_stage + 1
+        _check_stage(deadline, stage, "deadline")
         if weight is None:
-            weight = _default_stream_weight(stage)
-        if weight <= 0:
-            raise ValueError("weight must be positive.")
+            weight = _default_stream_weight(self.num_hypotheses + 1)
+        weight = _check_weight(weight)
         if sum(record.weight for record in self._records) + weight > 1 + 1e-10:
             raise ValueError("streaming TOAD weights must sum to at most 1.")
 
         record = _ToadRecord(
             test_id=test_id,
             p_val=float(p_val),
-            deadline=deadline,
+            deadline=int(deadline),
             weight=float(weight),
             stage=stage,
         )
         self._records.append(record)
         self._records_by_id[test_id] = record
-        self._current_stage = stage
-        self._recompute_at(stage)
+        self.advance_to(stage)
+        if next_auto_id is not None:
+            self._next_auto_id = next_auto_id
         return self._current_decisions[test_id]
 
     def advance_to(self, stage: int) -> dict[Hashable, bool]:
-        if stage < self.current_stage:
-            raise ValueError("stage cannot move backwards.")
+        """Advance the stage clock and return decisions finalized by this call.
+
+        Arrivals also finalize expired decisions. Those are recorded in
+        ``final_decisions`` and are not returned again here, so read
+        ``final_decisions`` for the complete set.
+        """
+        _check_stage(stage, self.current_stage, "stage")
+        stage = int(stage)
         self._current_stage = stage
         self._recompute_at(stage)
         finalized: dict[Hashable, bool] = {}

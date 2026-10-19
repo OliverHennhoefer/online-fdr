@@ -6,6 +6,10 @@ from online_fdr.core.utils.sequence import DependentLordGammaSequence
 class LordDependent(AbstractSequentialTest):
     """Implements a variant of LORD for dependent p-values[1]_.
 
+    The default dependence correction requires ``wealth <= reward`` in
+    addition to ``wealth + reward <= alpha`` (the reference's ``w0 <= b0``
+    regime).
+
     References
     ----------
     [1] Javanmard, A., and A. Montanari.
@@ -20,11 +24,13 @@ class LordDependent(AbstractSequentialTest):
         reward: float,
     ):  # fmt: skip
         super().__init__(alpha)
-        self.alpha0: float = alpha
-        self.wealth: float = wealth
-        self.reward: float = reward
         validity.check_initial_wealth(wealth, alpha)
         validity.check_reward_budget(wealth=wealth, reward=reward, alpha=alpha)
+        if wealth > reward:
+            raise ValueError("LordDependent requires wealth <= reward.")
+        self.alpha0: float = float(alpha)
+        self.wealth: float = float(wealth)
+        self.reward: float = float(reward)
 
         # onlineFDR LORDdep default xi_i:
         # xi_i = 0.139307 * alpha / (b0 * i * log(max(i,2))^3)

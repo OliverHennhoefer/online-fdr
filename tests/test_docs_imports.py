@@ -1,5 +1,6 @@
 import ast
 import importlib
+import re
 from pathlib import Path
 
 
@@ -87,3 +88,26 @@ def test_non_parity_workflow_docs_use_default_marker_exclusion() -> None:
         assert "--ignore=tests/test_onlinefdr_parity.py" not in text
         assert "--ignore=tests/test_async_methods.py" not in text
         assert '-k "not onlinefdr_parity"' not in text
+
+
+def _python_example_under_heading(path: Path, heading: str) -> str:
+    text = path.read_text(encoding="utf-8")
+    marker = f"\n{heading}\n"
+    assert text.count(marker) == 1, f"{path} must contain one {heading!r} heading"
+    section = text.split(marker, 1)[1].split("\n### ", 1)[0]
+    examples = re.findall(r"```python\n(.*?)\n```", section, flags=re.DOTALL)
+    assert len(examples) == 1, f"{path}: {heading} must contain one Python example"
+    return examples[0]
+
+
+def test_saffron_basic_and_parameter_selection_examples_run() -> None:
+    path = Path("docs/api/investing/saffron.md")
+    namespace: dict[str, object] = {}
+    # These two adjacent examples intentionally share their Saffron import.
+    for heading in ("### Basic Usage", "### Parameter Selection"):
+        example = _python_example_under_heading(path, heading)
+        exec(compile(example, str(path), "exec"), namespace)
+
+    assert namespace["saffron"].num_hypotheses == len(namespace["p_values"])
+    for name in ("conservative", "moderate", "aggressive"):
+        assert namespace[name].num_hypotheses == len(namespace["test_p_values"])

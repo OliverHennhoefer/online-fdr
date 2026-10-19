@@ -59,15 +59,15 @@ class LordThree(AbstractSequentialTest):
         reward: float,
     ):  # fmt: skip
         super().__init__(alpha)
-        self.wealth: float = wealth
-        self.reward: float = reward
         validity.check_initial_wealth(wealth, alpha)
         validity.check_reward_budget(wealth=wealth, reward=reward, alpha=alpha)
+        self.wealth: float = float(wealth)
+        self.reward: float = float(reward)
 
         self.seq = DefaultLordGammaSequence(c=0.07720838)
 
         self.last_reject: int = 0  # reject index
-        self.wealth_reject: float = wealth  # reject wealth
+        self.wealth_reject: float = self.wealth  # reject wealth
         # Matches onlineFDR's LORD(version = "3") state recursion sentinel.
         self._decision_history: list[bool] = [True]
 

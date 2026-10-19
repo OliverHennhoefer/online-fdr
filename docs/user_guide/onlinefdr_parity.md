@@ -36,20 +36,20 @@ The parity harness uses deterministic long p-value sequences and checks:
 | `AddisAsync` | `Extension` | True lifecycle API with restricted live R parity against `ADDIS(async=TRUE)`; see the async limitations below. |
 | `LordThree` | `Parity` | Sequential LORD-3 semantics. |
 | `LordPlusPlus` | `Parity` | LORD++ semantics under strict guaranteed payout mode (`reward == alpha`). |
-| `LordDiscard` | `Parity` | First-rejection state keyed to first discovery time. |
-| `LordDependent` | `Parity` | Dependence-robust LORD variant for the supported reference regime. |
+| `LordDiscard` | `Parity` | First-rejection state keyed to first discovery time; requires `wealth <= tau * alpha`. |
+| `LordDependent` | `Parity` | Dependence-robust LORD variant; requires `wealth <= reward` and `wealth + reward <= alpha`. |
 | `Lond` | `Parity` | Original/modified and dependent options supported. |
 | `Gai` | `Parity` | Alpha-investing family equivalent. |
-| `WeightedGaiPlusPlus` | `Extension` | Prior/penalty-weighted GAI++ checked against the authors' `OnlineFDRCode` formula. |
+| `WeightedGaiPlusPlus` | `Extension` | Prior/penalty-weighted GAI++; author-code comparisons cover feasible, unclipped weights, and independent tests enforce the paper's reward bounds for the corrected prior cap. |
 | `AlphaSpending` | `Parity` | Boundary uses `p_t <= alpha_t`. |
 | `OnlineFallback` | `Parity` | Boundary uses `p_t <= alpha_t`. |
 | `BatchBH` | `Parity` | Batch online BH semantics. |
 | `BatchPRDS` | `Parity` | Batch PRDS variant. |
 | `BatchStoreyBH` | `Parity` | `R+` computed on same-size batch via replacement, not append. |
 | `BatchBY` | `Extension` | Added here as a conservative BY-style batch extension; no direct `onlineFDR` counterpart. |
-| `Toad` | `Extension` | Decision-deadline online FDR checked against Fisher's AISTATS supplementary `toad.r`. |
+| `Toad` | `Extension` | Identity-shape decision-deadline FDR checked against Fisher's supplementary `toad.r`; conditional positive dependence is required. |
 | `LORDMemoryDecay` | `Extension` | Not a direct `onlineFDR` release method. |
-| `BatchBHOfficial` | `Extension` | Matches the AISTATS supplementary BatchBH code profile, including the normalized `j^-2` small-batch gamma sequence. |
+| `BatchBHOfficial` | `Extension` | Matches the supplementary BatchBH code for a fixed gamma profile, including the normalized `j^-2` small-batch sequence; the first profile is retained when later batch sizes change. |
 | Stateful `test_one` / `test_batch` API | `IntentionalDivergence` | True-online interface by design. |
 | Date-level internal randomization | `IntentionalDivergence` | Not done internally; caller controls ordering. |
 

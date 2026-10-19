@@ -82,9 +82,13 @@ def _author_weighted_reference(
     return decisions, thresholds, used_prior_weights
 
 
-def test_weighted_gai_plus_plus_matches_author_weighted_reference() -> None:
+def test_weighted_gai_plus_plus_matches_author_reference_without_weight_clipping() -> (
+    None
+):
     p_values = [0.0005, 0.2, 0.001, 0.04, 0.0001, 0.8, 0.002]
-    prior_weights = [1.0, 1.7, 0.8, 1.2, 2.0, 0.9, 1.4]
+    # Preserve author-code parity where its incorrect cap is not exercised.
+    # Independent reward-bound regressions cover the corrected clipping regime.
+    prior_weights = [1.0, 0.8, 0.8, 0.75, 1.0, 0.9, 0.8]
     penalty_weights = [1.0, 1.1, 0.95, 1.3, 1.0, 1.2, 0.9]
     method = WeightedGaiPlusPlus(
         alpha=0.05,

@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "method": "WeightedGaiPlusPlus",
+  "state": {
+    "target_level": 0.05,
+    "_last_test_level": 0.002482617482960414,
+    "_last_rejection_threshold": 0.00209062524880877,
+    "_num_hypotheses": 3,
+    "alpha0": 0.05,
+    "wealth0": 0.025,
+    "decay": 0.92,
+    "gamma_horizon": 100,
+    "wealth": 0.07714914303528811,
+    "wealth_history": [
+      0.025,
+      0.04355655002647407,
+      0.03222732938618273,
+      0.07714914303528811
+    ],
+    "base_alpha": 0.002482617482960414,
+    "reject_idx": [
+      1,
+      3
+    ],
+    "decisions": [
+      true,
+      false,
+      true
+    ],
+    "base_alpha_history": [
+      0.006443449973525935,
+      0.007844696638173417,
+      0.002482617482960414
+    ],
+    "alpha_history": [
+      0.006443449973525935,
+      0.008257575408603599,
+      0.00209062524880877
+    ],
+    "prior_weights_used": [
+      1.0,
+      1.1578947368421055,
+      0.8
+    ],
+    "penalty_weights": [
+      1.0,
+      1.1,
+      0.95
+    ],
+    "phi_history": [
+      0.006443449973525935,
+      0.007844696638173417,
+      0.002482617482960414
+    ],
+    "psi_history": [
+      0.025,
+      0.0,
+      0.049982617482960415
+    ],
+    "_next_base_alpha": 0.01488510819370258,
+    "_psi_rejections": [
+      0.025,
+      0.049982617482960415
+    ],
+    "_first_rejection_seen": true
+  }
+}

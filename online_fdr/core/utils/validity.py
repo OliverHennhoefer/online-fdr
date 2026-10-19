@@ -1,5 +1,24 @@
 import math
 from collections.abc import Callable, Sequence
+from numbers import Integral, Real
+
+
+def check_positive_integer(value: int, name: str) -> None:
+    """Validate a positive integer scalar, including NumPy integers."""
+    if isinstance(value, bool) or not isinstance(value, Integral) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer.")
+
+
+def check_finite_number(value: float, name: str) -> None:
+    """Validate a finite real scalar, including NumPy scalars, excluding bools."""
+    if isinstance(value, bool) or not isinstance(value, Real):
+        raise ValueError(f"{name} must be a finite number.")
+    try:
+        finite = math.isfinite(value)
+    except OverflowError:
+        finite = False
+    if not finite:
+        raise ValueError(f"{name} must be a finite number.")
 
 
 def check_p_val(p_val: float) -> None:
@@ -252,7 +271,8 @@ def check_tau(tau: float) -> None:
 
 def check_reward_budget(wealth: float, reward: float, alpha: float) -> None:
     """Validate LORD reward assumptions used in guarantee regimes."""
+    check_finite_number(reward, "reward")
     if reward <= 0:
         raise ValueError("reward must be positive.")
-    if wealth + reward > alpha:
+    if float(wealth) + float(reward) > float(alpha):
         raise ValueError("wealth + reward must not exceed alpha.")

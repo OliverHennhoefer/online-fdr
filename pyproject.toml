@@ -87,8 +87,8 @@ path = "online_fdr/__init__.py"
 include = [
     "online_fdr/**/*.py",
     "online_fdr/py.typed",
-    "README.md",
-    "LICENSE",
+    "/README.md",
+    "/LICENSE",
 ]
 exclude = [
     "*.pyc",

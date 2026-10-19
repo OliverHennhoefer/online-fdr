@@ -4,6 +4,7 @@ from typing import Optional, Tuple
 
 import numpy as np
 
+from online_fdr.core.utils.validity import check_positive_integer
 from online_fdr.e_values.toolbox import p_to_e_power
 
 __all__ = [
@@ -67,8 +68,9 @@ class GaussianEValueGenerator:
         batch_size: Optional[int] = None,
         seed: int = 1,
     ):
-        if n <= 0:
-            raise ValueError("n must be positive.")
+        check_positive_integer(n, "n")
+        if batch_size is not None:
+            check_positive_integer(batch_size, "batch_size")
         if not 0 <= pi0 <= 1:
             raise ValueError("pi0 must be in [0, 1].")
         if std <= 0:
@@ -78,7 +80,7 @@ class GaussianEValueGenerator:
         self.alt_mean = float(alt_mean)
         self.null_mean = float(null_mean)
         self.std = float(std)
-        self.batch_size = batch_size
+        self.batch_size = None if batch_size is None else int(batch_size)
         self.rng = np.random.RandomState(seed)
         self.current_idx = 0
 
@@ -111,7 +113,9 @@ class GaussianEValueGenerator:
     def sample_batch(self, size: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
         """Sample a batch of e-values and labels."""
         if size is None:
-            size = self.batch_size or self.n
+            size = self.batch_size if self.batch_size is not None else self.n
+        check_positive_integer(size, "size")
+        size = int(size)
         if self.current_idx >= self.n:
             raise StopIteration("All samples have been generated.")
         end_idx = min(self.current_idx + size, self.n)

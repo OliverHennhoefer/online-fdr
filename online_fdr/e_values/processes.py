@@ -4,7 +4,7 @@ import math
 from collections.abc import Callable, Sequence
 from typing import Any, Protocol
 
-from online_fdr.core.utils.validity import check_nonnegative_weights
+from online_fdr.e_values.toolbox import _prepare_weights
 
 __all__ = [
     "BettingEProcess",
@@ -57,6 +57,13 @@ def _logsumexp(log_terms: Sequence[float]) -> float:
     )
 
 
+def _advance_log_capital(current: float, increment: float) -> float:
+    updated = current + increment
+    if math.isnan(increment) or math.isnan(updated):
+        raise ValueError("log likelihood ratio and cumulative value must not be NaN.")
+    return updated
+
+
 class LikelihoodRatioEProcess:
     """Log-space likelihood-ratio e-process.
 
@@ -75,9 +82,7 @@ class LikelihoodRatioEProcess:
 
     def update(self, observation: Any) -> float:
         increment = float(self.log_likelihood_ratio(observation))
-        if math.isnan(increment):
-            raise ValueError("log likelihood ratio must not be NaN.")
-        self.log_current += increment
+        self.log_current = _advance_log_capital(self.log_current, increment)
         return self.current
 
     def reset(self) -> None:
@@ -101,17 +106,17 @@ class MixtureLikelihoodRatioEProcess:
         if not log_likelihood_ratios:
             raise ValueError("at least one likelihood-ratio component is required.")
         self.log_likelihood_ratios = list(log_likelihood_ratios)
-        if weights is None:
-            self.weights = [1.0 / len(self.log_likelihood_ratios)] * len(
-                self.log_likelihood_ratios
-            )
-        else:
-            if len(weights) != len(self.log_likelihood_ratios):
-                raise ValueError("weights must match likelihood-ratio components.")
-            check_nonnegative_weights(weights)
-            total = float(sum(weights))
-            self.weights = [float(weight) / total for weight in weights]
+        self._weights, self._log_weights = _prepare_weights(
+            len(self.log_likelihood_ratios),
+            weights,
+            mismatch_message="weights must match likelihood-ratio components.",
+        )
         self.component_log_currents = [0.0] * len(self.log_likelihood_ratios)
+
+    @property
+    def weights(self) -> list[float]:
+        """Return the normalized fixed prior without exposing mutable state."""
+        return list(self._weights)
 
     @property
     def current(self) -> float:
@@ -120,27 +125,25 @@ class MixtureLikelihoodRatioEProcess:
     @property
     def log_current(self) -> float:
         terms = []
-        for weight, component_log_current in zip(
-            self.weights, self.component_log_currents
+        for log_weight, component_log_current in zip(
+            self._log_weights, self.component_log_currents
         ):
-            if weight == 0:
+            if log_weight == -math.inf:
                 terms.append(-math.inf)
             else:
-                terms.append(math.log(weight) + component_log_current)
+                terms.append(log_weight + component_log_current)
         return _logsumexp(terms)
 
     def update(self, observation: Any) -> float:
-        for idx, (weight, log_lr) in enumerate(
-            zip(self.weights, self.log_likelihood_ratios)
+        updated = self.component_log_currents.copy()
+        for idx, (log_weight, log_lr) in enumerate(
+            zip(self._log_weights, self.log_likelihood_ratios)
         ):
-            if weight == 0:
+            if log_weight == -math.inf:
                 continue
             value = float(log_lr(observation))
-            if math.isnan(value):
-                raise ValueError("log likelihood ratio must not be NaN.")
-            self.component_log_currents[idx] += value
-            if math.isnan(self.component_log_currents[idx]):
-                raise ValueError("cumulative log likelihood ratio must not be NaN.")
+            updated[idx] = _advance_log_capital(updated[idx], value)
+        self.component_log_currents = updated
         return _exp_or_inf(self.log_current)
 
     def reset(self) -> None:

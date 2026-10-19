@@ -18,9 +18,16 @@ def test_release_version_metadata_is_consistent() -> None:
     project = tomllib.loads(_read("pyproject.toml"))["project"]
     version = project["version"]
 
-    assert version == "1.0.0"
+    assert version
     assert online_fdr.__version__ == version
-    assert 'version = "1.0.0"' in _read("uv.lock")
+    lockfile = tomllib.loads(_read("uv.lock"))
+    locked_project = next(
+        package
+        for package in lockfile["package"]
+        if package["name"] == project["name"]
+        and package["source"].get("editable") == "."
+    )
+    assert locked_project["version"] == version
     assert f"version: {version}" in _read("CITATION.cff")
     assert f"## [{version}]" in _read("CHANGELOG.md")
     assert "Development Status :: 5 - Production/Stable" in project["classifiers"]

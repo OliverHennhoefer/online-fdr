@@ -1,4 +1,5 @@
 from online_fdr.core.abstract.abstract_spend_func import AbstractSpendFunc
+from online_fdr.core.utils.validity import check_positive_integer
 
 
 class Bonferroni(AbstractSpendFunc):
@@ -17,9 +18,8 @@ class Bonferroni(AbstractSpendFunc):
     56(293):52–64, 1961."""
 
     def __init__(self, k: int):
-        super().__init__(k)
-        if self.k is None or self.k <= 0:
-            raise ValueError("Bonferroni spending requires k to be a positive integer.")
+        check_positive_integer(k, "k")
+        super().__init__(int(k))
 
     def spend(self, index: int, alpha: float) -> float:
         if index < 0:

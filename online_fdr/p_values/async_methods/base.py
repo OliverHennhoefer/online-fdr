@@ -113,9 +113,13 @@ class AbstractAsyncTest(AbstractSequentialTest):
         }
 
     def start_test(self, test_id: Hashable | None = None) -> AsyncTestLevel:
+        next_auto_id = None
         if test_id is None:
-            test_id = self._next_auto_id
-            self._next_auto_id += 1
+            auto_id = self._next_auto_id
+            while auto_id in self._records_by_id:
+                auto_id += 1
+            test_id = auto_id
+            next_auto_id = auto_id + 1
         if test_id in self._records_by_id:
             raise ValueError(f"test_id {test_id!r} has already been started.")
 
@@ -130,6 +134,8 @@ class AbstractAsyncTest(AbstractSequentialTest):
         self.alpha_history.append(alpha_t)
         self._decisions.append(None)
         self._on_test_started(record)
+        if next_auto_id is not None:
+            self._next_auto_id = next_auto_id
         return AsyncTestLevel(test_id=test_id, test_level=alpha_t)
 
     def finish_test(self, test_id: Hashable, p_val: float) -> bool:
@@ -149,6 +155,7 @@ class AbstractAsyncTest(AbstractSequentialTest):
         return bool(record.rejected)
 
     def test_one(self, p_val: float) -> bool:
+        validity.check_p_val(p_val)
         level = self.start_test()
         return self.finish_test(level.test_id, p_val)
 

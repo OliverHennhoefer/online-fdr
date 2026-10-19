@@ -127,3 +127,11 @@ def concrete_keyword_apis(
     elond.test_one_detail(e_value=1.0)
     ebh.test_batch(e_values=[1.0])
     ebh.test_batch_detail(e_values=[1.0])
+
+
+def restore_weighted_method(snapshot: dict[str, object]) -> WeightedGaiPlusPlus:
+    return WeightedGaiPlusPlus.from_snapshot(snapshot)
+
+
+def invalid_weighted_arguments_are_checked(method: WeightedGaiPlusPlus) -> None:
+    method.test_one_detail(0.1, prior_weight="invalid")  # type: ignore[arg-type]
