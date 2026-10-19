@@ -5,13 +5,14 @@ import math
 import random
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from online_fdr.p_values import WeightedGaiPlusPlus
 
 
 @pytest.mark.parametrize("name", ["prior_weight", "penalty_weight"])
-@pytest.mark.parametrize("value", [True, 10**400])
+@pytest.mark.parametrize("value", [True, np.bool_(True), 10**400])
 def test_weighted_validation_preserves_state_for_bool_and_overflowing_integer(
     name, value
 ):
@@ -26,6 +27,22 @@ def test_weighted_validation_preserves_state_for_bool_and_overflowing_integer(
 def test_weighted_decay_uses_finite_numeric_validation(decay):
     with pytest.raises(ValueError, match="decay"):
         WeightedGaiPlusPlus(decay=decay)
+
+
+@pytest.mark.parametrize("real_type", [np.float32, np.float64])
+def test_weighted_numpy_configuration_and_weights_match_builtin_scalars(real_type):
+    decay = real_type(0.92)
+    method = WeightedGaiPlusPlus(decay=decay, gamma_horizon=np.int64(10))
+    control = WeightedGaiPlusPlus(decay=float(decay), gamma_horizon=10)
+    assert type(method.decay) is float
+    assert type(method.gamma_horizon) is int
+    prior, penalty = real_type(1.2), real_type(1.1)
+    for p_val in (0.0, 0.9, 0.001, 0.8):
+        assert method.test_one_detail(p_val, prior, penalty) == control.test_one_detail(
+            p_val, float(prior), float(penalty)
+        )
+    assert all(type(weight) is float for weight in method.penalty_weights)
+    assert method.snapshot() == control.snapshot()
 
 
 @pytest.mark.parametrize("alpha,wealth", [(0.05, 0.049), (0.5, 0.49)])

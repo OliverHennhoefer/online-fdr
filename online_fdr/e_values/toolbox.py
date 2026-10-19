@@ -63,7 +63,9 @@ def p_to_e_power(p_value: float, exponent: float) -> float:
 
 
 def _prepare_weights(
-    length: int, weights: Sequence[float] | None
+    length: int,
+    weights: Sequence[float] | None,
+    mismatch_message: str = "weights must have the same length as e_values.",
 ) -> tuple[tuple[float, ...], tuple[float, ...]]:
     if length == 0:
         raise ValueError("at least one e-value is required.")
@@ -71,12 +73,13 @@ def _prepare_weights(
         normalized = (1.0 / length,) * length
         return normalized, (math.log(normalized[0]),) * length
     if len(weights) != length:
-        raise ValueError("weights must have the same length as e_values.")
+        raise ValueError(mismatch_message)
     check_nonnegative_weights(weights)
-    total = float(sum(weights))
+    # Sum Python floats so an overflowing NumPy total does not emit a warning.
+    total = sum(float(weight) for weight in weights)
     # Preserve ordinary arithmetic when representable; scale only an overflowing
     # total. Retain a log representation for positive weights that underflow.
-    scale = 1.0 if math.isfinite(total) else max(weights)
+    scale = 1.0 if math.isfinite(total) else float(max(weights))
     if not math.isfinite(total):
         total = math.fsum(float(weight) / scale for weight in weights)
     normalized = tuple(float(weight) / scale / total for weight in weights)

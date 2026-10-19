@@ -107,7 +107,9 @@ class MixtureLikelihoodRatioEProcess:
             raise ValueError("at least one likelihood-ratio component is required.")
         self.log_likelihood_ratios = list(log_likelihood_ratios)
         self._weights, self._log_weights = _prepare_weights(
-            len(self.log_likelihood_ratios), weights
+            len(self.log_likelihood_ratios),
+            weights,
+            mismatch_message="weights must match likelihood-ratio components.",
         )
         self.component_log_currents = [0.0] * len(self.log_likelihood_ratios)
 

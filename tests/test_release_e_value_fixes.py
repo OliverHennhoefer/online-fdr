@@ -61,3 +61,22 @@ def test_gaussian_generator_default_batch_size_consumes_short_final_batch():
     assert generator.remaining == 0
     with pytest.raises(StopIteration):
         generator.sample_batch()
+
+
+@pytest.mark.parametrize("integer_type", [np.int32, np.int64, np.uint64])
+def test_gaussian_generator_numpy_sizes_match_builtin_counts(integer_type):
+    generator = GaussianEValueGenerator(
+        integer_type(5), 0.5, batch_size=integer_type(2), seed=7
+    )
+    control = GaussianEValueGenerator(5, 0.5, batch_size=2, seed=7)
+    assert type(generator.n) is int
+    assert type(generator.batch_size) is int
+    for size in (integer_type(2), None, None):
+        actual_values, actual_labels = generator.sample_batch(size)
+        expected_values, expected_labels = control.sample_batch(
+            None if size is None else int(size)
+        )
+        np.testing.assert_array_equal(actual_values, expected_values)
+        np.testing.assert_array_equal(actual_labels, expected_labels)
+        assert type(generator.current_idx) is int
+    assert generator.remaining == 0

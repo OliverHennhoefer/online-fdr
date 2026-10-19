@@ -24,13 +24,13 @@ class LordDependent(AbstractSequentialTest):
         reward: float,
     ):  # fmt: skip
         super().__init__(alpha)
-        self.alpha0: float = alpha
-        self.wealth: float = wealth
-        self.reward: float = reward
         validity.check_initial_wealth(wealth, alpha)
         validity.check_reward_budget(wealth=wealth, reward=reward, alpha=alpha)
         if wealth > reward:
             raise ValueError("LordDependent requires wealth <= reward.")
+        self.alpha0: float = float(alpha)
+        self.wealth: float = float(wealth)
+        self.reward: float = float(reward)
 
         # onlineFDR LORDdep default xi_i:
         # xi_i = 0.139307 * alpha / (b0 * i * log(max(i,2))^3)

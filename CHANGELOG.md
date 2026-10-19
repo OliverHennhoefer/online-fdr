@@ -6,7 +6,7 @@ repository milestones are consolidated into the first stable release below.
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-10-09
+## [1.0.0] - 2026-10-19
 
 ### Added
 
@@ -67,7 +67,8 @@ repository milestones are consolidated into the first stable release below.
   and documentation describe penalty-weighted FDR and decaying-memory FDR.
 - TOAD arrivals preserve a monotone stage clock and finalized decisions after
   explicit advancement. Document conditional positive dependence for its
-  implemented identity shape.
+  implemented identity shape. Streaming deadlines and stages must be integers
+  (NumPy integers included), and weights must lie in `(0, 1]`.
 - Keep BatchBHOfficial's gamma profile fixed across changing batch sizes,
   preventing retrospective allocations. Clamp floating-point cancellation at
   an exhausted budget to zero instead of emitting negative test levels.
@@ -83,6 +84,11 @@ repository milestones are consolidated into the first stable release below.
 - Typed snapshot restoration preserves concrete method types, and weighted
   detailed calls expose explicit weight arguments instead of arbitrary `Any`
   arguments.
+- Accept NumPy integer horizons and generator sizes, and NumPy real scalar
+  configuration values, while continuing to reject booleans. Normalize these
+  inputs to Python numbers before storing execution state.
+- The p-value `DataGenerator.sample_batch` rejects nonpositive or fractional
+  sizes before moving its cursor.
 
 ### Performance
 
@@ -93,6 +99,9 @@ repository milestones are consolidated into the first stable release below.
 - Memory-decay FDR evaluation maintains discounted counts incrementally instead
   of recomputing full convolutions. Scalar updates take constant time; tracker
   configuration is fixed and observation histories are returned as detached lists.
+- BatchBH and BatchBHOfficial compute `R+` with one largest-value replacement
+  instead of rerunning BH for every hypothesis. Decisions and snapshots are
+  preserved, while per-batch sorting work drops from quadratic to `O(n log n)`.
 
 ### Migration
 

@@ -57,9 +57,9 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
             raise ValueError("decay must be in (0, 1].")
         validity.check_positive_integer(gamma_horizon, "gamma_horizon")
 
-        self.decay = decay
+        self.decay = float(decay)
         self.error_rate = "weighted mem-FDR" if decay < 1 else "weighted FDR"
-        self.gamma_horizon = gamma_horizon
+        self.gamma_horizon = int(gamma_horizon)
         self.wealth = self.wealth0
         self.wealth_history = [self.wealth]
         self.base_alpha: float = self._gamma(1) * self.wealth0
@@ -97,6 +97,8 @@ class WeightedGaiPlusPlus(AbstractSequentialTest):
             validity.check_finite_number(weight, name)
             if weight <= 0:
                 raise ValueError(f"{name} must be finite and positive.")
+        prior_weight = float(prior_weight)
+        penalty_weight = float(penalty_weight)
 
         idx = self.num_hypotheses + 1
         base_alpha = self._calc_base_alpha(idx)

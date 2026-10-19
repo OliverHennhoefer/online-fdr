@@ -9,7 +9,7 @@ from collections.abc import Sequence
 from online_fdr.core.abstract.abstract_batching_test import AbstractBatchingTest
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import DefaultSaffronGammaSequence
-from online_fdr.core.utils.static import bh
+from online_fdr.core.utils.static import _bh_r_plus, bh
 
 
 class BatchBH(AbstractBatchingTest):
@@ -131,17 +131,7 @@ class BatchBH(AbstractBatchingTest):
         # Run BH on current batch
         num_reject, threshold = bh(p_vals_local, alpha_t)
 
-        # Calculate R^+_t (maximum rejections if one p-value is set to 0)
-        r_plus = num_reject  # Start with current rejections
-        adjusted = list(p_vals_local)
-        for i in range(len(adjusted)):
-            # Temporarily set p-value to 0
-            original_p = adjusted[i]
-            adjusted[i] = 0.0
-            temp_reject, _ = bh(adjusted, alpha_t)
-            r_plus = max(r_plus, temp_reject)
-            # Restore original p-value
-            adjusted[i] = original_p
+        r_plus = _bh_r_plus(p_vals_local, alpha_t)
 
         # Store results
         self.r_s.append(num_reject)

@@ -19,7 +19,7 @@ class Bonferroni(AbstractSpendFunc):
 
     def __init__(self, k: int):
         check_positive_integer(k, "k")
-        super().__init__(k)
+        super().__init__(int(k))
 
     def spend(self, index: int, alpha: float) -> float:
         if index < 0:
