@@ -37,17 +37,9 @@ def check_p_val(p_val: float) -> None:
         ValueError: Given p-value must be between [0,1].
     """
     if not isinstance(p_val, int | float) or not math.isfinite(float(p_val)):
-        raise ValueError(
-            """
-            Given p-value must be a finite number between [0,1].
-            """
-        )
+        raise ValueError("Given p-value must be a finite number between [0,1].")
     if not 0 <= float(p_val) <= 1:
-        raise ValueError(
-            """
-            Given p-value must be between [0,1].
-            """
-        )
+        raise ValueError("Given p-value must be between [0,1].")
 
 
 def check_p_vals_batch(p_vals: Sequence[float]) -> None:
@@ -150,11 +142,7 @@ def check_alpha(p_val: float) -> None:
         >>> check_alpha(1.0)   # Raises ValueError (not < 1)
     """
     if not 0 < p_val < 1:
-        raise ValueError(
-            """
-            Given alpha value must be between (0,1).
-            """
-        )
+        raise ValueError("Given alpha value must be between (0,1).")
 
 
 def check_initial_wealth(initial_wealth: float, alpha: float) -> None:
@@ -177,11 +165,7 @@ def check_initial_wealth(initial_wealth: float, alpha: float) -> None:
         >>> check_initial_wealth(0.0, 0.05)    # Raises ValueError (not > 0)
     """
     if not 0 < initial_wealth < alpha:
-        raise ValueError(
-            """
-            The initial wealth should be between (0, alpha).
-            """
-        )
+        raise ValueError("The initial wealth should be between (0, alpha).")
 
 
 def check_candidate_threshold(lambda_: float) -> None:
@@ -203,11 +187,7 @@ def check_candidate_threshold(lambda_: float) -> None:
         >>> check_candidate_threshold(1.0)  # Raises ValueError
     """
     if not 0 < lambda_ < 1:
-        raise ValueError(
-            """
-            The candidate threshold (lambda) should be between (0, 1).
-            """
-        )
+        raise ValueError("The candidate threshold (lambda) should be between (0, 1).")
 
 
 def check_wealth(wealth: float) -> None:
@@ -229,11 +209,7 @@ def check_wealth(wealth: float) -> None:
         >>> check_wealth(-0.1)  # Raises ValueError (negative wealth)
     """
     if wealth <= 0:
-        raise ValueError(
-            """
-            Alpha wealth depleted. Test execution stopped.
-            """
-        )
+        raise ValueError("Alpha wealth depleted. Test execution stopped.")
 
 
 def check_decay_factor(decay_factor: float) -> None:
@@ -256,11 +232,7 @@ def check_decay_factor(decay_factor: float) -> None:
         >>> check_decay_factor(1.5)   # Raises ValueError (not < 1)
     """
     if not 0 < decay_factor < 1:
-        raise ValueError(
-            """
-            Decay factor must be between (0,1).
-            """
-        )
+        raise ValueError("Decay factor must be between (0,1).")
 
 
 def check_tau(tau: float) -> None:

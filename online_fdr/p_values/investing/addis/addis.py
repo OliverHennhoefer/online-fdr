@@ -102,7 +102,7 @@ class Addis(AbstractSequentialTest):
 
         Examples:
             >>> addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
-            >>> addis.test_one(0.01)  # Small p-value, likely rejected
+            >>> addis.test_one(0.001)  # Below the first test level
             True
             >>> addis.test_one(0.8)   # Large p-value, not selected
             False

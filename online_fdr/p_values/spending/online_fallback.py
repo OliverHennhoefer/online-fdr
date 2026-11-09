@@ -80,11 +80,11 @@ class OnlineFallback(AbstractSequentialTest):
 
         Examples:
             >>> fallback = OnlineFallback(alpha=0.05)
-            >>> fallback.test_one(0.01)  # First test, uses base alpha
+            >>> fallback.test_one(0.001)  # First test, uses base alpha
             True
-            >>> fallback.test_one(0.03)  # Second test, higher power after discovery
+            >>> fallback.test_one(0.003)  # Second test, level carried over after discovery
             True
-            >>> fallback.test_one(0.04)  # Third test, even higher power
+            >>> fallback.test_one(0.04)  # Third test, still above the carried-over level
             False
 
         Note:
@@ -101,8 +101,6 @@ class OnlineFallback(AbstractSequentialTest):
         self._advance_hypotheses()
 
         is_rejected = p_val <= alpha_t
-        self.last_rejected = bool(
-            is_rejected
-        )  # Fix SIM210: Use bool() instead of True if else False
+        self.last_rejected = bool(is_rejected)
 
         return is_rejected

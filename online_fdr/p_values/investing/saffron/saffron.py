@@ -88,7 +88,7 @@ class Saffron(AbstractSequentialTest):
 
         Examples:
             >>> saffron = Saffron(alpha=0.05, wealth=0.025, lambda_=0.5)
-            >>> saffron.test_one(0.01)  # Small p-value, likely rejected
+            >>> saffron.test_one(0.001)  # Below the first test level
             True
             >>> saffron.test_one(0.8)   # Large p-value, not rejected
             False

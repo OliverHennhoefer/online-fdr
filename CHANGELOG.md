@@ -6,6 +6,21 @@ repository milestones are consolidated into the first stable release below.
 
 ## [Unreleased]
 
+### Changed
+
+- `BatchBY` computes its augmented rejection count with one step-up pass
+  instead of one pass per p-value, and `Gai` no longer rescans its candidate
+  history on every test. Decisions and test levels are unchanged.
+- Validation errors for p-values, alpha, wealth, the candidate threshold, and
+  the decay factor are single-line messages without padding whitespace.
+
+### Fixed
+
+- Docstring examples for `Addis`, `Saffron`, `LordThree`, `Lond`, and
+  `OnlineFallback` now state the decisions the methods actually return.
+- The ADDIS parameter-sensitivity example in the evaluation guide no longer
+  sweeps `lambda_` values at or above `tau`.
+
 ## [1.0.0] - 2026-10-19
 
 ### Added

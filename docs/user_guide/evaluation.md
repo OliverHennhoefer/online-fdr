@@ -486,8 +486,8 @@ def parameter_sensitivity_analysis(method_class, param_grid, base_params):
 # Example: ADDIS parameter sensitivity
 addis_param_grid = {
     'wealth': [0.01, 0.02, 0.025, 0.04],
-    'lambda_': [0.1, 0.25, 0.5, 0.75],
-    'tau': [0.3, 0.5, 0.7, 0.9]
+    'lambda_': [0.05, 0.1, 0.25, 0.4],  # must stay below tau
+    'tau': [0.3, 0.5, 0.7, 0.9]  # must stay above lambda_
 }
 
 addis_base_params = {

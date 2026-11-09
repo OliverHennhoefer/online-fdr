@@ -159,12 +159,6 @@ class AbstractAsyncTest(AbstractSequentialTest):
         level = self.start_test()
         return self.finish_test(level.test_id, p_val)
 
-    def _is_available(self, record: _AsyncRecord, stage: int) -> bool:
-        return record.finish_stage is not None and record.finish_stage <= stage - 1
-
-    def _is_active_at(self, record: _AsyncRecord, stage: int) -> bool:
-        return record.finish_stage is None or record.finish_stage >= stage
-
     def _prepare_history_index(self) -> None:
         """Prepare derived accounting before a lifecycle operation."""
 

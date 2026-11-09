@@ -91,7 +91,7 @@ class LordThree(AbstractSequentialTest):
 
         Examples:
             >>> lord3 = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
-            >>> lord3.test_one(0.01)  # Small p-value, likely rejected
+            >>> lord3.test_one(0.001)  # Below the first test level
             True
             >>> lord3.test_one(0.8)   # Large p-value, not rejected
             False

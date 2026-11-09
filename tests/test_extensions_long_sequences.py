@@ -5,6 +5,7 @@ import pytest
 from online_fdr.core.utils.static import bh
 from online_fdr.p_values.batching.bh_official import BatchBHOfficial
 from online_fdr.p_values.batching.by import BatchBY
+from online_fdr.p_values.investing.alpha.alpha import Gai
 from online_fdr.p_values.investing.lord.mem_decay import LORDMemoryDecay
 from tests.parity_cases import batch_cases, sequential_cases
 
@@ -159,3 +160,48 @@ def test_batch_by_long_sequence_regression() -> None:
     assert sum(decisions) == 91
     assert len(method.alpha_s) == 141
     assert round(sum(method.alpha_s), 12) == 2.344898140949
+
+
+def _gai_reference_levels(p_values: list[float], alpha: float, wealth: float):
+    """GAI levels from explicit candidate counts over the whole history."""
+
+    def gamma(j: int) -> float:
+        return 0.4374901658 / j**1.6
+
+    candidates: list[bool] = []
+    reject_idx: list[int] = []
+    levels: list[float] = []
+    for index, p_val in enumerate(p_values, start=1):
+        if index == 1:
+            level = gamma(1) * wealth
+        else:
+            level = wealth * gamma(index - sum(candidates))
+            if reject_idx:
+                first = reject_idx[0]
+                level += (alpha - wealth) * gamma(
+                    index - first - sum(candidates[first:])
+                )
+            level += alpha * sum(
+                gamma(index - idx - sum(candidates[idx:])) for idx in reject_idx[1:]
+            )
+        level /= 1 + level
+        levels.append(level)
+        candidates.append(p_val <= level)
+        if p_val <= level:
+            reject_idx.append(index)
+    return levels, reject_idx
+
+
+def test_gai_matches_explicit_candidate_count_reference() -> None:
+    p_values = list(sequential_cases()["seq_long_mixed_v1"].p_values)
+    method = Gai(alpha=0.05, wealth=0.025)
+
+    levels = []
+    for p_val in p_values:
+        method.test_one(p_val)
+        levels.append(method.last_test_level)
+
+    expected_levels, expected_rejections = _gai_reference_levels(p_values, 0.05, 0.025)
+    assert len(expected_rejections) > 2
+    assert method.reject_idx == expected_rejections
+    assert levels == pytest.approx(expected_levels, rel=1e-12, abs=0.0)
