@@ -36,8 +36,9 @@ class LordThree(AbstractSequentialTest):
     Examples:
         >>> # Basic usage with recommended parameters
         >>> lord3 = LordThree(alpha=0.05, wealth=0.025, reward=0.025)
-        >>> decision = lord3.test_one(0.01)  # Test a small p-value
+        >>> decision = lord3.test_one(0.001)  # Test a small p-value
         >>> print(f"Rejected: {decision}")
+        Rejected: True
 
         >>> # Sequential testing
         >>> p_values = [0.001, 0.3, 0.02, 0.8, 0.005]

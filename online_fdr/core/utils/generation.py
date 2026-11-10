@@ -15,6 +15,16 @@ from scipy import stats
 from online_fdr.core.utils.validity import check_positive_integer
 
 
+def _normal_pvalues(z: np.ndarray, one_sided: bool) -> np.ndarray:
+    """Upper-tail or two-sided p-values of standard normal statistics.
+
+    The survival function keeps the precision that ``1 - cdf`` loses: past a
+    statistic of about 8.3 the difference rounds to exactly zero.
+    """
+    tail = stats.norm.sf(z) if one_sided else 2 * stats.norm.sf(np.abs(z))
+    return np.asarray(tail)
+
+
 class DataGeneratingProcess(abc.ABC):
     """Abstract base class for data generating processes."""
 
@@ -86,14 +96,10 @@ class GaussianLocationModel(DataGeneratingProcess):
         z_alt = self.rng.randn(n_alt) * self.alt_std + self.alt_mean
 
         # Convert to p-values
-        if self.one_sided:
-            p_null = 1 - stats.norm.cdf(z_null)  # Upper tail
-            p_alt = 1 - stats.norm.cdf(z_alt)
-        else:
-            p_null = 2 * (1 - stats.norm.cdf(np.abs(z_null)))
-            p_alt = 2 * (1 - stats.norm.cdf(np.abs(z_alt)))
-
-        return p_null, p_alt
+        return (
+            _normal_pvalues(z_null, self.one_sided),
+            _normal_pvalues(z_alt, self.one_sided),
+        )
 
 
 class BetaMixtureModel(DataGeneratingProcess):
@@ -139,11 +145,11 @@ class ChiSquaredModel(DataGeneratingProcess):
     ) -> Tuple[np.ndarray, np.ndarray]:
         # Null: standard chi-squared
         chi2_null = self.rng.chisquare(self.df, n_null)
-        p_null = 1 - stats.chi2.cdf(chi2_null, self.df)
+        p_null = stats.chi2.sf(chi2_null, self.df)
 
         # Alternative: scaled chi-squared
         chi2_alt = self.alt_scale * self.rng.chisquare(self.df, n_alt)
-        p_alt = 1 - stats.chi2.cdf(chi2_alt, self.df)
+        p_alt = stats.chi2.sf(chi2_alt, self.df)
 
         return p_null, p_alt
 
@@ -179,21 +185,19 @@ class DependentGaussianModel(DataGeneratingProcess):
             np.fill_diagonal(Sigma, 1.0)
 
         elif self.structure == "block":
-            # Block diagonal structure
+            # Block diagonal structure; the last block holds what is left over
             Sigma = np.eye(n)
-            n_blocks = n // self.block_size
-            for i in range(n_blocks):
-                start = i * self.block_size
-                end = min((i + 1) * self.block_size, n)
+            for start in range(0, n, self.block_size):
+                end = min(start + self.block_size, n)
                 Sigma[start:end, start:end] = self.correlation
                 np.fill_diagonal(Sigma[start:end, start:end], 1.0)
 
         elif self.structure == "autoregressive":
             # AR(1) structure: corr(i,j) = ρ^|i-j|
-            Sigma = np.zeros((n, n))
-            for i in range(n):
-                for j in range(n):
-                    Sigma[i, j] = self.correlation ** abs(i - j)
+            position = np.arange(n)
+            lag = np.abs(position[:, None] - position[None, :])
+            by_lag = np.array([self.correlation**k for k in range(n)], dtype=float)
+            Sigma = by_lag[lag]
 
         else:
             raise ValueError(f"Unknown correlation structure: {self.structure}")
@@ -207,11 +211,7 @@ class DependentGaussianModel(DataGeneratingProcess):
         if n_null > 0:
             Sigma_null = self._create_correlation_matrix(n_null)
             z_null = self.rng.multivariate_normal(np.zeros(n_null), Sigma_null)
-            p_null = (
-                1 - stats.norm.cdf(z_null)
-                if self.one_sided
-                else 2 * (1 - stats.norm.cdf(np.abs(z_null)))
-            )
+            p_null = _normal_pvalues(z_null, self.one_sided)
         else:
             p_null = np.array([])
 
@@ -220,11 +220,7 @@ class DependentGaussianModel(DataGeneratingProcess):
             Sigma_alt = self._create_correlation_matrix(n_alt)
             mean_alt = np.full(n_alt, self.alt_mean)
             z_alt = self.rng.multivariate_normal(mean_alt, Sigma_alt)
-            p_alt = (
-                1 - stats.norm.cdf(z_alt)
-                if self.one_sided
-                else 2 * (1 - stats.norm.cdf(np.abs(z_alt)))
-            )
+            p_alt = _normal_pvalues(z_alt, self.one_sided)
         else:
             p_alt = np.array([])
 
@@ -257,11 +253,7 @@ class SparseGaussianModel(DataGeneratingProcess):
     ) -> Tuple[np.ndarray, np.ndarray]:
         # Null: standard normal
         z_null = self.rng.randn(n_null)
-        p_null = (
-            1 - stats.norm.cdf(z_null)
-            if self.one_sided
-            else 2 * (1 - stats.norm.cdf(np.abs(z_null)))
-        )
+        p_null = _normal_pvalues(z_null, self.one_sided)
 
         # Alternative: varying effect sizes
         if self.effect_dist == "constant":
@@ -281,11 +273,7 @@ class SparseGaussianModel(DataGeneratingProcess):
             raise ValueError(f"Unknown effect distribution: {self.effect_dist}")
 
         z_alt = self.rng.randn(n_alt) + effects
-        p_alt = (
-            1 - stats.norm.cdf(z_alt)
-            if self.one_sided
-            else 2 * (1 - stats.norm.cdf(np.abs(z_alt)))
-        )
+        p_alt = _normal_pvalues(z_alt, self.one_sided)
 
         return p_null, p_alt
 
@@ -319,7 +307,7 @@ class DataGenerator:
         self.current_idx = 0
 
     def sample_one(self) -> Tuple[float, bool]:
-        """Sample one p-value (backward compatibility)."""
+        """Sample one p-value and its label."""
         if self.current_idx >= self.n:
             raise StopIteration("All samples have been generated.")
 

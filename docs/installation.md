@@ -42,7 +42,9 @@ For development and extended functionality:
 
 === "Documentation Dependencies"
     ```bash
-    pip install online-fdr[docs]
+    git clone https://github.com/OliverHennhoefer/online-fdr.git
+    cd online-fdr
+    uv sync --group docs --no-dev
     ```
     For building documentation locally:
     - `mkdocs-material >= 9.0`

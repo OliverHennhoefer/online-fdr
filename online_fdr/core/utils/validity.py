@@ -3,6 +3,11 @@ from collections.abc import Callable, Sequence
 from numbers import Integral, Real
 
 
+def _is_real(value: object) -> bool:
+    """A real scalar, including NumPy scalars. A bool is not a measurement."""
+    return isinstance(value, Real) and not isinstance(value, bool)
+
+
 def check_positive_integer(value: int, name: str) -> None:
     """Validate a positive integer scalar, including NumPy integers."""
     if isinstance(value, bool) or not isinstance(value, Integral) or value <= 0:
@@ -11,7 +16,7 @@ def check_positive_integer(value: int, name: str) -> None:
 
 def check_finite_number(value: float, name: str) -> None:
     """Validate a finite real scalar, including NumPy scalars, excluding bools."""
-    if isinstance(value, bool) or not isinstance(value, Real):
+    if not _is_real(value):
         raise ValueError(f"{name} must be a finite number.")
     try:
         finite = math.isfinite(value)
@@ -32,11 +37,11 @@ def check_p_val(p_val: float) -> None:
 
     Examples:
         >>> check_p_val(0.05)  # Valid - no exception
-        >>> check_p_val(1.5)   # Raises ValueError
+        >>> check_p_val(1.5)
         Traceback (most recent call last):
         ValueError: Given p-value must be between [0,1].
     """
-    if not isinstance(p_val, int | float) or not math.isfinite(float(p_val)):
+    if not _is_real(p_val) or not math.isfinite(float(p_val)):
         raise ValueError("Given p-value must be a finite number between [0,1].")
     if not 0 <= float(p_val) <= 1:
         raise ValueError("Given p-value must be between [0,1].")
@@ -45,7 +50,7 @@ def check_p_val(p_val: float) -> None:
 def check_p_vals_batch(p_vals: Sequence[float]) -> None:
     """Validate that all batch p-values are finite and in [0, 1]."""
     for idx, p_val in enumerate(p_vals):
-        if not isinstance(p_val, int | float) or not math.isfinite(float(p_val)):
+        if not _is_real(p_val) or not math.isfinite(float(p_val)):
             raise ValueError(f"Batch p-value at index {idx} must be a finite number.")
         check_p_val(float(p_val))
 
@@ -56,7 +61,7 @@ def check_e_value(e_value: float) -> None:
     Infinite e-values are allowed because they can arise from exact-zero
     calibrated p-values or likelihood ratios with zero null density.
     """
-    if not isinstance(e_value, int | float):
+    if not _is_real(e_value):
         raise ValueError("e-value must be a numeric value.")
     value = float(e_value)
     if math.isnan(value) or value < 0:
@@ -79,7 +84,7 @@ def check_nonnegative_weights(weights: Sequence[float]) -> None:
 
     total = 0.0
     for idx, weight in enumerate(weights):
-        if not isinstance(weight, int | float) or not math.isfinite(float(weight)):
+        if not _is_real(weight) or not math.isfinite(float(weight)):
             raise ValueError(f"weight at index {idx} must be finite.")
         value = float(weight)
         if value < 0:
@@ -112,7 +117,7 @@ def check_calibrator(
     for idx in range(grid_size):
         p_value = (idx + 0.5) / grid_size
         value = calibrator(p_value)
-        if not isinstance(value, int | float) or not math.isfinite(float(value)):
+        if not _is_real(value) or not math.isfinite(float(value)):
             raise ValueError("calibrator must return finite numeric values on (0, 1).")
         value = float(value)
         if value < 0:
@@ -138,8 +143,12 @@ def check_alpha(p_val: float) -> None:
 
     Examples:
         >>> check_alpha(0.05)  # Valid - no exception
-        >>> check_alpha(0.0)   # Raises ValueError (not > 0)
-        >>> check_alpha(1.0)   # Raises ValueError (not < 1)
+        >>> check_alpha(0.0)
+        Traceback (most recent call last):
+        ValueError: Given alpha value must be between (0,1).
+        >>> check_alpha(1.0)
+        Traceback (most recent call last):
+        ValueError: Given alpha value must be between (0,1).
     """
     if not 0 < p_val < 1:
         raise ValueError("Given alpha value must be between (0,1).")
@@ -161,8 +170,12 @@ def check_initial_wealth(initial_wealth: float, alpha: float) -> None:
 
     Examples:
         >>> check_initial_wealth(0.025, 0.05)  # Valid - no exception
-        >>> check_initial_wealth(0.1, 0.05)    # Raises ValueError (> alpha)
-        >>> check_initial_wealth(0.0, 0.05)    # Raises ValueError (not > 0)
+        >>> check_initial_wealth(0.1, 0.05)
+        Traceback (most recent call last):
+        ValueError: The initial wealth should be between (0, alpha).
+        >>> check_initial_wealth(0.0, 0.05)
+        Traceback (most recent call last):
+        ValueError: The initial wealth should be between (0, alpha).
     """
     if not 0 < initial_wealth < alpha:
         raise ValueError("The initial wealth should be between (0, alpha).")
@@ -183,8 +196,12 @@ def check_candidate_threshold(lambda_: float) -> None:
 
     Examples:
         >>> check_candidate_threshold(0.5)  # Valid - no exception
-        >>> check_candidate_threshold(0.0)  # Raises ValueError
-        >>> check_candidate_threshold(1.0)  # Raises ValueError
+        >>> check_candidate_threshold(0.0)
+        Traceback (most recent call last):
+        ValueError: The candidate threshold (lambda) should be between (0, 1).
+        >>> check_candidate_threshold(1.0)
+        Traceback (most recent call last):
+        ValueError: The candidate threshold (lambda) should be between (0, 1).
     """
     if not 0 < lambda_ < 1:
         raise ValueError("The candidate threshold (lambda) should be between (0, 1).")
@@ -205,8 +222,12 @@ def check_wealth(wealth: float) -> None:
 
     Examples:
         >>> check_wealth(0.01)  # Valid - no exception
-        >>> check_wealth(0.0)   # Raises ValueError (wealth depleted)
-        >>> check_wealth(-0.1)  # Raises ValueError (negative wealth)
+        >>> check_wealth(0.0)
+        Traceback (most recent call last):
+        ValueError: Alpha wealth depleted. Test execution stopped.
+        >>> check_wealth(-0.1)
+        Traceback (most recent call last):
+        ValueError: Alpha wealth depleted. Test execution stopped.
     """
     if wealth <= 0:
         raise ValueError("Alpha wealth depleted. Test execution stopped.")
@@ -227,9 +248,15 @@ def check_decay_factor(decay_factor: float) -> None:
 
     Examples:
         >>> check_decay_factor(0.9)   # Valid - no exception
-        >>> check_decay_factor(0.0)   # Raises ValueError (not > 0)
-        >>> check_decay_factor(1.0)   # Raises ValueError (not < 1)
-        >>> check_decay_factor(1.5)   # Raises ValueError (not < 1)
+        >>> check_decay_factor(0.0)
+        Traceback (most recent call last):
+        ValueError: Decay factor must be between (0,1).
+        >>> check_decay_factor(1.0)
+        Traceback (most recent call last):
+        ValueError: Decay factor must be between (0,1).
+        >>> check_decay_factor(1.5)
+        Traceback (most recent call last):
+        ValueError: Decay factor must be between (0,1).
     """
     if not 0 < decay_factor < 1:
         raise ValueError("Decay factor must be between (0,1).")

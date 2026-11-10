@@ -37,6 +37,7 @@ class Gai(AbstractSequentialTest):
         >>> gai = Gai(alpha=0.05, wealth=0.025)
         >>> decision = gai.test_one(0.01)  # Test a small p-value
         >>> print(f"Rejected: {decision}")
+        Rejected: True
 
         >>> # Sequential testing with wealth dynamics
         >>> p_values = [0.001, 0.3, 0.02, 0.8, 0.005]

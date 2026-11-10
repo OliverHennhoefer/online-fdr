@@ -1,6 +1,28 @@
+import random
+
 from online_fdr.core.utils.static import by
-from online_fdr.core.utils.testing import generate_test_data
 from online_fdr.p_values.batching.by import BatchBY
+
+
+def _stream_with_signals(
+    n: int, signal_share: float, max_batch_size: int, seed: int
+) -> tuple[list[float], list[int]]:
+    """Uniform p-values with a share of near-zero ones, cut into random batches."""
+    random.seed(seed)
+
+    p_vals = [random.uniform(0, 1) for _ in range(n)]
+    for i in range(int(n * signal_share)):
+        p_vals[i] = random.uniform(0, 0.00005)
+
+    batch_sizes = []
+    remaining = n
+    while remaining > 0:
+        batch_size = min(remaining, random.randint(1, max_batch_size))
+        batch_sizes.append(batch_size)
+        remaining -= batch_size
+
+    random.shuffle(p_vals)
+    return p_vals, batch_sizes
 
 
 def test_batch_by_first_batch_uses_static_by_at_allocated_alpha() -> None:
@@ -17,8 +39,8 @@ def test_batch_by_large() -> None:
     """Methods in this suite are derivations without a reference implementation."""
     batch_bh = BatchBY(alpha=0.05)
 
-    p_vals, batch_sizes = generate_test_data(
-        n=1_000, h0_prop=0.025, max_batch_size=15, seed=1
+    p_vals, batch_sizes = _stream_with_signals(
+        n=1_000, signal_share=0.025, max_batch_size=15, seed=1
     )
 
     decision = []

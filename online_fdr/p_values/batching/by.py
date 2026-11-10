@@ -46,11 +46,13 @@ class BatchBY(AbstractBatchingTest):
         >>> batch1 = [0.001, 0.002, 0.15, 0.8]  # May be dependent
         >>> decisions1 = by_test.test_batch(batch1)
         >>> print(f"BY discoveries in batch 1: {sum(decisions1)}")
+        BY discoveries in batch 1: 2
 
         >>> # Sequential dependent batches
         >>> batch2 = [0.03, 0.04, 0.006, 0.4]   # Also potentially dependent
         >>> decisions2 = by_test.test_batch(batch2)
         >>> print(f"BY discoveries in batch 2: {sum(decisions2)}")
+        BY discoveries in batch 2: 0
 
         >>> # Comparing with standard BH under dependence
         >>> from online_fdr.p_values.batching import BatchBH
@@ -120,6 +122,7 @@ class BatchBY(AbstractBatchingTest):
             >>> # Test potentially dependent p-values
             >>> decisions = by_test.test_batch([0.001, 0.002, 0.15, 0.8])
             >>> print(f"Rejections with BY: {sum(decisions)}")
+            Rejections with BY: 2
 
         Note:
             The BY procedure is more conservative than BH within a batch.

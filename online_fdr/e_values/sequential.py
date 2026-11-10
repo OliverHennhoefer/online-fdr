@@ -48,7 +48,7 @@ class ELond(AbstractSequentialTest):
     def test_one(self, e_value: float) -> bool:
         """Test a single e-value and return whether it is rejected."""
         check_e_value(e_value)
-        gamma_t = self._calc_gamma(self.num_hypotheses + 1)
+        gamma_t = float(self.seq.calc_gamma(self.num_hypotheses + 1, alpha=1.0))
         level = self.target_level * gamma_t * (self.num_reject + 1)
         threshold = math.inf if level <= 0 else 1.0 / level
         self._set_test_level(level, rejection_threshold=threshold)
@@ -62,9 +62,3 @@ class ELond(AbstractSequentialTest):
     def test_one_detail(self, e_value: float) -> TestDecision:
         """Return details using the same validation and state as ``test_one``."""
         return super().test_one_detail(e_value)
-
-    def _calc_gamma(self, index: int) -> float:
-        try:
-            return float(self.seq.calc_gamma(index, alpha=1.0))
-        except TypeError:
-            return float(self.seq.calc_gamma(index))

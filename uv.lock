@@ -1092,14 +1092,6 @@ dependencies = [
     { name = "scipy", version = "1.16.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 
-[package.optional-dependencies]
-docs = [
-    { name = "mkdocs-git-revision-date-localized-plugin" },
-    { name = "mkdocs-material" },
-    { name = "mkdocs-minify-plugin" },
-    { name = "mkdocstrings", extra = ["python"] },
-]
-
 [package.dev-dependencies]
 dev = [
     { name = "build" },
@@ -1120,14 +1112,9 @@ parity = [
 
 [package.metadata]
 requires-dist = [
-    { name = "mkdocs-git-revision-date-localized-plugin", marker = "extra == 'docs'", specifier = ">=1.2" },
-    { name = "mkdocs-material", marker = "extra == 'docs'", specifier = ">=9.0,<9.8" },
-    { name = "mkdocs-minify-plugin", marker = "extra == 'docs'", specifier = ">=0.6" },
-    { name = "mkdocstrings", extras = ["python"], marker = "extra == 'docs'", specifier = ">=0.20" },
     { name = "numpy", specifier = ">=1.20.0" },
     { name = "scipy", specifier = ">=1.9.0" },
 ]
-provides-extras = ["docs"]
 
 [package.metadata.requires-dev]
 dev = [

@@ -1,3 +1,6 @@
+from numbers import Integral
+from typing import Any
+
 from online_fdr.core.abstract.abstract_sequential_test import AbstractSequentialTest
 from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import DefaultLordGammaSequence
@@ -60,34 +63,53 @@ class LORDMemoryDecay(AbstractSequentialTest):
         validity.check_decay_factor(delta)
         if not 0 < eta <= 1:
             raise ValueError(f"eta must be in (0, 1], got {eta}")
+        if isinstance(l, bool) or not isinstance(l, Integral) or l < 0:
+            raise ValueError(f"l must be a non-negative integer, got {l}")
 
-        self.seq = DefaultLordGammaSequence(c=0.07720838)
+        self.seq: DefaultLordGammaSequence = DefaultLordGammaSequence(c=0.07720838)
 
         self.rejection_times: list[int] = []  # all rejection times
-        self._gamma_cache: dict[int, float] = {}  # Cache for efficiency
+        # Rejections before this position have decayed to a weight of exactly
+        # zero, so they can no longer change a test level.
+        self._first_active: int = 0
+        # Gamma by time since a rejection. Only active rejections are looked up,
+        # which bounds it by the time a weight takes to reach zero.
+        self._gamma_cache: dict[int, float] = {}
+
+    def _snapshot_state(self) -> dict[str, Any]:
+        state = super()._snapshot_state()
+        del state["_gamma_cache"]  # derived, and rebuilt on demand
+        return state
+
+    @classmethod
+    def _restore_snapshot_state(cls, state: dict[str, Any]) -> dict[str, Any]:
+        state["_gamma_cache"] = {}
+        return state
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
         index = self.num_hypotheses + 1
 
         # Base component with smoothing and minimum threshold
-        if index not in self._gamma_cache:
-            self._gamma_cache[index] = self.seq.calc_gamma(index)
-
-        gamma_t = self._gamma_cache[index]
+        gamma_t = self.seq.calc_gamma(index)
         alpha_t = self.alpha0 * self.eta * max(gamma_t, 1 - self.delta)
 
-        # Add decayed contributions from past rejections
-        for reject_idx in self.rejection_times:
-            time_diff = index - reject_idx - self.l
-            if time_diff > 0:
-                # Cache gamma values for efficiency
-                if time_diff not in self._gamma_cache:
-                    self._gamma_cache[time_diff] = self.seq.calc_gamma(time_diff)
+        # Add decayed contributions from past rejections, oldest first
+        cache = self._gamma_cache
+        for position in range(self._first_active, len(self.rejection_times)):
+            time_diff = index - self.rejection_times[position] - self.l
+            if time_diff <= 0:
+                break  # later rejections are more recent still
 
-                decay_weight = self.delta**time_diff
-                gamma_val = self._gamma_cache[time_diff]
-                alpha_t += self.alpha0 * decay_weight * gamma_val
+            decay_weight = self.delta**time_diff
+            if decay_weight == 0.0:
+                self._first_active = position + 1
+                continue
+
+            gamma_val = cache.get(time_diff)
+            if gamma_val is None:
+                gamma_val = cache[time_diff] = self.seq.calc_gamma(time_diff)
+            alpha_t += self.alpha0 * decay_weight * gamma_val
 
         self._set_test_level(alpha_t)
         self._advance_hypotheses()

@@ -40,8 +40,9 @@ class Addis(AbstractSequentialTest):
     Examples:
         >>> # Basic usage with recommended parameters
         >>> addis = Addis(alpha=0.05, wealth=0.025, lambda_=0.25, tau=0.5)
-        >>> decision = addis.test_one(0.01)  # Test a small p-value
+        >>> decision = addis.test_one(0.001)  # Test a small p-value
         >>> print(f"Rejected: {decision}")
+        Rejected: True
 
         >>> # Sequential testing
         >>> p_values = [0.001, 0.3, 0.02, 0.8, 0.005]

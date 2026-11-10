@@ -1,4 +1,5 @@
 import math
+from numbers import Real
 
 from online_fdr.core.abstract.abstract_gamma_seq import AbstractGammaSequence
 from online_fdr.core.utils.validity import check_finite_number
@@ -27,6 +28,7 @@ class DefaultLondGammaSequence(AbstractGammaSequence):
         >>> gamma_1 = gamma_seq.calc_gamma(1, alpha=0.05)
         >>> gamma_10 = gamma_seq.calc_gamma(10, alpha=0.05)
         >>> print(f"γ₁ = {gamma_1:.6f}, γ₁₀ = {gamma_10:.6f}")
+        γ₁ = 0.002676, γ₁₀ = 0.000195
 
     References:
         Javanmard, A., and A. Montanari (2018). "Online rules for control of false
@@ -57,7 +59,7 @@ class DefaultLondGammaSequence(AbstractGammaSequence):
             >>> gamma_5 = seq.calc_gamma(5, alpha=0.05)
         """
         alpha = kwargs.get("alpha")
-        if not isinstance(alpha, int | float):
+        if isinstance(alpha, bool) or not isinstance(alpha, Real):
             raise ValueError(
                 "alpha must be provided as a numeric value for LOND gamma sequence."
             )
@@ -85,8 +87,9 @@ class DefaultLordGammaSequence(AbstractGammaSequence):
     Examples:
         >>> # Standard LORD gamma sequence
         >>> gamma_seq = DefaultLordGammaSequence(c=0.07720838)
-        >>> gamma_values = [gamma_seq.calc_gamma(j) for j in range(1, 6)]
+        >>> gamma_values = [round(gamma_seq.calc_gamma(j), 6) for j in range(1, 6)]
         >>> print(f"First 5 gamma values: {gamma_values}")
+        First 5 gamma values: [0.053517, 0.011638, 0.009912, 0.008244, 0.006989]
 
     References:
         Javanmard, A., and A. Montanari (2018). "Online rules for control of false
@@ -135,8 +138,9 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
     Examples:
         >>> # Standard SAFFRON sequence with recommended parameters
         >>> gamma_seq = DefaultSaffronGammaSequence(gamma_exp=1.6, c=0.4374901658)
-        >>> gamma_values = [gamma_seq.calc_gamma(j) for j in range(1, 6)]
+        >>> gamma_values = [round(gamma_seq.calc_gamma(j), 6) for j in range(1, 6)]
         >>> print(f"SAFFRON γ values: {gamma_values}")
+        SAFFRON γ values: [0.43749, 0.144318, 0.075435, 0.047607, 0.033313]
 
     References:
         Ramdas, A., T. Zrnic, M. J. Wainwright, and M. I. Jordan (2018).
@@ -165,12 +169,13 @@ class DefaultSaffronGammaSequence(AbstractGammaSequence):
             raise ValueError("gamma_exp must be > 1 for a summable gamma sequence.")
         super().__init__(gamma_exp=gamma_exp, c=c)
 
-    def calc_gamma(self, j: int, *args: object) -> float:
+    def calc_gamma(self, j: int, *args: object, **kwargs: object) -> float:
         """Calculate gamma value for position j.
 
         Args:
             j: Position index (1-based).
             *args: Additional arguments (unused).
+            **kwargs: Additional arguments (unused).
 
         Returns:
             Gamma value for position j.
@@ -213,35 +218,22 @@ class BatchGammaSequenceSmall(AbstractGammaSequence):
     International Conference on Artificial Intelligence and Statistics."""
 
     def __init__(self, gamma_exp: float):
+        check_finite_number(gamma_exp, "gamma_exp")
+        if gamma_exp <= 1:
+            raise ValueError("gamma_exp must be > 1 for a summable gamma sequence.")
         super().__init__(gamma_exp=gamma_exp)
+        # The normalizer depends only on the batch size, which rarely changes.
+        self._normalizer: tuple[int, float] | None = None
 
     def calc_gamma(self, j: int, **kwargs) -> float:
         batch_size = kwargs.get("batch_size")
         if batch_size is None:
             raise ValueError("batch_size must be provided in kwargs.")
         batch_size = int(batch_size)
-        if self.gamma_exp <= 1:
-            raise ValueError("gamma_exp must be > 1 for a summable gamma sequence.")
-        sum_gamma = sum(s ** (-self.gamma_exp) for s in range(1, batch_size + 1))
-        normalization_factor = 1.0 / sum_gamma
-        return float(normalization_factor * math.pow(float(j), -self.gamma_exp))
-
-
-class BatchGammaSequenceLarge(AbstractGammaSequence):
-    """Proposed default gamma sequence for Batch-BH and Batch-StBH [1]_
-    with batch sizes of more than 100.
-
-    References
-    ----------
-    [1] Zrnic, T., Jiang, D., Ramdas, A., & Jordan, M.I. (2019).
-    The Power of Batching in Multiple Hypothesis Testing.
-    International Conference on Artificial Intelligence and Statistics."""
-
-    def __init__(self):
-        super().__init__()
-
-    def calc_gamma(self, j: int, **kwargs) -> float:
-        return 0.5 if j < 3 else 0.0
+        if self._normalizer is None or self._normalizer[0] != batch_size:
+            sum_gamma = sum(s ** (-self.gamma_exp) for s in range(1, batch_size + 1))
+            self._normalizer = (batch_size, 1.0 / sum_gamma)
+        return float(self._normalizer[1] * math.pow(float(j), -self.gamma_exp))
 
 
 class BatchBHPolynomialGammaSequence(AbstractGammaSequence):
