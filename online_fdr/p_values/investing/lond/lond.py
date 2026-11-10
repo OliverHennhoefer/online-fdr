@@ -33,8 +33,9 @@ class Lond(AbstractSequentialTest):
     Examples:
         >>> # Basic usage
         >>> lond = Lond(alpha=0.05)
-        >>> decision = lond.test_one(0.01)  # Test a small p-value
+        >>> decision = lond.test_one(0.001)  # Test a small p-value
         >>> print(f"Rejected: {decision}")
+        Rejected: True
 
         >>> # For dependent p-values
         >>> lond_dep = Lond(alpha=0.05, dependent=True)
@@ -69,6 +70,8 @@ class Lond(AbstractSequentialTest):
 
         self.original: bool = original
         self.dependent: bool = dependent
+        # (terms added, running sum, rounding error carried along)
+        self._harmonic: tuple[int, float, float] = (0, 0.0, 0.0)
 
     def test_one(self, p_val: float) -> bool:
         """Test a single p-value using the LOND procedure.
@@ -105,11 +108,8 @@ class Lond(AbstractSequentialTest):
         index = self.num_hypotheses + 1
 
         alpha_t = self.seq.calc_gamma(index, alpha=self.alpha0)
-        alpha_t /= (
-            sum(1 / i for i in range(1, index + 1))
-            if self.dependent
-            else 1  # fmt: split
-        )
+        if self.dependent:
+            alpha_t /= self._harmonic_number(index)
         alpha_t *= (
             self.num_reject + 1 if self.original else max(self.num_reject, 1)
         )  # fmt: split
@@ -120,3 +120,22 @@ class Lond(AbstractSequentialTest):
         self.num_reject += 1 if is_rejected else 0
 
         return is_rejected
+
+    def _harmonic_number(self, index: int) -> float:
+        """The sum 1 + 1/2 + ... + 1/index, extended by one term per test.
+
+        The rounding error of each addition is carried along (Neumaier), so the
+        result does not drift over long streams.
+        """
+        terms, total, error = self._harmonic
+        while terms < index:
+            terms += 1
+            term = 1 / terms
+            new_total = total + term
+            if abs(total) >= abs(term):
+                error += (total - new_total) + term
+            else:
+                error += (term - new_total) + total
+            total = new_total
+        self._harmonic = (terms, total, error)
+        return total + error

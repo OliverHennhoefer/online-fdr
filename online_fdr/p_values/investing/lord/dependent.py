@@ -39,8 +39,7 @@ class LordDependent(AbstractSequentialTest):
             b0=self.reward,
         )
 
-        self.last_reject: int = 0  # tau
-        self.wealth_reject: float = self.wealth  # wealth at tau
+        self.wealth_reject: float = self.wealth  # wealth at the last rejection
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
@@ -57,7 +56,6 @@ class LordDependent(AbstractSequentialTest):
 
         self.wealth -= alpha_t
         self.wealth += self.reward if is_rejected else 0
-        self.last_reject = index if is_rejected else self.last_reject
         self.wealth_reject = self.wealth if is_rejected else self.wealth_reject
 
         return is_rejected

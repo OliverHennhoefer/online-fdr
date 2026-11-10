@@ -78,10 +78,11 @@ class AlphaSpending(AbstractSequentialTest):
             ValueError: If p_val is not in [0, 1].
 
         Examples:
-            >>> alpha_spending = AlphaSpending(alpha=0.05, spend_func=my_spend_func)
-            >>> alpha_spending.test_one(0.01)  # First analysis
+            >>> from online_fdr.p_values.spending.functions.bonferroni import Bonferroni
+            >>> alpha_spending = AlphaSpending(alpha=0.05, spend_func=Bonferroni(k=5))
+            >>> alpha_spending.test_one(0.005)  # First analysis, level 0.05 / 5
             True
-            >>> alpha_spending.test_one(0.04)  # Second analysis, stricter threshold
+            >>> alpha_spending.test_one(0.04)  # Second analysis, same level
             False
         """
         validity.check_p_val(p_val)

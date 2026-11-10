@@ -46,14 +46,6 @@ dependencies = [
     "scipy>=1.9.0",
 ]
 
-[project.optional-dependencies]
-docs = [
-    "mkdocs-material>=9.0,<9.8",
-    "mkdocstrings[python]>=0.20",
-    "mkdocs-git-revision-date-localized-plugin>=1.2",
-    "mkdocs-minify-plugin>=0.6",
-]
-
 [dependency-groups]
 dev = [
     "pytest>=7.0",

@@ -37,9 +37,8 @@ def test_default_lord_sequence_invariants() -> None:
 
 
 def test_batch_small_gamma_requires_summable_exponent() -> None:
-    seq = BatchGammaSequenceSmall(gamma_exp=1.0)
     with pytest.raises(ValueError):
-        seq.calc_gamma(1, batch_size=10)
+        BatchGammaSequenceSmall(gamma_exp=1.0)
 
 
 def test_batch_small_gamma_is_positive_and_decreasing() -> None:

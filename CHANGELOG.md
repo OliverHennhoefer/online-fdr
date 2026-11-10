@@ -13,9 +13,44 @@ repository milestones are consolidated into the first stable release below.
   history on every test. Decisions and test levels are unchanged.
 - Validation errors for p-values, alpha, wealth, the candidate threshold, and
   the decay factor are single-line messages without padding whitespace.
+- P-values, e-values, weights, and the LOND `alpha` accept any real scalar,
+  including NumPy scalars such as `np.float32`, and refuse booleans.
+- `BatchStoreyBH` computes its augmented rejection count from two candidate
+  replacements instead of one per p-value, and dependent `Lond` extends a
+  running harmonic sum instead of recomputing it on every test. Decisions
+  and test levels are unchanged.
+- `LORDMemoryDecay` stops visiting rejections whose decay weight has reached
+  exactly zero, keeps its gamma cache bounded and out of snapshots, and
+  validates `l`. Test levels are unchanged.
+- The Gaussian and chi-squared data generators compute p-values with the
+  survival function, so very strong signals no longer round to exactly zero.
+  Generated p-values differ from earlier versions in their last digits.
+- `DependentGaussianModel` builds its autoregressive correlation matrix
+  without a Python loop over all pairs.
+- `BatchGammaSequenceSmall` validates `gamma_exp` when it is created and
+  reuses its normalizer per batch size.
+- `ELond` no longer swallows a `TypeError` raised inside a gamma sequence.
+  `DefaultSaffronGammaSequence.calc_gamma` accepts keyword arguments like the
+  other sequences.
+- Docstring examples run as part of the test suite.
+- The `AddisAsync` docstring states how its `lambda_` and `wealth` differ
+  from `Addis`.
+
+### Removed
+
+- `BatchGammaSequenceLarge`, which duplicated `BatchBHHalfGammaSequence`.
+- `LordPlusPlus.wealth_at_first_reject` and `LordDependent.last_reject`,
+  which were written and never read. Snapshots no longer contain them.
+- `online_fdr.core.utils.testing` and `online_fdr.core.utils.format`. Their
+  helpers were unused by the package; the one a test needed now lives with
+  that test.
+- The `docs` extra. The documentation toolchain is the `docs` dependency
+  group, which is what the workflows install.
 
 ### Fixed
 
+- The "block" structure of `DependentGaussianModel` left a trailing partial
+  block uncorrelated.
 - Docstring examples for `Addis`, `Saffron`, `LordThree`, `Lond`, and
   `OnlineFallback` now state the decisions the methods actually return.
 - The ADDIS parameter-sensitivity example in the evaluation guide no longer

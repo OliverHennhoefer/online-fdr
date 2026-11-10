@@ -42,11 +42,13 @@ class BatchPRDS(AbstractBatchingTest):
         >>> batch1 = [0.001, 0.005, 0.15, 0.8]  # Positively correlated
         >>> decisions1 = prds_test.test_batch(batch1)
         >>> print(f"PRDS discoveries: {sum(decisions1)}")
+        PRDS discoveries: 2
 
         >>> # Subsequent batch - alpha adjusted for previous discoveries
         >>> batch2 = [0.02, 0.03, 0.4, 0.9]
         >>> decisions2 = prds_test.test_batch(batch2)
         >>> print(f"Total discoveries: {prds_test.r_total}")
+        Total discoveries: 2
 
         >>> # PRDS vs standard BH under positive dependence
         >>> # PRDS maintains FDR control while BH may be conservative
@@ -115,6 +117,7 @@ class BatchPRDS(AbstractBatchingTest):
             >>> # Test positively dependent p-values
             >>> decisions = prds_test.test_batch([0.001, 0.002, 0.15, 0.8])
             >>> print(f"PRDS rejections: {sum(decisions)}")
+            PRDS rejections: 2
 
         Note:
             This method assumes that p-values within the batch satisfy PRDS

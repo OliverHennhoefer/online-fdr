@@ -38,7 +38,6 @@ class LordPlusPlus(AbstractSequentialTest):
 
         self.first_reject: int | None = None  # first rejection index
         self.last_reject: list = []  # rejection indices without first
-        self.wealth_at_first_reject: float | None = None
 
     def test_one(self, p_val: float) -> bool:
         validity.check_p_val(p_val)
@@ -74,7 +73,6 @@ class LordPlusPlus(AbstractSequentialTest):
             if self.first_reject is None:
                 # First rejection
                 self.first_reject = index
-                self.wealth_at_first_reject = self.wealth
             else:
                 # Subsequent rejection
                 self.last_reject.append(index)

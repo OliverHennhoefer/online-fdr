@@ -86,9 +86,18 @@ class BatchStoreyBH(AbstractBatchingTest):
                 )
             alpha_batch = float(self.last_test_level)
 
+        # Replacing a larger p-value with zero never rejects fewer, as long as
+        # the Storey estimate stays the same. The estimate only depends on
+        # whether the replaced value was above lambda, so the largest value on
+        # each side of lambda covers every replacement.
+        positions = range(len(p_vals))
+        candidates = {max(positions, key=p_vals.__getitem__)}
+        at_most_lambda = [i for i in positions if p_vals[i] <= self.lambda_]
+        if at_most_lambda:
+            candidates.add(max(at_most_lambda, key=p_vals.__getitem__))
+
         r_plus = 0
-        n = len(p_vals)
-        for i in range(n):
+        for i in candidates:
             pseudo_pvals = p_vals[:i] + p_vals[i + 1 :] + [0.0]
             pseudo_rejections, _ = self._storey_batch_decisions(
                 pseudo_pvals, alpha_batch

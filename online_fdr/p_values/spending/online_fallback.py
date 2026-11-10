@@ -34,14 +34,17 @@ class OnlineFallback(AbstractSequentialTest):
         >>> # Create online fallback instance
         >>> fallback = OnlineFallback(alpha=0.05)
         >>> # Test p-values sequentially
-        >>> decision1 = fallback.test_one(0.01)  # First test
-        >>> decision2 = fallback.test_one(0.03)  # Higher power if previous rejected
+        >>> decision1 = fallback.test_one(0.001)  # First test
+        >>> decision2 = fallback.test_one(0.003)  # Level raised by the rejection
         >>> print(f"Decisions: {decision1}, {decision2}")
+        Decisions: True, True
 
         >>> # Sequential testing with FWER guarantee
+        >>> fallback = OnlineFallback(alpha=0.05)
         >>> p_values = [0.001, 0.8, 0.02, 0.9, 0.005]
         >>> decisions = [fallback.test_one(p) for p in p_values]
         >>> print(f"FWER-controlled decisions: {decisions}")
+        FWER-controlled decisions: [True, False, False, False, False]
 
     References:
         Tian, J., and A. Ramdas (2021). "Online control of the familywise error rate."

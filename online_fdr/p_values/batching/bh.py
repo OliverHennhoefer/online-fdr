@@ -47,11 +47,13 @@ class BatchBH(AbstractBatchingTest):
         >>> batch1 = [0.001, 0.02, 0.15, 0.8]
         >>> decisions1 = bh.test_batch(batch1)
         >>> print(f"Batch 1 discoveries: {sum(decisions1)}")
+        Batch 1 discoveries: 1
 
         >>> # Sequential batches with adaptive alpha
         >>> batch2 = [0.03, 0.9, 0.006, 0.4]
         >>> decisions2 = bh.test_batch(batch2)  # Alpha adjusted based on batch1
         >>> print(f"Batch 2 discoveries: {sum(decisions2)}")
+        Batch 2 discoveries: 0
 
         >>> # Multiple batches
         >>> batches = [[0.001, 0.8], [0.02, 0.3], [0.005, 0.9]]
@@ -60,6 +62,9 @@ class BatchBH(AbstractBatchingTest):
         ...     decisions = bh.test_batch(batch)
         ...     all_decisions.append(decisions)
         ...     print(f"Batch {i+1}: {sum(decisions)} discoveries")
+        Batch 1: 1 discoveries
+        Batch 2: 0 discoveries
+        Batch 3: 0 discoveries
 
     References:
         Zrnic, T., D. Jiang, A. Ramdas, and M. I. Jordan (2020). "The Power of
