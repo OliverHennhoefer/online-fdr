@@ -21,14 +21,21 @@ def bh(p_vals: list[float], alpha: float) -> tuple[int, float]:
     return k, (alpha * k / n if k else 0.0)
 
 
+def _zero_replaced(p_vals: list[float]) -> list[float]:
+    """Sorted batch after replacing its largest p-value with zero.
+
+    Replacing the largest value minimizes every order statistic among all
+    one-zero replacements, which maximizes the rejection count of any step-up
+    procedure whose critical values depend only on the batch size.
+    """
+    return [0.0, *sorted(p_vals)[:-1]]
+
+
 def _bh_r_plus(p_vals: list[float], alpha: float) -> int:
     """Maximum BH rejections after replacing one p-value with zero."""
     if not p_vals:
         return 0
-    # Replacing the largest value minimizes every order statistic among all
-    # one-zero replacements, maximizing the monotone BH rejection count.
-    augmented = [0.0, *sorted(p_vals)[:-1]]
-    return bh(augmented, alpha)[0]
+    return bh(_zero_replaced(p_vals), alpha)[0]
 
 
 def storey_bh(p_vals: list[float], alpha: float, lambda_: float) -> tuple[int, float]:
@@ -59,3 +66,10 @@ def by(p_vals: list[float], alpha: float) -> tuple[int, float]:
         sorted_p_vals, (alpha * i / (n * harmonic_sum) for i in range(1, n + 1))
     )
     return k, (alpha * k / (n * harmonic_sum) if k else 0.0)
+
+
+def _by_r_plus(p_vals: list[float], alpha: float) -> int:
+    """Maximum BY rejections after replacing one p-value with zero."""
+    if not p_vals:
+        return 0
+    return by(_zero_replaced(p_vals), alpha)[0]

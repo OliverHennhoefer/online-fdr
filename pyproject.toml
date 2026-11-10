@@ -80,9 +80,6 @@ Issues = "https://github.com/OliverHennhoefer/online-fdr/issues"
 Changelog = "https://github.com/OliverHennhoefer/online-fdr/blob/main/CHANGELOG.md"
 Security = "https://github.com/OliverHennhoefer/online-fdr/blob/main/SECURITY.md"
 
-[tool.hatch.version]
-path = "online_fdr/__init__.py"
-
 [tool.hatch.build]
 include = [
     "online_fdr/**/*.py",

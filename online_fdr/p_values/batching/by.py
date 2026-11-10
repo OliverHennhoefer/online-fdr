@@ -5,7 +5,7 @@ from online_fdr.core.utils import validity
 from online_fdr.core.utils.sequence import (
     DefaultSaffronGammaSequence,
 )
-from online_fdr.core.utils.static import by
+from online_fdr.core.utils.static import _by_r_plus, by
 
 
 class BatchBY(AbstractBatchingTest):
@@ -158,13 +158,7 @@ class BatchBY(AbstractBatchingTest):
         self.r_total += num_reject
         self.alpha_s.append(alpha_t)
 
-        r_plus = 0
-        adjusted = list(p_vals_local)
-        for i, p_val in enumerate(adjusted):
-            adjusted[i] = 0.0
-            r_plus = max(r_plus, by(adjusted, alpha_t)[0])
-            adjusted[i] = p_val
-        self.r_s_plus.append(r_plus)
+        self.r_s_plus.append(_by_r_plus(p_vals_local, alpha_t))
 
         self._set_test_level(alpha_t, rejection_threshold=threshold)
         self._advance_batch(n_batch)

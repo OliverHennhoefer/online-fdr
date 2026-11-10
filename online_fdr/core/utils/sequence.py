@@ -204,7 +204,7 @@ class DependentLordGammaSequence(AbstractGammaSequence):
 
 class BatchGammaSequenceSmall(AbstractGammaSequence):
     """Proposed default gamma sequence for Batch-BH and Batch-StBH [1]_
-    with batche sizes up to 100.
+    with batch sizes up to 100.
 
     References
     ----------

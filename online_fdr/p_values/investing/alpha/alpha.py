@@ -87,21 +87,24 @@ class Gai(AbstractSequentialTest):
                 * self.wealth0
             )
         else:
+            # GAI rejects exactly its candidates, so the candidates after the
+            # k-th rejection are the later rejections; no history scan is needed.
+            num_rejections = len(self.reject_idx)
             alpha_t = self.wealth0 * self.seq.calc_gamma(
-                self.num_hypotheses - sum(self.candidates), None
+                self.num_hypotheses - num_rejections, None
             )
-            if len(self.reject_idx) >= 1:
+            if num_rejections >= 1:
                 tau_1 = self.reject_idx[0]
-                c_1_plus = sum(self.candidates[tau_1:])
+                c_1_plus = num_rejections - 1
                 alpha_t += (self.alpha0 - self.wealth0) * self.seq.calc_gamma(
                     (self.num_hypotheses - tau_1 - c_1_plus), None
                 )
-            if len(self.reject_idx) >= 2:
+            if num_rejections >= 2:
                 alpha_t += self.alpha0 * sum(
                     self.seq.calc_gamma(
-                        (self.num_hypotheses - idx - sum(self.candidates[idx:])),
+                        (self.num_hypotheses - idx - (num_rejections - position)),
                         None,
                     )
-                    for idx in self.reject_idx[1:]
+                    for position, idx in enumerate(self.reject_idx[1:], start=2)
                 )
         return alpha_t / (1 + alpha_t)

@@ -92,9 +92,9 @@ class Lond(AbstractSequentialTest):
             >>> lond = Lond(alpha=0.05)
             >>> lond.test_one(0.001)  # First test, small p-value
             True
-            >>> lond.test_one(0.04)   # Second test, higher threshold after discovery
+            >>> lond.test_one(0.001)  # Second test, level scaled up by the discovery
             True
-            >>> lond.test_one(0.04)   # Third test, threshold increased again
+            >>> lond.test_one(0.04)   # Third test, still above the scaled level
             False
 
         Note:
