@@ -18,6 +18,28 @@ class AddisAsync(AbstractAsyncTest):
     still in progress are treated pessimistically as selected in the ADDIS
     conflict accounting, which is the information available to a true lifecycle
     API before their p-values are known.
+
+    Two parameters do not mean what they mean in ``Addis``:
+
+    - ``lambda_`` is relative to ``tau``. A finished test counts as a candidate
+      when its p-value is at most ``tau * lambda_``, where ``Addis`` compares
+      the p-value with ``lambda_`` itself. With ``lambda_=0.25`` and
+      ``tau=0.5`` that is 0.125 here and 0.25 there. Test levels are capped
+      at ``lambda_`` in both.
+    - ``wealth`` may equal 0 or ``alpha``. ``Addis`` requires it strictly
+      between the two. With zero wealth every test level is zero until there
+      is a rejection.
+
+    Both follow ``ADDIS(async = TRUE)`` in the R package onlineFDR, which the
+    live parity tests call with the same ``lambda`` and ``tau``.
+
+    Args:
+        alpha: Target FDR level.
+        wealth: Initial wealth in [0, alpha]. Defaults to ``alpha / 2``.
+        lambda_: Candidate parameter in (0, tau); see above.
+        tau: Discarding threshold. P-values above it are not tested.
+        gamma_seq: Gamma sequence. Defaults to the SAFFRON sequence with
+            exponent 1.6.
     """
 
     def __init__(

@@ -33,6 +33,8 @@ repository milestones are consolidated into the first stable release below.
   `DefaultSaffronGammaSequence.calc_gamma` accepts keyword arguments like the
   other sequences.
 - Docstring examples run as part of the test suite.
+- The `AddisAsync` docstring states how its `lambda_` and `wealth` differ
+  from `Addis`.
 
 ### Removed
 
